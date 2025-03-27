@@ -89,11 +89,8 @@ List insert(List l, int p, int x) {
 		temp = temp->next; // Go to the (p-1)-th node (starting at 1)
 	new_node->next = temp->next;
 	new_node->prev = temp;
-	if (temp->next)
-	{
-		struct Node* ptr = temp->next;
-		temp->next = new_node;
-	}
+	if (!is_empty(temp->next))
+		temp->next->prev = new_node;
 	temp->next = new_node;
 	return l;
 }
@@ -111,4 +108,37 @@ void print_list(List l) {
 		temp = temp->next;
 	}
 	printf("\n");
+}
+
+List delete_at_head(List l) {
+	if (is_empty(l))
+		return l;
+	struct Node* head = l->next; // Pointer to next Node
+	head->prev = NULL;
+	_free_node(l);
+	l = head;
+	return l;
+}
+
+List delete_at_tail(List l) {
+	struct Node* temp = l;
+	while (!is_empty(temp->next))
+		temp = temp->next; // Go to last Node
+	temp->prev->next = NULL;
+	_free_node(temp);
+	return l;
+}
+
+List delete(List l, int p) {
+	struct Node* temp = l;
+	if (p==1)
+		return delete_at_head(l);
+	for (int i=1; i<p && !is_empty(temp->next); ++i)
+		temp = temp->next; // Go to the p-th node (starting at 1)
+	if (!is_empty(temp->prev))
+		temp->prev->next = temp->next;
+	if (!is_empty(temp->next))
+		temp->next->prev = temp->prev;
+	_free_node(temp);
+	return l;
 }

@@ -27,4 +27,8 @@ List insert(List l, int p, int x);
 
 void print_list(List l);
 
+List delete_at_head(List l);
+List delete_at_tail(List l);
+List delete(List l, int p);
+
 #endif // LIST_H_
