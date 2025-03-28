@@ -35,6 +35,8 @@ struct Node* get_first_node(List l);
 struct Node* get_last_node(List l);
 struct Node* get_next_node(List l);
 struct Node* get_prev_node(List l);
-int* get_data(List l);
+int* get_data(struct Node* n);
+
+void swap_data(struct Node* n1, struct Node* n2);
 
 #endif // LIST_H_

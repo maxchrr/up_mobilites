@@ -169,7 +169,32 @@ struct Node* get_prev_node(List l)
 	return l->prev;
 }
 
-int* get_data(List l)
+int* get_data(struct Node* n)
 {
-	return l->data;
+	return n->data;
+}
+
+void swap_data(struct Node* n1, struct Node* n2)
+{
+	struct Node* temp = n1;
+	n1->data = get_data(n2);
+	n2->data = get_data(temp);
+}
+
+int length(List l)
+{
+	if (is_empty(l))
+		return 0;
+	int c=1;
+	while (!is_empty(get_next_node(l)))
+	{
+		++c;
+		l = get_next_node(l);
+	}
+	return c;
+}
+
+int sizeof_bytes(List l)
+{
+	return (length(l)*sizeof(struct Node*))
 }
