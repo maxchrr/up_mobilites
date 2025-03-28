@@ -142,3 +142,34 @@ List delete(List l, int p) {
 	_free_node(temp);
 	return l;
 }
+
+struct Node* get_first_node(List l)
+{
+	return l;
+}
+
+struct Node* get_last_node(List l)
+{
+	while (!is_empty(l->next))
+		l = l->next;
+	return l;
+}
+
+struct Node* get_next_node(List l)
+{
+	if (is_empty(l->next))
+		return NULL;
+	return l->next;
+}
+
+struct Node* get_prev_node(List l)
+{
+	if (is_empty(l->prev))
+		return NULL;
+	return l->prev;
+}
+
+int* get_data(List l)
+{
+	return l->data;
+}

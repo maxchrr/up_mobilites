@@ -31,4 +31,10 @@ List delete_at_head(List l);
 List delete_at_tail(List l);
 List delete(List l, int p);
 
+struct Node* get_first_node(List l);
+struct Node* get_last_node(List l);
+struct Node* get_next_node(List l);
+struct Node* get_prev_node(List l);
+int* get_data(List l);
+
 #endif // LIST_H_
