@@ -6,7 +6,7 @@ $(exec): main.o list.a #bus.a
 main.o: main.c list.h #bus.h
 	cc -c main.c
 
-list.a: list.o #sort.o
+list.a: list.o sort.o utils.o
 	ar rcs liblist.a $^
 
 list.o: list.c list.h
@@ -14,6 +14,9 @@ list.o: list.c list.h
 
 sort.o: sort.c sort.h
 	cc -c sort.c
+
+utils.o: utils.c list.h utils.h
+	cc -c utils.c
 
 bus.a: bus.o
 	ar rcs libbus.a $^
