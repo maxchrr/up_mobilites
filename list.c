@@ -169,16 +169,16 @@ struct Node* get_prev_node(List l)
 	return l->prev;
 }
 
-int* get_data(struct Node* n)
+int* get_node(struct Node* n)
 {
 	return n->data;
 }
 
-void swap_data(struct Node* n1, struct Node* n2)
+void swap_node(struct Node* n1, struct Node* n2)
 {
 	struct Node* temp = n1;
-	n1->data = get_data(n2);
-	n2->data = get_data(temp);
+	n1->data = get_node(n2);
+	n2->data = get_node(temp);
 }
 
 int length(List l)
@@ -205,12 +205,12 @@ List merge(List l1, List l2)
 	init_list(&new_list); // Create a new empty List
 	while (!is_empty(l1))
 	{
-		new_list = insert_at_tail(new_list, *get_data(l1));
+		new_list = insert_at_tail(new_list, *get_node(l1));
 		l1 = get_next_node(l1); // Copy each Node of the first List
 	}
 	while (!is_empty(l2))
 	{
-		new_list = insert_at_tail(new_list, *get_data(l2));
+		new_list = insert_at_tail(new_list, *get_node(l2));
 		l2 = get_next_node(l2); // Copy each Node of the second List
 	}
 	return new_list;
@@ -223,4 +223,27 @@ List append(List l1, List l2)
 	l2->prev = temp; // Append the second List
 	l1 = temp;
 	return l1;
+}
+
+struct Node* find_node(List l, int x)
+{
+	if (is_empty(l))
+		return NULL;
+	while (*get_node(l) != x && !is_empty(get_next_node(l)))
+		l = get_next_node(l); // Get the first occurence of x
+	return l;
+}
+
+int count_node(List l, int x)
+{
+	if (is_empty(l))
+		return 0;
+	int c=0;
+	while (!is_empty(get_next_node(l)))
+	{
+		if (*get_node(l) == x)
+			++c;
+		l = get_next_node(l);
+	}
+	return c;
 }

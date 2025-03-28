@@ -35,13 +35,16 @@ struct Node* get_first_node(List l);
 struct Node* get_last_node(List l);
 struct Node* get_next_node(List l);
 struct Node* get_prev_node(List l);
-int* get_data(struct Node* n);
+int* get_node(struct Node* n);
 
-void swap_data(struct Node* n1, struct Node* n2);
+void swap_node(struct Node* n1, struct Node* n2);
 int length(List l);
 int sizeof_bytes(List l);
 
 List merge(List l1, List l2);
 List append(List l1, List l2);
+
+struct Node* find_node(List l, int x);
+int count_node(List l, int x);
 
 #endif // LIST_H_
