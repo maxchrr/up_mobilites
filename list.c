@@ -86,7 +86,7 @@ List insert(List l, int p, int x) {
 	if (p == 1)
 		return insert_at_head(l, x);
 	for (int i=1; i<(p-1) && !is_empty(temp->next); ++i)
-		temp = temp->next; // Go to the (p-1)-th node (starting at 1)
+		temp = temp->next; // Go to the (p-1)-th Node (starting at 1)
 	new_node->next = temp->next;
 	new_node->prev = temp;
 	if (!is_empty(temp->next))
@@ -134,7 +134,7 @@ List delete(List l, int p) {
 	if (p==1)
 		return delete_at_head(l);
 	for (int i=1; i<p && !is_empty(temp->next); ++i)
-		temp = temp->next; // Go to the p-th node (starting at 1)
+		temp = temp->next; // Go to the p-th Node (starting at 1)
 	if (!is_empty(temp->prev))
 		temp->prev->next = temp->next;
 	if (!is_empty(temp->next))
@@ -196,5 +196,31 @@ int length(List l)
 
 int sizeof_bytes(List l)
 {
-	return (length(l)*sizeof(struct Node*))
+	return (length(l)*sizeof(struct Node*));
+}
+
+List merge(List l1, List l2)
+{
+	List new_list;
+	init_list(&new_list); // Create a new empty List
+	while (!is_empty(l1))
+	{
+		new_list = insert_at_tail(new_list, *get_data(l1));
+		l1 = get_next_node(l1); // Copy each Node of the first List
+	}
+	while (!is_empty(l2))
+	{
+		new_list = insert_at_tail(new_list, *get_data(l2));
+		l2 = get_next_node(l2); // Copy each Node of the second List
+	}
+	return new_list;
+}
+
+List append(List l1, List l2)
+{
+	struct Node* temp = get_last_node(l1); // Go to last Node of the first List
+	temp->next = l2;
+	l2->prev = temp; // Append the second List
+	l1 = temp;
+	return l1;
 }

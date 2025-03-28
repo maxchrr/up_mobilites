@@ -38,5 +38,10 @@ struct Node* get_prev_node(List l);
 int* get_data(struct Node* n);
 
 void swap_data(struct Node* n1, struct Node* n2);
+int length(List l);
+int sizeof_bytes(List l);
+
+List merge(List l1, List l2);
+List append(List l1, List l2);
 
 #endif // LIST_H_
