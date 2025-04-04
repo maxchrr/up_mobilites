@@ -16,14 +16,13 @@ struct Node* _get_new_node(Bus_Line_Object* x)
 		printf("Memory allocation failed for the node.\n");
 		return NULL;
 	}
-	new_node->data = malloc(sizeof(Bus_Line_Object));
+	new_node->data = x; // Set pointer as new pointer
 	if (!new_node->data)
 	{
 		printf("Memory allocation failed for the node data.\n");
 		free(new_node);
 		return NULL;
 	}
-	new_node->data = x;
 	new_node->prev = NULL;
 	new_node->next = NULL;
 	return new_node;
@@ -172,6 +171,8 @@ struct Node* get_prev_node(List_Bus_Line l)
 
 Bus_Line_Object* get_node(struct Node* n)
 {
+	if (is_empty(n))
+		return NULL;
 	return n->data;
 }
 
@@ -198,4 +199,53 @@ int length(List_Bus_Line l)
 int sizeof_bytes(List_Bus_Line l)
 {
 	return (length(l)*sizeof(struct Node*));
+}
+
+List_Bus_Line merge(List_Bus_Line l1, List_Bus_Line l2)
+{
+	List_Bus_Line new_list;
+	init_list(&new_list); // Create a new empty List
+	while (!is_empty(l1))
+	{
+		new_list = insert_at_tail(new_list, get_node(l1));
+		l1 = get_next_node(l1); // Copy each Node of the first List
+	}
+	while (!is_empty(l2))
+	{
+		new_list = insert_at_tail(new_list, get_node(l2));
+		l2 = get_next_node(l2); // Copy each Node of the second List
+	}
+	return new_list;
+}
+
+List_Bus_Line append(List_Bus_Line l1, List_Bus_Line l2)
+{
+	struct Node* temp = get_last_node(l1); // Go to last Node of the first List
+	temp->next = l2;
+	l2->prev = temp; // Append the second List
+	l1 = temp;
+	return l1;
+}
+
+struct Node* find_node(List_Bus_Line l, Bus_Line_Object* x)
+{
+	if (is_empty(l))
+		return NULL;
+	while (get_node(l) != x && !is_empty(get_next_node(l)))
+		l = get_next_node(l); // Get the first occurence of x
+	return l;
+}
+
+int count_node(List_Bus_Line l, Bus_Line_Object* x)
+{
+	if (is_empty(l))
+		return 0;
+	int c=0;
+	while (!is_empty(get_next_node(l)))
+	{
+		if (get_node(l) == x)
+			++c;
+		l = get_next_node(l);
+	}
+	return c;
 }

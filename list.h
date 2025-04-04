@@ -43,4 +43,10 @@ void swap_node(struct Node* n1, struct Node* n2);
 int length(List_Bus_Line l);
 int sizeof_bytes(List_Bus_Line l);
 
+List_Bus_Line merge(List_Bus_Line l1, List_Bus_Line l2);
+List_Bus_Line append(List_Bus_Line l1, List_Bus_Line l2);
+
+struct Node* find_node(List_Bus_Line l, Bus_Line_Object* x);
+int count_node(List_Bus_Line l, Bus_Line_Object* x);
+
 #endif // LIST_H_

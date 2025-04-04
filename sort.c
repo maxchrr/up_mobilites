@@ -4,19 +4,19 @@
 
 void selection_sort(List_Bus_Line l)
 {
-	/*List i;
-	List j;
-	List j_min;
-	List temp = get_last_node(l);
+	struct Node* i;
+	struct Node* j;
+	struct Node* j_min;
+	struct Node* temp = get_last_node(l);
 	for (i=l; i!=temp; i=get_next_node(i))
 	{
 		j_min = i;
 		for (j=i; j!=temp; j=get_next_node(j))
 		{
-			if (*get_node(j) < *get_node(j_min))
+			if (get_node(j) < get_node(j_min))
 				j_min = j; 
 		}
-		if (*get_node(temp) < *get_node(j_min))
+		if (get_node(temp) < get_node(j_min))
 			j_min = temp;
-	}*/
+	}
 }
