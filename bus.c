@@ -28,6 +28,9 @@ void print_bus_line(Bus_Line_Object* bus_line)
 	printf("End of Line\n");
 }
 
+/********************************
+ *  Getter for Bus_Line_Object  *
+ ********************************/
 int get_bus_stop_id(Bus_Line_Object* bus_line)
 {
 	return bus_line->bus_stop_id;
@@ -70,6 +73,9 @@ Maintenance_Date get_maintenance_date(Bus_Line_Object* bus_line)
 	return bus_line->maintenance_date;
 }
 
+/********************************
+ *  Setter for Bus_Line_Object  *
+ ********************************/
 void set_maintenance_price(Bus_Line_Object* bus_line, int new_price)
 {
 	bus_line->maintenance_price = new_price;
@@ -80,6 +86,9 @@ void set_maintenance_date(Bus_Line_Object* bus_line, Maintenance_Date new_date)
 	bus_line->maintenance_date = new_date;
 }
 
+/********************************
+ *     Getter for Bus_Object    *
+ ********************************/
 int get_bus_id(Bus_Object bus)
 {
 	return bus->bus_id;
@@ -110,6 +119,9 @@ Bus_Line_Direction get_direction(Bus_Object bus)
 	return bus->direction;
 }
 
+/********************************
+ *     Setter for Bus_Object    *
+ ********************************/
 void set_bus_pos_x(Bus_Object bus, int new_pos_x)
 {
 	bus->pos_x = new_pos_x;
