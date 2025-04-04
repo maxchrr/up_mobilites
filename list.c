@@ -47,7 +47,8 @@ bool is_empty(List_Bus_Line l)
 	return (l == NULL);
 }
 
-List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x) {
+List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x)
+{
 	struct Node* new_node = _get_new_node(x);
 	if (is_empty(l))
 	{
@@ -60,7 +61,8 @@ List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x) {
 	return l;
 }
 
-List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x) {
+List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x)
+{
 	struct Node* temp = l;
 	struct Node* new_node = _get_new_node(x);
 	if (is_empty(l))
@@ -75,7 +77,8 @@ List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x) {
 	return l;
 }
 
-List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x) {
+List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x)
+{
 	struct Node* temp = l;
 	struct Node* new_node = _get_new_node(x);
 	if (is_empty(l))
@@ -95,22 +98,8 @@ List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x) {
 	return l;
 }
 
-void print_list(List_Bus_Line l) {
-	struct Node* temp = l;
-	if (is_empty(temp))
-	{
-		printf("List is empty.\n");
-		return;
-	}
-	while(temp != NULL)
-	{
-		//printf("%d ",*(temp->data));
-		temp = temp->next;
-	}
-	printf("\n");
-}
-
-List_Bus_Line delete_at_head(List_Bus_Line l) {
+List_Bus_Line delete_at_head(List_Bus_Line l)
+{
 	if (is_empty(l))
 		return l;
 	struct Node* head = l->next; // Pointer to next Node
@@ -120,7 +109,8 @@ List_Bus_Line delete_at_head(List_Bus_Line l) {
 	return l;
 }
 
-List_Bus_Line delete_at_tail(List_Bus_Line l) {
+List_Bus_Line delete_at_tail(List_Bus_Line l)
+{
 	struct Node* temp = l;
 	while (!is_empty(temp->next))
 		temp = temp->next; // Go to last Node
@@ -129,7 +119,8 @@ List_Bus_Line delete_at_tail(List_Bus_Line l) {
 	return l;
 }
 
-List_Bus_Line delete(List_Bus_Line l, int p) {
+List_Bus_Line delete(List_Bus_Line l, int p)
+{
 	struct Node* temp = l;
 	if (p==1)
 		return delete_at_head(l);
