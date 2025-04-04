@@ -3,6 +3,6 @@
 
 #include "list.h"
 
-List create_random(int s);
+List_Bus_Line create_random(int sz);
 
 #endif // SORT_H_

@@ -6,8 +6,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "list.h"
+#include "bus.h"
 
-struct Node* _get_new_node(int x)
+struct Node* _get_new_node(Bus_Line_Object* x)
 {
 	struct Node* new_node = malloc(sizeof(struct Node));
 	if (!new_node)
@@ -15,14 +16,14 @@ struct Node* _get_new_node(int x)
 		printf("Memory allocation failed for the node.\n");
 		return NULL;
 	}
-	new_node->data = malloc(sizeof(int));
+	new_node->data = malloc(sizeof(Bus_Line_Object));
 	if (!new_node->data)
 	{
 		printf("Memory allocation failed for the node data.\n");
 		free(new_node);
 		return NULL;
 	}
-	*(new_node->data) = x;
+	new_node->data = x;
 	new_node->prev = NULL;
 	new_node->next = NULL;
 	return new_node;
@@ -34,7 +35,7 @@ int _free_node(struct Node* n) {
 	return 0;
 }
 
-int init_list(List* l)
+int init_list(List_Bus_Line* l)
 {
 	if (l == NULL)
 		exit(EXIT_FAILURE);
@@ -42,12 +43,12 @@ int init_list(List* l)
 	return 0;
 }
 
-bool is_empty(List l)
+bool is_empty(List_Bus_Line l)
 {
 	return (l == NULL);
 }
 
-List insert_at_head(List l, int x) {
+List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x) {
 	struct Node* new_node = _get_new_node(x);
 	if (is_empty(l))
 	{
@@ -60,7 +61,7 @@ List insert_at_head(List l, int x) {
 	return l;
 }
 
-List insert_at_tail(List l, int x) {
+List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x) {
 	struct Node* temp = l;
 	struct Node* new_node = _get_new_node(x);
 	if (is_empty(l))
@@ -75,7 +76,7 @@ List insert_at_tail(List l, int x) {
 	return l;
 }
 
-List insert(List l, int p, int x) {
+List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x) {
 	struct Node* temp = l;
 	struct Node* new_node = _get_new_node(x);
 	if (is_empty(l))
@@ -95,7 +96,7 @@ List insert(List l, int p, int x) {
 	return l;
 }
 
-void print_list(List l) {
+void print_list(List_Bus_Line l) {
 	struct Node* temp = l;
 	if (is_empty(temp))
 	{
@@ -104,13 +105,13 @@ void print_list(List l) {
 	}
 	while(temp != NULL)
 	{
-		printf("%d ",*(temp->data));
+		//printf("%d ",*(temp->data));
 		temp = temp->next;
 	}
 	printf("\n");
 }
 
-List delete_at_head(List l) {
+List_Bus_Line delete_at_head(List_Bus_Line l) {
 	if (is_empty(l))
 		return l;
 	struct Node* head = l->next; // Pointer to next Node
@@ -120,7 +121,7 @@ List delete_at_head(List l) {
 	return l;
 }
 
-List delete_at_tail(List l) {
+List_Bus_Line delete_at_tail(List_Bus_Line l) {
 	struct Node* temp = l;
 	while (!is_empty(temp->next))
 		temp = temp->next; // Go to last Node
@@ -129,7 +130,7 @@ List delete_at_tail(List l) {
 	return l;
 }
 
-List delete(List l, int p) {
+List_Bus_Line delete(List_Bus_Line l, int p) {
 	struct Node* temp = l;
 	if (p==1)
 		return delete_at_head(l);
@@ -143,33 +144,33 @@ List delete(List l, int p) {
 	return l;
 }
 
-struct Node* get_first_node(List l)
+struct Node* get_first_node(List_Bus_Line l)
 {
 	return l;
 }
 
-struct Node* get_last_node(List l)
+struct Node* get_last_node(List_Bus_Line l)
 {
 	while (!is_empty(l->next))
 		l = l->next;
 	return l;
 }
 
-struct Node* get_next_node(List l)
+struct Node* get_next_node(List_Bus_Line l)
 {
 	if (is_empty(l->next))
 		return NULL;
 	return l->next;
 }
 
-struct Node* get_prev_node(List l)
+struct Node* get_prev_node(List_Bus_Line l)
 {
 	if (is_empty(l->prev))
 		return NULL;
 	return l->prev;
 }
 
-int* get_node(struct Node* n)
+Bus_Line_Object* get_node(struct Node* n)
 {
 	return n->data;
 }
@@ -181,7 +182,7 @@ void swap_node(struct Node* n1, struct Node* n2)
 	n2->data = get_node(temp);
 }
 
-int length(List l)
+int length(List_Bus_Line l)
 {
 	if (is_empty(l))
 		return 0;
@@ -194,56 +195,7 @@ int length(List l)
 	return c;
 }
 
-int sizeof_bytes(List l)
+int sizeof_bytes(List_Bus_Line l)
 {
 	return (length(l)*sizeof(struct Node*));
-}
-
-List merge(List l1, List l2)
-{
-	List new_list;
-	init_list(&new_list); // Create a new empty List
-	while (!is_empty(l1))
-	{
-		new_list = insert_at_tail(new_list, *get_node(l1));
-		l1 = get_next_node(l1); // Copy each Node of the first List
-	}
-	while (!is_empty(l2))
-	{
-		new_list = insert_at_tail(new_list, *get_node(l2));
-		l2 = get_next_node(l2); // Copy each Node of the second List
-	}
-	return new_list;
-}
-
-List append(List l1, List l2)
-{
-	struct Node* temp = get_last_node(l1); // Go to last Node of the first List
-	temp->next = l2;
-	l2->prev = temp; // Append the second List
-	l1 = temp;
-	return l1;
-}
-
-struct Node* find_node(List l, int x)
-{
-	if (is_empty(l))
-		return NULL;
-	while (*get_node(l) != x && !is_empty(get_next_node(l)))
-		l = get_next_node(l); // Get the first occurence of x
-	return l;
-}
-
-int count_node(List l, int x)
-{
-	if (is_empty(l))
-		return 0;
-	int c=0;
-	while (!is_empty(get_next_node(l)))
-	{
-		if (*get_node(l) == x)
-			++c;
-		l = get_next_node(l);
-	}
-	return c;
 }
