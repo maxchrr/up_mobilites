@@ -11,14 +11,14 @@ void print_bus_line(Bus_Line_Object* bus_line)
 	if (bus_line->bus_stop_or_route == BUS_STOP)
 	{
 		printf("Bus Stop %d \"%s\" at (%d,%d)\n",
-			bus_line->id_bus_stop,
+			bus_line->bus_stop_id,
 			bus_line->name,
 			bus_line->pos_x,
 			bus_line->pos_y);
 	}
 	else {
 		printf("Bus Route %d (%dm) in %ds\n",
-			bus_line->id_bus_route,
+			bus_line->bus_route_id,
 			bus_line->distance_due,
 			bus_line->time_due);
 		printf("From : "); print_bus_line(bus_line->departure);
@@ -28,9 +28,9 @@ void print_bus_line(Bus_Line_Object* bus_line)
 	printf("End of Line\n");
 }
 
-int get_id_bus_stop(Bus_Line_Object* bus_line)
+int get_bus_stop_id(Bus_Line_Object* bus_line)
 {
-	return bus_line->id_bus_stop;
+	return bus_line->bus_stop_id;
 }
 
 char* get_name(Bus_Line_Object* bus_line)
@@ -48,14 +48,89 @@ int get_pos_y(Bus_Line_Object* bus_line)
 	return bus_line->pos_y;
 }
 
-int get_id_bus_route(Bus_Line_Object* bus_line)
+int get_bus_route_id(Bus_Line_Object* bus_line)
 {
 	if (bus_line->bus_stop_or_route == BUS_STOP)
 		return -1;
-	return bus_line->id_bus_route;
+	return bus_line->bus_route_id;
 }
 
 Bus_Line_Object_Type get_type(Bus_Line_Object* bus_line)
 {
 	return bus_line->bus_stop_or_route;
+}
+
+int get_maintenance_price(Bus_Line_Object* bus_line)
+{
+	return bus_line->maintenance_price;
+}
+
+Maintenance_Date get_maintenance_date(Bus_Line_Object* bus_line)
+{
+	return bus_line->maintenance_date;
+}
+
+void set_maintenance_price(Bus_Line_Object* bus_line, int new_price)
+{
+	bus_line->maintenance_price = new_price;
+}
+
+void set_maintenance_date(Bus_Line_Object* bus_line, Maintenance_Date new_date)
+{
+	bus_line->maintenance_date = new_date;
+}
+
+int get_bus_id(Bus_Object bus)
+{
+	return bus->bus_id;
+}
+
+int get_bus_pos_x(Bus_Object bus)
+{
+	return bus->pos_x;
+}
+
+int get_bus_pos_y(Bus_Object bus)
+{
+	return bus->pos_y;
+}
+
+int get_bus_line_id(Bus_Object bus)
+{
+	return bus->bus_line_id;
+}
+
+List_Bus_Line get_bus_line_pos(Bus_Object bus)
+{
+	return bus->bus_line_pos;
+}
+
+Bus_Line_Direction get_direction(Bus_Object bus)
+{
+	return bus->direction;
+}
+
+void set_bus_pos_x(Bus_Object bus, int new_pos_x)
+{
+	bus->pos_x = new_pos_x;
+}
+
+void set_bus_pos_y(Bus_Object bus, int new_pos_y)
+{
+	bus->pos_y = new_pos_y;
+}
+
+void set_bus_line_id(Bus_Object bus, int new_bus_line)
+{
+	bus->bus_line_id = new_bus_line;
+}
+
+void set_bus_line_pos(Bus_Object bus, List_Bus_Line bus_line)
+{
+	bus->bus_line_pos = bus_line;
+}
+
+void set_direction(Bus_Object bus, Bus_Line_Direction new_direction)
+{
+	bus->direction = new_direction;
 }

@@ -8,15 +8,6 @@
 #include <stdbool.h>
 #include "bus.h"
 
-struct Node
-{
-	Bus_Line_Object* data; // Data held by the node - pointer to integer.
-	struct Node* next;
-	struct Node* prev;
-};
-typedef struct Node* List_Bus_Line; // global variable - pointer to head node.
-
-
 struct Node* _get_new_node(Bus_Line_Object* x);
 int _free_node(struct Node* n);
 
