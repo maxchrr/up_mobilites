@@ -27,8 +27,8 @@ typedef struct
 	int id_bus_line;
 	struct Bus_Line_Object* departure;
 	struct Bus_Line_Object* arrival;
-	int weight_distance;         // Coût en temps de parcours (secondes)
-	int weight_time;             // Coût en distance (mètres)
+	int weight_distance;         // Coût en distance (mètres)
+	int weight_time;             // Coût en temps de parcours (secondes)
 	int distance_due, time_due;  // Algorithme de Dijkstra
 
 	/* Pour les tris */
