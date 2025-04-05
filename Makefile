@@ -34,8 +34,8 @@ RM ?= rm -f
 CFLAGS = -Wall -Wextra -Wno-invalid-utf8 -Wno-invalid-source-encoding -pedantic -std=c99
 DEBUG = -ggdb
 sdl2_INSTALL_DIR := $(shell pwd)/SDL2
-sdl2_CFLAGS := $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --cflags)
-sdl2_LDFLAGS := $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --libs)
+sdl2_CFLAGS = $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --cflags)
+sdl2_LDFLAGS = $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --libs)
 
 .PHONY: all
 all:
