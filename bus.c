@@ -21,8 +21,8 @@ void print_bus_line(Bus_Line_Object* bus_line)
 			bus_line->bus_route_id,
 			bus_line->distance_due,
 			bus_line->time_due);
-		printf("From : "); print_bus_line(bus_line->departure);
-		printf("To : "); print_bus_line(bus_line->arrival);
+		printf("From : "); print_bus_line((Bus_Line_Object*)bus_line->departure);
+		printf("To : "); print_bus_line((Bus_Line_Object*)bus_line->arrival);
 		printf("\n");
 	}
 	printf("End of Line\n");
