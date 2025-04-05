@@ -34,8 +34,8 @@ RM ?= rm -f
 CFLAGS = -Wall -Wextra -Wno-invalid-utf8 -Wno-invalid-source-encoding -pedantic -std=c99
 DEBUG = -ggdb
 sdl2_INSTALL_DIR := $(shell pwd)/SDL2
-sdl2_CFLAGS = $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --cflags)
-sdl2_LDFLAGS = $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --libs)
+sdl2_CFLAGS := $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --cflags)
+sdl2_LDFLAGS := $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --libs)
 
 .PHONY: all
 all:
@@ -53,15 +53,12 @@ directories:
 
 UNAME_S := $(shell uname -s)
 $(exec): directories main.o mylib.a
-	$(CC) -o bin/$@ build/main.o $(sdl2_CFLAGS) $(sdl2_LDFLAGS) -lSDL2_image -Lbuild -lmylib
+	$(CC) -o bin/$@ build/$(word 2,$^) $(sdl2_CFLAGS) $(sdl2_LDFLAGS) -lSDL2_image -Lbuild -lmylib
 ifeq ($(UNAME_S),Darwin)
 	@echo "\033[0;32m==> \033[0mBuilded to \033[1;34mbin/$@"
 else
 	@echo -e "\033[0;32m==> \033[0mBuilded to \033[1;34mbin/$@"
 endif
-
-main.o: main.c
-	$(CC) $(CFLAGS) $(sdl2_CFLAGS) -c main.c -o build/$@
 
 mylib.a: $(objects)
 	$(AR) rcs build/lib$@ $(addprefix build/,$^)
