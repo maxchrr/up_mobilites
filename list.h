@@ -18,15 +18,17 @@ List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x);
 List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x);
 List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x);
 
+void print_list(List_Bus_Line l);
+
 List_Bus_Line delete_at_head(List_Bus_Line l);
 List_Bus_Line delete_at_tail(List_Bus_Line l);
 List_Bus_Line delete(List_Bus_Line l, int p);
 
-struct Node* get_first_node(List_Bus_Line l);
-struct Node* get_last_node(List_Bus_Line l);
-struct Node* get_next_node(List_Bus_Line l);
-struct Node* get_prev_node(List_Bus_Line l);
-Bus_Line_Object* get_node(struct Node* n);
+struct Node* _get_first_node(List_Bus_Line l);
+struct Node* _get_last_node(List_Bus_Line l);
+struct Node* _get_next_node(List_Bus_Line l);
+struct Node* _get_prev_node(List_Bus_Line l);
+Bus_Line_Object* _get_node(struct Node* n);
 
 void swap_node(struct Node* n1, struct Node* n2);
 int length(List_Bus_Line l);

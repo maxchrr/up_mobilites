@@ -98,6 +98,23 @@ List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x)
 	return l;
 }
 
+void print_list(List_Bus_Line l)
+{
+	struct Node* temp = l;
+	if (is_empty(temp))
+	{
+		printf("List is empty.\n");
+		return;
+	}
+	while(temp != NULL)
+	{
+		//printf("%d ",*(temp->data));
+		print_bus_line(temp->data);
+		temp = temp->next;
+	}
+	printf("End of Line\n\n");
+}
+
 List_Bus_Line delete_at_head(List_Bus_Line l)
 {
 	if (is_empty(l))
@@ -134,33 +151,33 @@ List_Bus_Line delete(List_Bus_Line l, int p)
 	return l;
 }
 
-struct Node* get_first_node(List_Bus_Line l)
+struct Node* _get_first_node(List_Bus_Line l)
 {
 	return l;
 }
 
-struct Node* get_last_node(List_Bus_Line l)
+struct Node* _get_last_node(List_Bus_Line l)
 {
 	while (!is_empty(l->next))
 		l = l->next;
 	return l;
 }
 
-struct Node* get_next_node(List_Bus_Line l)
+struct Node* _get_next_node(List_Bus_Line l)
 {
 	if (is_empty(l->next))
 		return NULL;
 	return l->next;
 }
 
-struct Node* get_prev_node(List_Bus_Line l)
+struct Node* _get_prev_node(List_Bus_Line l)
 {
 	if (is_empty(l->prev))
 		return NULL;
 	return l->prev;
 }
 
-Bus_Line_Object* get_node(struct Node* n)
+Bus_Line_Object* _get_node(struct Node* n)
 {
 	if (is_empty(n))
 		return NULL;
@@ -170,8 +187,8 @@ Bus_Line_Object* get_node(struct Node* n)
 void swap_node(struct Node* n1, struct Node* n2)
 {
 	struct Node* temp = n1;
-	n1->data = get_node(n2);
-	n2->data = get_node(temp);
+	n1->data = _get_node(n2);
+	n2->data = _get_node(temp);
 }
 
 int length(List_Bus_Line l)
@@ -179,10 +196,10 @@ int length(List_Bus_Line l)
 	if (is_empty(l))
 		return 0;
 	int c=1;
-	while (!is_empty(get_next_node(l)))
+	while (!is_empty(_get_next_node(l)))
 	{
 		++c;
-		l = get_next_node(l);
+		l = _get_next_node(l);
 	}
 	return c;
 }
@@ -198,20 +215,20 @@ List_Bus_Line merge(List_Bus_Line l1, List_Bus_Line l2)
 	init_list(&new_list); // Create a new empty List
 	while (!is_empty(l1))
 	{
-		new_list = insert_at_tail(new_list, get_node(l1));
-		l1 = get_next_node(l1); // Copy each Node of the first List
+		new_list = insert_at_tail(new_list, _get_node(l1));
+		l1 = _get_next_node(l1); // Copy each Node of the first List
 	}
 	while (!is_empty(l2))
 	{
-		new_list = insert_at_tail(new_list, get_node(l2));
-		l2 = get_next_node(l2); // Copy each Node of the second List
+		new_list = insert_at_tail(new_list, _get_node(l2));
+		l2 = _get_next_node(l2); // Copy each Node of the second List
 	}
 	return new_list;
 }
 
 List_Bus_Line append(List_Bus_Line l1, List_Bus_Line l2)
 {
-	struct Node* temp = get_last_node(l1); // Go to last Node of the first List
+	struct Node* temp = _get_last_node(l1); // Go to last Node of the first List
 	temp->next = l2;
 	l2->prev = temp; // Append the second List
 	l1 = temp;
@@ -222,8 +239,8 @@ struct Node* find_node(List_Bus_Line l, Bus_Line_Object* x)
 {
 	if (is_empty(l))
 		return NULL;
-	while (get_node(l) != x && !is_empty(get_next_node(l)))
-		l = get_next_node(l); // Get the first occurence of x
+	while (_get_node(l) != x && !is_empty(_get_next_node(l)))
+		l = _get_next_node(l); // Get the first occurence of x
 	return l;
 }
 
@@ -232,11 +249,11 @@ int count_node(List_Bus_Line l, Bus_Line_Object* x)
 	if (is_empty(l))
 		return 0;
 	int c=0;
-	while (!is_empty(get_next_node(l)))
+	while (!is_empty(_get_next_node(l)))
 	{
-		if (get_node(l) == x)
+		if (_get_node(l) == x)
 			++c;
-		l = get_next_node(l);
+		l = _get_next_node(l);
 	}
 	return c;
 }
