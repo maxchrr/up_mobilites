@@ -4,7 +4,7 @@
 #include "bus.h"
 #include "list.h"
 
-void print_bus_line(Bus_Line_Object* bus_line)
+void print_bus_object(Bus_Line_Object* bus_line)
 {
 	if (bus_line == NULL)
 	{
@@ -24,8 +24,8 @@ void print_bus_line(Bus_Line_Object* bus_line)
 			bus_line->bus_route_id,
 			bus_line->distance_due,
 			bus_line->time_due);
-		printf("-- From : "); print_bus_line((Bus_Line_Object*)bus_line->departure);
-		printf("-- To : "); print_bus_line((Bus_Line_Object*)bus_line->arrival);
+		printf("-- From : "); print_bus_object((Bus_Line_Object*)bus_line->departure);
+		printf("-- To : "); print_bus_object((Bus_Line_Object*)bus_line->arrival);
 	}
 }
 
@@ -136,10 +136,12 @@ void set_direction(Bus_Object bus, Bus_Line_Direction new_direction)
 	bus->direction = new_direction;
 }
 
-Bus_Object create_bus(int id)//, List_Bus_Line start)
+Bus_Object create_bus(int id, List_Bus_Line start)
 {
 	Bus_Object new_bus = malloc(sizeof(Bus_Object));
 	new_bus->bus_id = id;
+	int new_bus_line = get_bus_route_id(_get_node(get_next_route(start)));
+	new_bus->bus_line_id = new_bus_line;
 	return new_bus;
 }
 
@@ -193,6 +195,11 @@ Bus_Line_Object* create_route(
 	new_route->pos_x = 0;
 	new_route->pos_y = 0;
 	return new_route;
+}
+
+void print_bus_line(List_Bus_Line l)
+{
+	_print_list(l);
 }
 
 struct Node* get_next_stop(List_Bus_Line l)

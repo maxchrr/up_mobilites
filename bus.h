@@ -44,7 +44,7 @@ struct Node
 };
 typedef struct Node* List_Bus_Line; // global variable - pointer to head node.
 
-void print_bus_line(Bus_Line_Object* bus_line);
+void print_bus_object(Bus_Line_Object* bus_line);
 
 int get_bus_stop_id(Bus_Line_Object* bus_line);
 char* get_name(Bus_Line_Object* bus_line);
@@ -87,7 +87,7 @@ void set_bus_line_id(Bus_Object bus, int new_bus_line);
 void set_bus_line_pos(Bus_Object bus, List_Bus_Line bus_line);
 void set_direction(Bus_Object bus, Bus_Line_Direction new_direction);
 
-Bus_Object create_bus(int id); //, List_Bus_Line start);
+Bus_Object create_bus(int id, List_Bus_Line start);
 Bus_Line_Object* create_stop(int id, char* name, int pos_x, int pos_y);
 Bus_Line_Object* create_route(
 	int id,
@@ -96,6 +96,8 @@ Bus_Line_Object* create_route(
 	int distance_due,
 	int time_due
 );
+
+void print_bus_line(List_Bus_Line l);
 
 struct Node* get_next_stop(List_Bus_Line l);
 struct Node* get_prev_stop(List_Bus_Line l);

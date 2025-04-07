@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "list.h"
-#include "bus.h"
 
 struct Node* _get_new_node(Bus_Line_Object* x)
 {
@@ -98,7 +97,7 @@ List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x)
 	return l;
 }
 
-void print_list(List_Bus_Line l)
+void _print_list(List_Bus_Line l)
 {
 	struct Node* temp = l;
 	if (is_empty(temp))
@@ -109,7 +108,7 @@ void print_list(List_Bus_Line l)
 	while(temp != NULL)
 	{
 		//printf("%d ",*(temp->data));
-		print_bus_line(temp->data);
+		print_bus_object(temp->data);
 		temp = temp->next;
 	}
 	printf("End of Line\n\n");

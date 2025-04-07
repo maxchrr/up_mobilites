@@ -18,7 +18,7 @@ List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x);
 List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x);
 List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x);
 
-void print_list(List_Bus_Line l);
+void _print_list(List_Bus_Line l);
 
 List_Bus_Line delete_at_head(List_Bus_Line l);
 List_Bus_Line delete_at_tail(List_Bus_Line l);
