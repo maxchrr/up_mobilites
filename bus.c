@@ -34,17 +34,17 @@ int get_bus_stop_id(Bus_Line_Object* bus_line)
 	return bus_line->bus_stop_id;
 }
 
-char* get_name(Bus_Line_Object* bus_line)
+char* get_bus_stop_name(Bus_Line_Object* bus_line)
 {
 	return bus_line->name;
 }
 
-int get_pos_x(Bus_Line_Object* bus_line)
+int get_bus_stop_pos_x(Bus_Line_Object* bus_line)
 {
 	return bus_line->pos_x;
 }
 
-int get_pos_y(Bus_Line_Object* bus_line)
+int get_bus_stop_pos_y(Bus_Line_Object* bus_line)
 {
 	return bus_line->pos_y;
 }
@@ -140,6 +140,7 @@ Bus_Object create_bus(int id, List_Bus_Line start)
 {
 	Bus_Object new_bus = malloc(sizeof(Bus_Object));
 	new_bus->bus_id = id;
+	set_bus_on_bus_line(new_bus, start, DEP_TO_ARR);
 	int new_bus_line = get_bus_route_id(_get_node(get_next_route(start)));
 	new_bus->bus_line_id = new_bus_line;
 	return new_bus;
@@ -189,7 +190,7 @@ Bus_Line_Object* create_route(
 	new_route->arrival = (struct Bus_Line_Object*)arrival;
 	new_route->distance_due = distance_due;
 	new_route->time_due = time_due;
-	// Useless ields for BUS_STOP
+	// Useless fields for BUS_STOP
 	new_route->bus_stop_id = -1; // NULL ID
 	strcpy(new_route->name, "");
 	new_route->pos_x = 0;
@@ -254,10 +255,25 @@ struct Node* get_prev_route(List_Bus_Line l)
 
 int get_pos_x_in_list(List_Bus_Line l)
 {
-	return get_pos_x(_get_node(l));
+	return get_bus_stop_pos_x(_get_node(l));
 }
 
 int get_pos_y_in_list(List_Bus_Line l)
 {
-	return get_pos_y(_get_node(l));
+	return get_bus_stop_pos_y(_get_node(l));
+}
+
+void set_bus_on_bus_line(Bus_Object bus, List_Bus_Line bus_line, Bus_Line_Direction direction)
+{
+	set_bus_line_pos(bus, bus_line);
+	set_direction(bus, direction);
+	set_bus_pos_x(bus, get_pos_x_in_list(bus_line));
+	set_bus_pos_y(bus, get_pos_y_in_list(bus_line));
+	printf("Bus %d at (%d,%d) on Bus Route %d / Bus Stop %s\n",
+		get_bus_id(bus),
+		get_bus_pos_x(bus),
+		get_bus_pos_y(bus),
+		get_bus_line_id(bus),
+		get_bus_stop_name(_get_node(bus_line))
+	);
 }

@@ -47,9 +47,9 @@ typedef struct Node* List_Bus_Line; // global variable - pointer to head node.
 void print_bus_object(Bus_Line_Object* bus_line);
 
 int get_bus_stop_id(Bus_Line_Object* bus_line);
-char* get_name(Bus_Line_Object* bus_line);
-int get_pos_x(Bus_Line_Object* bus_line);
-int get_pos_y(Bus_Line_Object* bus_line);
+char* get_bus_stop_name(Bus_Line_Object* bus_line);
+int get_bus_stop_pos_x(Bus_Line_Object* bus_line);
+int get_bus_stop_pos_y(Bus_Line_Object* bus_line);
 int get_bus_route_id(Bus_Line_Object* bus_line);
 Bus_Line_Object_Type get_type(Bus_Line_Object* bus_line);
 int get_maintenance_price(Bus_Line_Object* bus_line);
@@ -105,5 +105,7 @@ struct Node* get_next_route(List_Bus_Line l);
 struct Node* get_prev_route(List_Bus_Line l);
 int get_pos_x_in_list(List_Bus_Line l);
 int get_pos_y_in_list(List_Bus_Line l);
+
+void set_bus_on_bus_line(Bus_Object bus, List_Bus_Line bus_line, Bus_Line_Direction direction);
 
 #endif // BUS_H_
