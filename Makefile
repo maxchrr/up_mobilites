@@ -33,19 +33,12 @@ AR ?= ar
 RM ?= rm -f
 CFLAGS = -Wall -Wextra -Wno-invalid-utf8 -Wno-invalid-source-encoding -pedantic -std=c99
 DEBUG = -ggdb
-sdl2_INSTALL_DIR := $(shell pwd)/SDL2
-sdl2_CFLAGS = $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --cflags)
-sdl2_LDFLAGS = $(shell $(sdl2_INSTALL_DIR)/bin/sdl2-config --libs)
+raylib_CFLAGS = -I/Users/max/Desktop/etu/c/up_mobilites/raylib-5.5/include
+raylib_LDFLAGS = -Lraylib-5.5/lib -lraylib
 
 .PHONY: all
 all:
-	@if [ -f "$(sdl2_INSTALL_DIR)/bin/sdl2-config" ]; then \
-		$(MAKE) $(exec); \
-	else \
-		printf "\033[0;31m==> \033[0msdl2 not found, installing...\n"; \
-		$(MAKE) build-sdl2; \
-		$(MAKE) $(exec); \
-	fi
+	$(MAKE) $(exec)
 
 .PHONY: directories
 directories:
@@ -53,66 +46,23 @@ directories:
 
 UNAME_S := $(shell uname -s)
 $(exec): directories main.o mylib.a
-	$(CC) -o bin/$@ build/$(word 2,$^) $(sdl2_CFLAGS) $(sdl2_LDFLAGS) -lSDL2_image -Lbuild -lmylib
+	$(CC) -o bin/$@ build/$(word 2,$^) $(raylib_CFLAGS) -Wl,-rpath,@executable_path/../raylib-5.5/lib $(raylib_LDFLAGS) -Lbuild -lmylib
 ifeq ($(UNAME_S),Darwin)
-	@echo "\033[0;32m==> \033[0mBuilded to \033[1;34mbin/$@"
+	@echo "\033[0;32m==> \033[0mBuilded to \033[1;34mbin/$@\033[0m"
 else
-	@echo -e "\033[0;32m==> \033[0mBuilded to \033[1;34mbin/$@"
+	@echo -e "\033[0;32m==> \033[0mBuilded to \033[1;34mbin/$@\033[0m"
 endif
 
 mylib.a: $(objects)
 	$(AR) rcs build/lib$@ $(addprefix build/,$^)
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(sdl2_CFLAGS) -c $< -o build/$@
+	$(CC) $(CFLAGS) $(raylib_CFLAGS) -c $< -o build/$@
 
 .PHONY: clean
 clean:
 	@$(RM) -r bin build
 
-.PHONY: build-sdl2
-build-sdl2: directories sdl2 sdl2_image clean-build
-	@if [ -f "$(sdl2_INSTALL_DIR)/bin/sdl2-config" ]; then \
-		printf "\033[0;32m==> \033[0msdl2 installed successfully!\n"; \
-	else \
-		printf "\033[0;31m==> \033[0mInstallation error :(\n"; \
-		exit 1; \
-	fi
-
-.PHONY: sdl2
-.ONESHELL:
-sdl2_VERSION = 2.32.2
-sdl2_TARBALL = libsdl-org-SDL-release-$(sdl2_VERSION).tar.gz
-sdl2:
-	@echo "Downloading $@-$($@_VERSION) from GitHub..."
-	@curl -L https://github.com/libsdl-org/SDL/tarball/release-$($@_VERSION) -o $($@_TARBALL)
-	@mkdir -p $@-builder
-	@tar xzf $($@_TARBALL) -C $@-builder --strip-components=1
-	@$(RM) $($@_TARBALL)
-	@mkdir -p $(sdl2_INSTALL_DIR)
-	@echo "Building $@-$($@_VERSION)..."
-	@mkdir -p $@-builder/build
-	@cd $@-builder/build; ../configure --prefix $(sdl2_INSTALL_DIR); $(MAKE) install
-
-.PHONY: sdl2_image
-.ONESHELL:
-sdl2_image_VERSION = 2.8.8
-sdl2_image_TARBALL = libsdl-org-SDL_image-release-$(sdl2_image_VERSION).tar.gz
-sdl2_image:
-	@echo "Downloading sdl2_image-$($@_VERSION) from GitHub..."
-	@curl -L https://github.com/libsdl-org/SDL_image/tarball/release-$($@_VERSION) -o $($@_TARBALL)
-	@mkdir -p $@-builder
-	@tar xzf $($@_TARBALL) -C $@-builder --strip-components=1
-	@$(RM) $($@_TARBALL)
-	@mkdir -p $(sdl2_INSTALL_DIR)
-	@echo "Building $@-$($@_VERSION)..."
-	@mkdir -p $@-builder/build
-	@cd $@-builder/build; ../configure --prefix $(sdl2_INSTALL_DIR); $(MAKE) install
-
-.PHONY: clean-build
-clean-build:
-	@$(RM) -r sdl2-builder sdl2_image-builder
-
-.PHONY: clean-all
-clean-all: clean clean-build
-	@$(RM) -r SDL2
+.PHONY: run
+run: all
+	@./bin/$(exec)
