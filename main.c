@@ -41,6 +41,7 @@ int main(void)
 {
 	List_Bus_Line bus_line1 = create_bus_line();
 	print_bus_line(bus_line1);
+	sort_bus_line(bus_line1); print_bus_line(bus_line1);
 
 	return 0;
 }
