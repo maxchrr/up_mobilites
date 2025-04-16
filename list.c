@@ -108,7 +108,7 @@ void _print_list(List_Bus_Line l)
 	while(temp != NULL)
 	{
 		//printf("%d ",*(temp->data));
-		print_bus_object(temp->data);
+		print_bus_object(temp->data, 0);
 		temp = temp->next;
 	}
 	printf("End of Line\n\n");

@@ -5,7 +5,7 @@
 
 List_Bus_Line create_bus_line(void)
 {
-	List_Bus_Line new_line;
+	List_Bus_Line new_line = NULL;
 	Bus_Line_Object* departure;
 	Bus_Line_Object* arrival;
 	Bus_Line_Object* route;
@@ -40,7 +40,7 @@ List_Bus_Line create_bus_line(void)
 int main(void)
 {
 	List_Bus_Line bus_line1 = create_bus_line();
-	Bus_Object bus = create_bus(1, bus_line1);
 	print_bus_line(bus_line1);
+
 	return 0;
 }

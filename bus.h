@@ -44,7 +44,7 @@ struct Node
 };
 typedef struct Node* List_Bus_Line; // global variable - pointer to head node.
 
-void print_bus_object(Bus_Line_Object* bus_line);
+void print_bus_object(Bus_Line_Object* bus_line, int indent);
 
 int get_bus_stop_id(Bus_Line_Object* bus_line);
 char* get_bus_stop_name(Bus_Line_Object* bus_line);

@@ -3,29 +3,38 @@
 #include <string.h>
 #include "bus.h"
 #include "list.h"
+#include "utils.h"
 
-void print_bus_object(Bus_Line_Object* bus_line)
+void print_bus_object(Bus_Line_Object* bus_line, int indent)
 {
 	if (bus_line == NULL)
 	{
-		printf("This line didn't exist or not allocated.\n");
+		printf("%*sThis line didn't exist or not allocated.\n", indent, "");
 		return;
 	}
 	if (bus_line->bus_stop_or_route == BUS_STOP)
 	{
-		printf("Bus Stop %d \"%s\" at (%d,%d)\n",
+		printf("%*sBus Stop %d \"%s\" at (%d,%d)\n",
+			indent, "",
 			bus_line->bus_stop_id,
 			bus_line->name,
 			bus_line->pos_x,
 			bus_line->pos_y);
+		printf("%*sLast maintenance: %d€ on %02d/%02d/%04d\n",
+			indent+2, "",
+			bus_line->maintenance_price,
+			bus_line->maintenance_date.day,
+			bus_line->maintenance_date.month,
+			bus_line->maintenance_date.year);
 	}
 	else {
-		printf("Bus Route %d (%dm) in %ds\n",
+		printf("%*sBus Route %d (%dm) in %ds\n",
+			indent, "",
 			bus_line->bus_route_id,
 			bus_line->distance_due,
 			bus_line->time_due);
-		printf("-- From : "); print_bus_object((Bus_Line_Object*)bus_line->departure);
-		printf("-- To : "); print_bus_object((Bus_Line_Object*)bus_line->arrival);
+		printf("%*s-- From : ", indent, ""); print_bus_object((Bus_Line_Object*)bus_line->departure, indent+4);
+		printf("%*s-- To : ", indent, ""); print_bus_object((Bus_Line_Object*)bus_line->arrival, indent+4);
 	}
 }
 
@@ -154,12 +163,23 @@ Bus_Line_Object* create_stop(int id, char* name, int pos_x, int pos_y)
 		printf("Memory allocation failed for BUS_STOP.\n");
 		return NULL;
 	}
+	memset(new_stop, 0, sizeof(Bus_Line_Object));
 	new_stop->bus_stop_or_route = BUS_STOP;
 	// Fields for BUS_STOP
 	new_stop->bus_stop_id = id;
-	strcpy(new_stop->name, name); // Set pointer as new pointer
+	strncpy(new_stop->name, name, sizeof(new_stop->name)); // Set pointer as new pointer
+	new_stop->name[sizeof(new_stop->name) - 1] = '\0'; // Ensure null-termination
 	new_stop->pos_x = pos_x;
 	new_stop->pos_y = pos_y;
+	new_stop->maintenance_price = rand_range(10,100);
+	int new_year = rand_range(2018,2024);
+	int new_month = rand_range(1,12);
+	int new_day = rand_range(1, (new_month == 2) ? (((new_year % 400 == 0) || (new_year % 4 == 0 && !(new_year % 100 == 0))) ? 29 : 28) : ((new_month == 4 || new_month == 6 || new_month == 9 || new_month == 11) ? 30 : 31));
+	Maintenance_Date new_maintenance_date;
+	new_maintenance_date.day = new_day;
+	new_maintenance_date.month = new_month;
+	new_maintenance_date.year = new_year;
+	new_stop->maintenance_date = new_maintenance_date;
 	// Useless fields for BUS_ROUTE
 	new_stop->bus_route_id = -1; // NULL ID
 	new_stop->departure = NULL;
@@ -183,6 +203,7 @@ Bus_Line_Object* create_route(
 		printf("Memory allocation failed for BUS_STOP.\n");
 		return NULL;
 	}
+	memset(new_route, 0, sizeof(Bus_Line_Object));
 	new_route->bus_stop_or_route = BUS_ROUTE;
 	// Fields for BUS_ROUTE
 	new_route->bus_route_id = id; // NULL ID
@@ -192,9 +213,15 @@ Bus_Line_Object* create_route(
 	new_route->time_due = time_due;
 	// Useless fields for BUS_STOP
 	new_route->bus_stop_id = -1; // NULL ID
-	strcpy(new_route->name, "");
+	strncpy(new_route->name, "", sizeof(new_route->name));
 	new_route->pos_x = 0;
 	new_route->pos_y = 0;
+	new_route->maintenance_price = 0;
+	Maintenance_Date new_maintenance_date;
+	new_maintenance_date.day = 0;
+	new_maintenance_date.month = 0;
+	new_maintenance_date.year = 0;
+	new_route->maintenance_date = new_maintenance_date;
 	return new_route;
 }
 
