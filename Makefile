@@ -47,11 +47,7 @@ directories:
 UNAME_S := $(shell uname -s)
 $(exec): directories main.o mylib.a
 	$(CC) -o bin/$@ build/$(word 2,$^) $(raylib_CFLAGS) -Wl,-rpath,@executable_path/../raylib-5.5/lib $(raylib_LDFLAGS) -Lbuild -lmylib
-ifeq ($(UNAME_S),Darwin)
 	@echo "\033[0;32m==> \033[0mBuilded to \033[1;34mbin/$@\033[0m"
-else
-	@echo -e "\033[0;32m==> \033[0mBuilded to \033[1;34mbin/$@\033[0m"
-endif
 
 mylib.a: $(objects)
 	$(AR) rcs build/lib$@ $(addprefix build/,$^)
