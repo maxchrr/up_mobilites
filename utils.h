@@ -1,10 +1,15 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-#include "list.h"
-
 int rand_range(int min, int max);
 
-List_Bus_Line create_random(int sz);
+struct Date
+{
+	int day;
+	int month;
+	int year;
+};
 
-#endif // SORT_H_
+struct Date rand_date(int start_year, int end_year);
+
+#endif // UTILS_H_

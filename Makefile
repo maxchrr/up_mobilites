@@ -1,5 +1,5 @@
 exec = up_mobilites
-sources = bus.c list.c sort.c utils.c
+sources = api.c utils.c
 objects = $(sources:.c=.o)
 
 CC ?= gcc

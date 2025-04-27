@@ -1,7 +1,5 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "list.h"
 #include "utils.h"
 
 int rand_range(int min, int max)
@@ -9,18 +7,20 @@ int rand_range(int min, int max)
 	static int seeded = 0;
 	if (!seeded)
 	{
-		srand(time(NULL) + clock()); // To ensure pseudo-random generation
+		srand(time(NULL) + clock());  // Génération pseudo-aléatoire
 		seeded = 1;
 	}
 	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
 }
 
-List_Bus_Line create_random(int sz)
+struct Date rand_date(int start_year, int end_year)
 {
-	List_Bus_Line l;
-	init_list(&l);
-	srand(time(NULL)); // To ensure pseudo-random generation
-	for (int i=0; i<sz; ++i)
-		l = insert_at_tail(l, NULL);
-	return l;
+	int year = rand_range(start_year,end_year);
+	int month = rand_range(1,12);
+	int day = rand_range(1, (month == 2) ? (((year % 400 == 0) || (year % 4 == 0 && !(year % 100 == 0))) ? 29 : 28) : ((month == 4 || month == 6 || month == 9 || month == 11) ? 30 : 31));
+	struct Date date;
+	date.year = year;
+	date.month = month;
+	date.day = day;
+	return date;
 }
