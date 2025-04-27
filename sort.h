@@ -1,3 +1,7 @@
+/*
+ * Fonctions de tri
+ * Copyright (c) 2025 Emilio Decaix-Massiani. All Rights Reserved.
+ */
 #ifndef SORT_H_
 #define SORT_H_
 

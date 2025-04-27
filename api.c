@@ -1,3 +1,7 @@
+/*
+ * Public API
+ * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

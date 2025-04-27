@@ -9,9 +9,9 @@
 
 struct Node
 {
-	struct Node* next;  // Élément suivant
-	struct Node* prev;  // Élément précédent
-	struct Bus_Line* data;     // Données
+	struct Node* next;
+	struct Node* prev;
+	struct Bus_Line* data;  // Data held by the node - pointer to Bus_Line
 };
 
 struct Node* _get_new_node(struct Bus_Line* x)
@@ -19,13 +19,13 @@ struct Node* _get_new_node(struct Bus_Line* x)
 	struct Node* new_node = malloc(sizeof(struct Node));
 	if (!new_node)
 	{
-		printf("Memory allocation failed for the node.\n");
+		printf("Memory allocation failed for the node\n");
 		return NULL;
 	}
 	new_node->data = x; // Set pointer as new pointer
 	if (!new_node->data)
 	{
-		printf("Memory allocation failed for the node data.\n");
+		printf("Memory allocation failed for the node data\n");
 		free(new_node);
 		return NULL;
 	}

@@ -1,3 +1,7 @@
+/*
+ * Fonctions utilitaires
+ * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
+ */
 #ifndef UTILS_H_
 #define UTILS_H_
 

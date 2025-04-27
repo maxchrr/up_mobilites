@@ -1,3 +1,7 @@
+/*
+ * Fonctions utilitaires
+ * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
+ */
 #include <stdlib.h>
 #include <time.h>
 #include "utils.h"

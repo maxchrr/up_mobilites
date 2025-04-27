@@ -1,3 +1,7 @@
+/*
+ * Fonctions de tri
+ * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
+ */
 #include <stdio.h>
 #include <stdbool.h>
 #include "list.h"

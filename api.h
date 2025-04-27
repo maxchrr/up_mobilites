@@ -1,3 +1,7 @@
+/*
+ * Public API
+ * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
+ */
 #ifndef API_H_
 #define API_H_
 
