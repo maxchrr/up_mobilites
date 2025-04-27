@@ -8,9 +8,6 @@
 #include <stdbool.h>
 #include "api.h"
 
-struct Node;                // Opaque structure with hidden member
-typedef struct Node* List;  // global variable - pointer to head node
-
 /* API funcitons that operate on Node objects */
 struct Node* _get_new_node(struct Bus_Line* x);
 int _free_node(struct Node* n);

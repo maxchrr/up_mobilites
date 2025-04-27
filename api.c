@@ -19,7 +19,7 @@ struct Bus_Stop {
 
 struct Bus_Route
 {
-	int bus_line_id;             // Identifiant de la ligne de bus entrante
+	int bl_id;                   // Identifiant de la ligne de bus entrante
 	struct Bus_Stop* departure;  // Pointeur sur l'arrêt entrant
 	struct Bus_Stop* arrival;    // Pointeur sur l'arrêt sortant
 	int distance_due;            // Coût en distance (mètres)
@@ -39,10 +39,10 @@ struct Bus_Line
 
 struct Bus
 {
-	int bus_id;
-	int pos_x, pos_y;
-	int bus_line_id;
-	List list;
+	int id;
+	int posx, posy;
+	int bl_id;
+	List pos_in_list;
 	Bus_Direction direction;
 };
 
@@ -70,7 +70,7 @@ void free_bs(struct Bus_Stop* bs)
 	free(bs);
 }
 
-struct Bus_Route* create_br(int bus_line_id, struct Bus_Stop* departure, struct Bus_Stop* arrival, int distance_due, int time_due)
+struct Bus_Route* create_br(int bl_id, struct Bus_Stop* departure, struct Bus_Stop* arrival, int distance_due, int time_due)
 {
 	struct Bus_Route* new_br = malloc(sizeof(struct Bus_Route));
 	if (!new_br)
@@ -79,7 +79,7 @@ struct Bus_Route* create_br(int bus_line_id, struct Bus_Stop* departure, struct 
 		return NULL;
 	}
 	memset(new_br, 0, sizeof(struct Bus_Route));
-	new_br->bus_line_id = bus_line_id;
+	new_br->bl_id = bl_id;
 	new_br->departure = departure;
 	new_br->arrival = arrival;
 	new_br->distance_due = distance_due;
@@ -116,7 +116,7 @@ void print_bl(struct Bus_Line* bl, int indent)
 	{
 		fprintf(
 			stdout,
-			"%*sarrêt %d \"%s\" (%d,%d)\n",
+			"%*sArrêt %d \"%s\" (%d,%d)\n",
 			indent, "",
 			bl->u.bs.id,
 			bl->u.bs.name,
@@ -139,7 +139,7 @@ void print_bl(struct Bus_Line* bl, int indent)
 			stdout,
 			"%*sLigne %d : distance %dm / temps %ds\n",
 			indent,"",
-			bl->u.br.bus_line_id,
+			bl->u.br.bl_id,
 			bl->u.br.distance_due,
 			bl->u.br.time_due
 		);
@@ -161,6 +161,20 @@ void print_bl(struct Bus_Line* bl, int indent)
 void free_bl(struct Bus_Line* bl)
 {
 	free(bl);
+}
+
+struct Bus* create_bus(int id, List start)
+{
+	struct Bus* new_bus = malloc(sizeof(struct Bus));
+	new_bus->id = id;
+	bus_setbus_on_bl(new_bus, start, DEP_TO_ARR);
+	new_bus->bl_id = br_getbl_id((struct Bus_Route*) _get_node(br_getnext(start)));
+	return new_bus;
+}
+
+void free_bus(struct Bus* bus)
+{
+	free(bus);
 }
 
 int bs_getid(struct Bus_Stop* bs)
@@ -203,9 +217,9 @@ void bs_setlast_maint_date(struct Bus_Stop* bs, struct Date date)
 	bs->last_maint_date = date;
 }
 
-int br_getbus_line_id(struct Bus_Route* br)
+int br_getbl_id(struct Bus_Route* br)
 {
-	return br->bus_line_id;
+	return br->bl_id;
 }
 
 struct Bus_Stop* br_getdeparture(struct Bus_Route* br)
@@ -223,7 +237,7 @@ int br_getdistance_due(struct Bus_Route* br)
 	return br->distance_due;
 }
 
-int br_gettime_tue(struct Bus_Route* br)
+int br_gettime_due(struct Bus_Route* br)
 {
 	return br->time_due;
 }
@@ -234,4 +248,136 @@ Bus_Line_Type bl_gettype(struct Bus_Line* bl)
 	if (bl->stop && !bl->route)       return BUS_LINE_STOP;
 	else if (!bl->stop && bl->route)  return BUS_LINE_ROUTE;
 	else                              return BUS_LINE_INVALID;
+}
+
+int bus_getid(struct Bus* bus)
+{
+	return bus->id;
+}
+
+int bus_getposx(struct Bus* bus)
+{
+	return bus->posx;
+}
+
+int bus_getposy(struct Bus* bus)
+{
+	return bus->posy;
+}
+
+int bus_getbl_id(struct Bus* bus)
+{
+	return bus->bl_id;
+}
+
+List bus_getpos_in_list(struct Bus* bus)
+{
+	return bus->pos_in_list;
+}
+
+Bus_Direction bus_getdirection(struct Bus* bus)
+{
+	return bus->direction;
+}
+
+void bus_setposx(struct Bus* bus, int posx)
+{
+	bus->posx = posx;
+}
+
+void bus_setposy(struct Bus* bus, int posy)
+{
+	bus->posy = posy;
+}
+
+void bus_setbl_id(struct Bus* bus, int bl_id)
+{
+	bus->bl_id = bl_id;
+}
+
+void bus_setpos_in_list(struct Bus* bus, List bl)
+{
+	bus->pos_in_list = bl;
+}
+
+void bus_setdirection(struct Bus* bus, Bus_Direction direction)
+{
+	bus->direction = direction;
+}
+
+void bus_setbus_on_bl(struct Bus* bus, List bl, Bus_Direction direction)
+{
+	bus_setpos_in_list(bus, bl);
+	bus_setdirection(bus, direction);
+	bus_setposx(bus, list_getposx(bl));
+	bus_setposy(bus, list_getposy(bl));
+	fprintf(
+		stdout,
+		"Bus %d en (%d,%d) sur Ligne %d / Arrêt %s\n",
+		bus_getid(bus),
+		bus_getposx(bus),
+		bus_getposy(bus),
+		bus_getbl_id(bus),
+		bs_getname((struct Bus_Stop*) _get_node(bl))
+	);
+}
+
+struct Node* bs_getnext(List l)
+{
+	if (is_empty(l))
+		return NULL;
+	if (bl_gettype(_get_node(l)) == BUS_LINE_STOP)
+	{
+		if (is_empty(_get_next_node(l)))
+			return NULL; // Terminal station
+		else
+			return _get_next_node(_get_next_node(l));
+			// Iter over two nodes, next one is BUS_ROUTE, then BUS_STOP
+	}
+	else
+		return _get_next_node(l); // Next node is BUS_STOP
+}
+
+struct Node* bs_getprev(List l)
+{
+	if (is_empty(l))
+		return NULL;
+	if (bl_gettype(_get_node(l)) == BUS_LINE_ROUTE)
+	{
+		if (is_empty(_get_prev_node(l)))
+			return NULL; // Terminal station
+		else
+			return _get_prev_node(_get_prev_node(l));
+			// Iter backwards over two nodes, previous one is BUS_ROUTE, then BUS_STOP
+	}
+	else
+		return _get_prev_node(l); // Previous node is BUS_STOP
+}
+
+struct Node* br_getnext(List l)
+{
+	if (is_empty(l))
+		return NULL;
+	if (bl_gettype(_get_node(l)) == BUS_LINE_ROUTE)
+		return _get_next_node(l); // Next node is BUS_ROUTE
+	return l;
+}
+
+struct Node* br_getprev(List l)
+{
+	if (is_empty(l))
+		return NULL;
+	if (bl_gettype(_get_node(l)) == BUS_LINE_ROUTE)
+		return _get_prev_node(l); // Previous node is BUS_ROUTE
+	return l;
+}
+
+int list_getposx(List l)
+{
+	return bs_getposx((struct Bus_Stop*) _get_node(l));
+}
+
+int list_getposy(List l)
+{
+	return bs_getposy((struct Bus_Stop*) _get_node(l));
 }
