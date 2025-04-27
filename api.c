@@ -3,7 +3,7 @@
 #include <string.h>
 #include "api.h"
 #include "utils.h"
-
+#include "list.h"
 
 struct Bus_Stop {
 	int id;                             // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
@@ -31,6 +31,15 @@ struct Bus_Line
 		struct Bus_Stop bs;
 		struct Bus_Route br;
 	} u;
+};
+
+struct Bus
+{
+	int bus_id;
+	int pos_x, pos_y;
+	int bus_line_id;
+	List list;
+	Bus_Direction direction;
 };
 
 struct Bus_Stop* create_bs(int id, char* name, int posx, int posy)

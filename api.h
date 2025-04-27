@@ -1,12 +1,14 @@
 #ifndef API_H_
 #define API_H_
 
-/* Déclaration opaques des structures (encapsulation -> propriétées cachées) */
+/* Déclarations opaques des structures (encapsulation -> propriétées cachées) */
 struct Bus_Stop;
 struct Bus_Route;
 struct Bus_Line;
+struct Bus;
 
 typedef enum { BUS_LINE_INVALID, BUS_LINE_STOP, BUS_LINE_ROUTE } Bus_Line_Type;
+typedef enum { DEP_TO_ARR, ARR_TO_DEP } Bus_Direction;
 
 /* Méthodes sur les entités */
 struct Bus_Stop*  create_bs(int id, char* name, int pos_x, int pos_y);

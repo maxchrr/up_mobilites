@@ -7,7 +7,14 @@
 #include <stdbool.h>
 #include "list.h"
 
-struct Node* _get_new_node(Bus_Line_Object* x)
+struct Node
+{
+	struct Node* next;  // Élément suivant
+	struct Node* prev;  // Élément précédent
+	struct Bus_Line* data;     // Données
+};
+
+struct Node* _get_new_node(struct Bus_Line* x)
 {
 	struct Node* new_node = malloc(sizeof(struct Node));
 	if (!new_node)
@@ -33,7 +40,7 @@ int _free_node(struct Node* n) {
 	return 0;
 }
 
-int init_list(List_Bus_Line* l)
+int init_list(List* l)
 {
 	if (l == NULL)
 		exit(EXIT_FAILURE);
@@ -41,12 +48,12 @@ int init_list(List_Bus_Line* l)
 	return 0;
 }
 
-bool is_empty(List_Bus_Line l)
+bool is_empty(List l)
 {
 	return (l == NULL);
 }
 
-List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x)
+List insert_at_head(List l, struct Bus_Line* x)
 {
 	struct Node* new_node = _get_new_node(x);
 	if (is_empty(l))
@@ -60,7 +67,7 @@ List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x)
 	return l;
 }
 
-List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x)
+List insert_at_tail(List l, struct Bus_Line* x)
 {
 	struct Node* temp = l;
 	struct Node* new_node = _get_new_node(x);
@@ -76,7 +83,7 @@ List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x)
 	return l;
 }
 
-List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x)
+List insert(List l, int p, struct Bus_Line* x)
 {
 	struct Node* temp = l;
 	struct Node* new_node = _get_new_node(x);
@@ -97,7 +104,7 @@ List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x)
 	return l;
 }
 
-void _print_list(List_Bus_Line l)
+void _print_list(List l)
 {
 	struct Node* temp = l;
 	if (is_empty(temp))
@@ -108,13 +115,13 @@ void _print_list(List_Bus_Line l)
 	while(temp != NULL)
 	{
 		//printf("%d ",*(temp->data));
-		print_bus_object(temp->data, 0);
+		print_bl(temp->data, 0);
 		temp = temp->next;
 	}
 	printf("End of Line\n\n");
 }
 
-List_Bus_Line delete_at_head(List_Bus_Line l)
+List delete_at_head(List l)
 {
 	if (is_empty(l))
 		return l;
@@ -125,7 +132,7 @@ List_Bus_Line delete_at_head(List_Bus_Line l)
 	return l;
 }
 
-List_Bus_Line delete_at_tail(List_Bus_Line l)
+List delete_at_tail(List l)
 {
 	struct Node* temp = l;
 	while (!is_empty(temp->next))
@@ -135,7 +142,7 @@ List_Bus_Line delete_at_tail(List_Bus_Line l)
 	return l;
 }
 
-List_Bus_Line delete(List_Bus_Line l, int p)
+List delete(List l, int p)
 {
 	struct Node* temp = l;
 	if (p==1)
@@ -150,33 +157,33 @@ List_Bus_Line delete(List_Bus_Line l, int p)
 	return l;
 }
 
-struct Node* _get_first_node(List_Bus_Line l)
+struct Node* _get_first_node(List l)
 {
 	return l;
 }
 
-struct Node* _get_last_node(List_Bus_Line l)
+struct Node* _get_last_node(List l)
 {
 	while (!is_empty(l->next))
 		l = l->next;
 	return l;
 }
 
-struct Node* _get_next_node(List_Bus_Line l)
+struct Node* _get_next_node(List l)
 {
 	if (is_empty(l->next))
 		return NULL;
 	return l->next;
 }
 
-struct Node* _get_prev_node(List_Bus_Line l)
+struct Node* _get_prev_node(List l)
 {
 	if (is_empty(l->prev))
 		return NULL;
 	return l->prev;
 }
 
-Bus_Line_Object* _get_node(struct Node* n)
+struct Bus_Line* _get_node(struct Node* n)
 {
 	if (is_empty(n))
 		return NULL;
@@ -190,7 +197,7 @@ void swap_node(struct Node* n1, struct Node* n2)
 	n2->data = _get_node(temp);
 }
 
-int length(List_Bus_Line l)
+int length(List l)
 {
 	if (is_empty(l))
 		return 0;
@@ -203,14 +210,14 @@ int length(List_Bus_Line l)
 	return c;
 }
 
-int sizeof_bytes(List_Bus_Line l)
+int sizeof_bytes(List l)
 {
 	return (length(l)*sizeof(struct Node*));
 }
 
-List_Bus_Line merge(List_Bus_Line l1, List_Bus_Line l2)
+List merge(List l1, List l2)
 {
-	List_Bus_Line new_list;
+	List new_list;
 	init_list(&new_list); // Create a new empty List
 	while (!is_empty(l1))
 	{
@@ -225,7 +232,7 @@ List_Bus_Line merge(List_Bus_Line l1, List_Bus_Line l2)
 	return new_list;
 }
 
-List_Bus_Line append(List_Bus_Line l1, List_Bus_Line l2)
+List append(List l1, List l2)
 {
 	struct Node* temp = _get_last_node(l1); // Go to last Node of the first List
 	temp->next = l2;
@@ -234,7 +241,7 @@ List_Bus_Line append(List_Bus_Line l1, List_Bus_Line l2)
 	return l1;
 }
 
-struct Node* find_node(List_Bus_Line l, Bus_Line_Object* x)
+struct Node* find_node(List l, struct Bus_Line* x)
 {
 	if (is_empty(l))
 		return NULL;
@@ -243,7 +250,7 @@ struct Node* find_node(List_Bus_Line l, Bus_Line_Object* x)
 	return l;
 }
 
-int count_node(List_Bus_Line l, Bus_Line_Object* x)
+int count_node(List l, struct Bus_Line* x)
 {
 	if (is_empty(l))
 		return 0;

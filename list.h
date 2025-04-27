@@ -6,38 +6,42 @@
 #define LIST_H_
 
 #include <stdbool.h>
-#include "bus.h"
+#include "api.h"
 
-struct Node* _get_new_node(Bus_Line_Object* x);
+/* Déclaratiosn opaques des structures (encapsulation -> propriétées cachées) */
+struct Node;
+typedef struct Node* List;
+
+struct Node* _get_new_node(struct Bus_Line* x);
 int _free_node(struct Node* n);
 
-int init_list(List_Bus_Line* l);
-bool is_empty(List_Bus_Line l);
+int init_list(List* l);
+bool is_empty(List l);
 
-List_Bus_Line insert_at_head(List_Bus_Line l, Bus_Line_Object* x);
-List_Bus_Line insert_at_tail(List_Bus_Line l, Bus_Line_Object* x);
-List_Bus_Line insert(List_Bus_Line l, int p, Bus_Line_Object* x);
+List insert_at_head(List l, struct Bus_Line* x);
+List insert_at_tail(List l, struct Bus_Line* x);
+List insert(List l, int p, struct Bus_Line* x);
 
-void _print_list(List_Bus_Line l);
+void _print_list(List l);
 
-List_Bus_Line delete_at_head(List_Bus_Line l);
-List_Bus_Line delete_at_tail(List_Bus_Line l);
-List_Bus_Line delete(List_Bus_Line l, int p);
+List delete_at_head(List l);
+List delete_at_tail(List l);
+List delete(List l, int p);
 
-struct Node* _get_first_node(List_Bus_Line l);
-struct Node* _get_last_node(List_Bus_Line l);
-struct Node* _get_next_node(List_Bus_Line l);
-struct Node* _get_prev_node(List_Bus_Line l);
-Bus_Line_Object* _get_node(struct Node* n);
+struct Node* _get_first_node(List l);
+struct Node* _get_last_node(List l);
+struct Node* _get_next_node(List l);
+struct Node* _get_prev_node(List l);
+struct Bus_Line* _get_node(struct Node* n);
 
 void swap_node(struct Node* n1, struct Node* n2);
-int length(List_Bus_Line l);
-int sizeof_bytes(List_Bus_Line l);
+int length(List l);
+int sizeof_bytes(List l);
 
-List_Bus_Line merge(List_Bus_Line l1, List_Bus_Line l2);
-List_Bus_Line append(List_Bus_Line l1, List_Bus_Line l2);
+List merge(List l1, List l2);
+List append(List l1, List l2);
 
-struct Node* find_node(List_Bus_Line l, Bus_Line_Object* x);
-int count_node(List_Bus_Line l, Bus_Line_Object* x);
+struct Node* find_node(List l, struct Bus_Line* x);
+int count_node(List l, struct Bus_Line* x);
 
 #endif // LIST_H_
