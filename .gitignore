@@ -2,6 +2,7 @@
 
 !.gitignore
 
+!sources/
 !*.c
 !*.h
 !Makefile
