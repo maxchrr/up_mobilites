@@ -8,37 +8,39 @@
 #include <stdbool.h>
 #include "api.h"
 
-/* API funcitons that operate on Node objects */
-struct Node* _get_new_node(struct Bus_Line* x);
-int _free_node(struct Node* n);
+typedef struct Node Node;
+typedef struct Node* List;
 
-int init_list(List* l);
-bool is_empty(List l);
+void  init_list(List* l);
+void  print_list(List l);
+void  destroy_list(List l);
 
-List insert_at_head(List l, struct Bus_Line* x);
-List insert_at_tail(List l, struct Bus_Line* x);
-List insert(List l, int p, struct Bus_Line* x);
+List  _alloc_node(BusEntity* obj);
+void  _free_node(Node* n);
+bool  is_empty(List l);
 
-void _print_list(List l);
+List  insert_at_head(List l, BusEntity* obj);
+List  insert_at_tail(List l, BusEntity* obj);
+List  insert(List l, int p, BusEntity* obj);
 
-List delete_at_head(List l);
-List delete_at_tail(List l);
-List delete(List l, int p);
+List  delete_at_head(List l);
+List  delete_at_tail(List l);
+List  delete(List l, int p);
 
-struct Node* _get_first_node(List l);
-struct Node* _get_last_node(List l);
-struct Node* _get_next_node(List l);
-struct Node* _get_prev_node(List l);
-struct Bus_Line* _get_node(struct Node* n);
+Node*       _get_first_node(List l);
+Node*       _get_last_node(List l);
+Node*       _get_next_node(List l);
+Node*       _get_prev_node(List l);
+BusEntity*  _get_node(Node* n);
 
-void swap_node(struct Node* n1, struct Node* n2);
-int length(List l);
-int sizeof_bytes(List l);
+void  swap_node(Node* n1, Node* n2);
+int   length(List l);
+int   sizeof_bytes(List l);
 
-List merge(List l1, List l2);
-List append(List l1, List l2);
+List  merge(List l1, List l2);
+List  append(List l1, List l2);
 
-struct Node* find_node(List l, struct Bus_Line* x);
-int count_node(List l, struct Bus_Line* x);
+Node*  find_node(List l, BusEntity* obj);
+int    count_node(List l, BusEntity* obj);
 
 #endif // LIST_H_

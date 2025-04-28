@@ -1,82 +1,55 @@
 #include <stdio.h>
 #include "raylib.h"
+#include "api.h"
+#include "list.h"
 
 #define SCREEN_WIDTH	1200
 #define SCREEN_HEIGHT	400
 
-typedef struct
-{
-	Vector2 position;
-	const char* name;
-} Station;
+#define WINDOW_TITLE	"UPmobilites"
 
-typedef struct
+List create_bl(int id)
 {
-	int currentStation;
-	int nextStation;
-	float progress;
-	float speed;
-	Color color;
-} Bus;
+	BusStation* departure_station;
+	BusStation* arrival_station;
+	BusRoute* route;
+
+	List new_bl;
+	init_list(&new_bl);
+
+	departure_station = create_bs(1, "Autoroute", 10, 20);
+	arrival_station = create_bs(2, "Rivière", 20, 20);
+	route = create_br(id, departure_station, arrival_station, 500, 1200);
+
+	new_bl = insert_at_tail(new_bl, open_entity(1, departure_station));
+	new_bl = insert_at_tail(new_bl, open_entity(0, route));
+	new_bl = insert_at_tail(new_bl, open_entity(1, arrival_station));
+
+	departure_station = create_bs(3, "Centre ville", 30, 20);
+	route = create_br(id, arrival_station, departure_station, 800, 1600);
+
+	new_bl = insert_at_tail(new_bl, open_entity(0, route));
+	new_bl = insert_at_tail(new_bl, open_entity(1, departure_station));
+
+	arrival_station = create_bs(4, "Université", 40, 20);
+	route = create_br(id, departure_station, arrival_station, 200, 800);
+
+	new_bl = insert_at_tail(new_bl, open_entity(0, route));
+	new_bl = insert_at_tail(new_bl, open_entity(1, arrival_station));
+
+	departure_station = create_bs(5, "Ville Sud", 50, 20);
+	route = create_br(id, arrival_station, departure_station, 2400, 4000);
+
+	new_bl = insert_at_tail(new_bl, open_entity(0, route));
+	new_bl = insert_at_tail(new_bl, open_entity(1, departure_station));
+
+	return new_bl;
+}
 
 int main(void)
 {
-	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "UPmobilites");
-	SetTargetFPS(60);
-
-	Station stations[] = {
-		{{100, 200}, "Gare d'Esbly"},
-		{{200, 200}, "Collège Louis Braille"},
-		{{300, 200}, "Vignes Rouges"},
-		{{400, 200}, "Cents Arpents"},
-		{{500, 200}, "Trois Ormes"},
-		{{600, 200}, "Hôtels du Val de France"},
-		{{700, 200}, "Hôtels Disneyland"},
-		{{800, 200}, "Marne-la-Vallée Chessy"},
-		{{900, 200}, "Centre de Secours"},
-		{{1000, 200}, "Val d'Europe"},
-		{{1100, 200}, "Centre Hospitalier"}
-	};
-	int stationCount = sizeof(stations) / sizeof(Station);
-
-	Bus bus = {0, 1, 0.0f, 0.2f, RED};
-
-	while (!WindowShouldClose())
-	{
-		float deltaTime = GetFrameTime();
-		bus.progress += bus.speed * deltaTime;
-		if (bus.progress >= 1.0f)
-		{
-			bus.currentStation++;
-			if (bus.currentStation >= stationCount - 1)
-				bus.currentStation = 0;
-			bus.nextStation = bus.currentStation + 1;
-			bus.progress = 0.0f;
-		}
-
-		Vector2 posStart = stations[bus.currentStation].position;
-		Vector2 posEnd = stations[bus.nextStation].position;
-		Vector2 busPos = {
-			posStart.x + (posEnd.x - posStart.x) * bus.progress,
-			posStart.y + (posEnd.y - posStart.y) * bus.progress
-		};
-
-		BeginDrawing();
-		ClearBackground(RAYWHITE);
-
-		DrawLineEx((Vector2){100, 200}, (Vector2){1100, 200}, 10.0f, PURPLE);
-
-		for (int i = 0; i < stationCount; i++) {
-			DrawCircleV(stations[i].position, 8, DARKPURPLE);
-			DrawText(stations[i].name, stations[i].position.x - 50, stations[i].position.y - 50, 10, BLACK);
-		}
-
-		DrawCircleV(busPos, 10, bus.color);
-
-		EndDrawing();
-	}
-
-	CloseWindow();
-
+	List bl = create_bl(1001);
+	print_list(bl);
+	destroy_list(bl);
 	return 0;
 }

@@ -4,48 +4,66 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include "api.h"
 #include "list.h"
 
 struct Node
 {
+	BusEntity* data;    // Data held by the node - pointer on entity
 	struct Node* next;
 	struct Node* prev;
-	struct Bus_Line* data;  // Data held by the node - pointer to Bus_Line
 };
 
-struct Node* _get_new_node(struct Bus_Line* x)
+void init_list(List* l)
 {
-	struct Node* new_node = malloc(sizeof(struct Node));
+	if (l == NULL) exit(EXIT_FAILURE);
+	*l = NULL;
+}
+
+void print_list(List l)
+{
+	Node* temp = l;
+	if (temp == NULL)
+	{
+		printf("List is empty\n");
+		return;
+	}
+	while(temp != NULL)
+	{
+		print_entity(temp->data, 0);
+		temp = temp->next;
+	}
+}
+
+void destroy_list(List l)
+{
+	Node* head = l;
+	while (head != NULL)
+	{
+		List temp = head;
+		head = temp->next;
+		_free_node(temp);
+	}
+}
+
+List _alloc_node(BusEntity* obj)
+{
+	List new_node = malloc(sizeof(Node));
 	if (!new_node)
 	{
 		printf("Memory allocation failed for the node\n");
 		return NULL;
 	}
-	new_node->data = x; // Set pointer as new pointer
-	if (!new_node->data)
-	{
-		printf("Memory allocation failed for the node data\n");
-		free(new_node);
-		return NULL;
-	}
+	new_node->data = obj; // Set pointer as new pointer
 	new_node->prev = NULL;
 	new_node->next = NULL;
 	return new_node;
 }
 
-int _free_node(struct Node* n) {
-	free(n->data);
-	free(n);
-	return 0;
-}
-
-int init_list(List* l)
+void _free_node(Node* n)
 {
-	if (l == NULL)
-		exit(EXIT_FAILURE);
-	*l = NULL;
-	return 0;
+	if (n->data != NULL) close_entity(n->data);
+	free(n);
 }
 
 bool is_empty(List l)
@@ -53,9 +71,9 @@ bool is_empty(List l)
 	return (l == NULL);
 }
 
-List insert_at_head(List l, struct Bus_Line* x)
+List insert_at_head(List l, BusEntity* obj)
 {
-	struct Node* new_node = _get_new_node(x);
+	List new_node = _alloc_node(obj);
 	if (is_empty(l))
 	{
 		l = new_node;
@@ -67,10 +85,10 @@ List insert_at_head(List l, struct Bus_Line* x)
 	return l;
 }
 
-List insert_at_tail(List l, struct Bus_Line* x)
+List insert_at_tail(List l, BusEntity* obj)
 {
-	struct Node* temp = l;
-	struct Node* new_node = _get_new_node(x);
+	List temp = l;
+	List new_node = _alloc_node(obj);
 	if (is_empty(l))
 	{
 		l = new_node;
@@ -83,17 +101,17 @@ List insert_at_tail(List l, struct Bus_Line* x)
 	return l;
 }
 
-List insert(List l, int p, struct Bus_Line* x)
+List insert(List l, int p, BusEntity* obj)
 {
-	struct Node* temp = l;
-	struct Node* new_node = _get_new_node(x);
+	Node* temp = l;
+	Node* new_node = _alloc_node(obj);
 	if (is_empty(l))
 	{
 		l = new_node;
 		return l;
 	}
 	if (p == 1)
-		return insert_at_head(l, x);
+		return insert_at_head(l, obj);
 	for (int i=1; i<(p-1) && !is_empty(temp->next); ++i)
 		temp = temp->next; // Go to the (p-1)-th Node (starting at 1)
 	new_node->next = temp->next;
@@ -104,27 +122,11 @@ List insert(List l, int p, struct Bus_Line* x)
 	return l;
 }
 
-void _print_list(List l)
-{
-	struct Node* temp = l;
-	if (is_empty(temp))
-	{
-		printf("List is empty.\n");
-		return;
-	}
-	while(temp != NULL)
-	{
-		//printf("%d ",*(temp->data));
-		print_bl(temp->data, 0);
-		temp = temp->next;
-	}
-}
-
 List delete_at_head(List l)
 {
 	if (is_empty(l))
 		return l;
-	struct Node* head = l->next; // Pointer to next Node
+	Node* head = l->next; // Pointer to next Node
 	head->prev = NULL;
 	_free_node(l);
 	l = head;
@@ -133,7 +135,7 @@ List delete_at_head(List l)
 
 List delete_at_tail(List l)
 {
-	struct Node* temp = l;
+	Node* temp = l;
 	while (!is_empty(temp->next))
 		temp = temp->next; // Go to last Node
 	temp->prev->next = NULL;
@@ -143,9 +145,8 @@ List delete_at_tail(List l)
 
 List delete(List l, int p)
 {
-	struct Node* temp = l;
-	if (p==1)
-		return delete_at_head(l);
+	Node* temp = l;
+	if (p==1) return delete_at_head(l);
 	for (int i=1; i<p && !is_empty(temp->next); ++i)
 		temp = temp->next; // Go to the p-th Node (starting at 1)
 	if (!is_empty(temp->prev))
@@ -156,50 +157,45 @@ List delete(List l, int p)
 	return l;
 }
 
-struct Node* _get_first_node(List l)
+Node* _get_first_node(List l)
 {
 	return l;
 }
 
-struct Node* _get_last_node(List l)
+Node* _get_last_node(List l)
 {
-	while (!is_empty(l->next))
-		l = l->next;
+	while (!is_empty(l->next)) l = l->next;
 	return l;
 }
 
-struct Node* _get_next_node(List l)
+Node* _get_next_node(List l)
 {
-	if (is_empty(l->next))
-		return NULL;
+	if (is_empty(l->next)) return NULL;
 	return l->next;
 }
 
-struct Node* _get_prev_node(List l)
+Node* _get_prev_node(List l)
 {
-	if (is_empty(l->prev))
-		return NULL;
+	if (is_empty(l->prev)) return NULL;
 	return l->prev;
 }
 
-struct Bus_Line* _get_node(struct Node* n)
+BusEntity* _get_node(Node* n)
 {
-	if (is_empty(n))
-		return NULL;
+	if (is_empty(n)) return NULL;
 	return n->data;
 }
 
-void swap_node(struct Node* n1, struct Node* n2)
+void swap_node(Node* n1, Node* n2)
 {
-	struct Node* temp = n1;
+	Node* temp = n1;
 	n1->data = _get_node(n2);
 	n2->data = _get_node(temp);
 }
 
 int length(List l)
 {
-	if (is_empty(l))
-		return 0;
+	if (is_empty(l)) return 0;
 	int c=1;
 	while (!is_empty(_get_next_node(l)))
 	{
@@ -211,7 +207,7 @@ int length(List l)
 
 int sizeof_bytes(List l)
 {
-	return (length(l)*sizeof(struct Node*));
+	return (length(l)*sizeof(List));
 }
 
 List merge(List l1, List l2)
@@ -233,31 +229,28 @@ List merge(List l1, List l2)
 
 List append(List l1, List l2)
 {
-	struct Node* temp = _get_last_node(l1); // Go to last Node of the first List
+	Node* temp = _get_last_node(l1); // Go to last Node of the first List
 	temp->next = l2;
 	l2->prev = temp; // Append the second List
 	l1 = temp;
 	return l1;
 }
 
-struct Node* find_node(List l, struct Bus_Line* x)
+Node* find_node(List l, BusEntity* obj)
 {
-	if (is_empty(l))
-		return NULL;
-	while (_get_node(l) != x && !is_empty(_get_next_node(l)))
+	if (is_empty(l)) return NULL;
+	while (_get_node(l) != obj && !is_empty(_get_next_node(l)))
 		l = _get_next_node(l); // Get the first occurence of x
 	return l;
 }
 
-int count_node(List l, struct Bus_Line* x)
+int count_node(List l, BusEntity* obj)
 {
-	if (is_empty(l))
-		return 0;
+	if (is_empty(l)) return 0;
 	int c=0;
 	while (!is_empty(_get_next_node(l)))
 	{
-		if (_get_node(l) == x)
-			++c;
+		if (_get_node(l) == obj) ++c;
 		l = _get_next_node(l);
 	}
 	return c;
