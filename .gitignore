@@ -5,4 +5,6 @@
 !sources/
 !*.c
 !*.h
+!vendor/
+!timetable.ini
 !Makefile
