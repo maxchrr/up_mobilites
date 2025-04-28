@@ -10,9 +10,9 @@
 #include "list.h"
 
 struct Bus_Stop {
-	int id;                             // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
-	char name[30];                      // Nom de l'arrêt (pour l'affichage)
-	int posx, posy;                   // Coordonées sur le plan
+	int id;                       // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
+	char name[30];                // Nom de l'arrêt (pour l'affichage)
+	int posx, posy;               // Coordonées sur le plan
 	int maint_price;              // Prix de maintenance (keuro)
 	struct Date last_maint_date;  // Date de la dernière maintenance
 };
@@ -92,12 +92,19 @@ void free_br(struct Bus_Route* br)
 	free(br);
 }
 
-struct Bus_Line* create_bl(struct Bus_Route* br)
+struct Bus_Line create_bl(int is_stop, void* data)
 {
-	struct Bus_Line* new_bl = malloc(sizeof(struct Bus_Line));
-	new_bl->stop = 0;
-	new_bl->route = 1;
-	new_bl->u.br = *br;
+	struct Bus_Line new_bl;
+	if (is_stop)
+	{
+		new_bl.stop = 1;
+		memcpy(&new_bl.u.bs, data, sizeof(struct Bus_Stop));
+	}
+	else
+	{
+		new_bl.route = 1;
+		memcpy(&new_bl.u.br, data, sizeof(struct Bus_Route));
+	}
 	return new_bl;
 }
 
@@ -175,6 +182,12 @@ struct Bus* create_bus(int id, List start)
 void free_bus(struct Bus* bus)
 {
 	free(bus);
+}
+
+void print_list_bl(List list_bl)
+{
+	_print_list(list_bl);
+	fprintf(stdout, "Fin de la ligne\n");
 }
 
 int bs_getid(struct Bus_Stop* bs)

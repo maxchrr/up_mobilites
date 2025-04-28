@@ -24,12 +24,14 @@ void              free_bs(struct Bus_Stop* bs);
 struct Bus_Route*  create_br(int bl_id, struct Bus_Stop* departure, struct Bus_Stop* arrival, int distance_due, int time_due);
 void               free_br(struct Bus_Route* br);
 
-struct Bus_Line*  create_bl(struct Bus_Route* br);
+struct Bus_Line  create_bl(int is_stop, void* data);
 void              print_bl(struct Bus_Line* bl, int indent);
 void              free_bl(struct Bus_Line* bl);
 
 struct Bus*  create_bus(int id, List start);
 void        free_bus(struct Bus* bus);
+
+void  print_list_bl(List list_bl);
 
 /* Accesseur */
 int          bs_getid(struct Bus_Stop* bs);

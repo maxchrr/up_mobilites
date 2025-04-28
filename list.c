@@ -118,7 +118,6 @@ void _print_list(List l)
 		print_bl(temp->data, 0);
 		temp = temp->next;
 	}
-	printf("End of Line\n\n");
 }
 
 List delete_at_head(List l)
