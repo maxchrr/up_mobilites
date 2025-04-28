@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "utils.h"
 #include "api.h"
 
@@ -73,7 +74,7 @@ void destroy_bs(BusStation* bs)
 	free(bs);
 }
 
-BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival, int distance_due, int time_due)
+BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 {
 	BusRoute* new_br = malloc(sizeof(BusRoute));
 	if (!new_br)
@@ -84,8 +85,9 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival, int d
 	new_br->bl_id = bl_id;
 	new_br->departure = departure;
 	new_br->arrival = arrival;
-	new_br->distance_due = distance_due;
-	new_br->time_due = time_due;
+	int due = sqrt(pow(bs_getposx(arrival)-bs_getposx(departure),2) + pow(bs_getposy(arrival)-bs_getposy(departure),2)); // Distance entre deux points, avec leurs coordonnées cartésiennes
+	new_br->distance_due = due;
+	new_br->time_due = due;
 	return new_br;
 }
 

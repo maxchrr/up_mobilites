@@ -28,7 +28,7 @@ BusStation*         create_bs(int id, char* name, int posx, int posy);
 static void         print_bs(BusStation* bs, int indent);
 void                destroy_bs(BusStation* bs);
 
-BusRoute*          create_br(int bl_id, BusStation* departure, BusStation* arrival, int distance_due, int time_due);
+BusRoute*          create_br(int bl_id, BusStation* departure, BusStation* arrival);
 static void        print_br(BusRoute* br, int indent);
 void               destroy_br(BusRoute* br);
 

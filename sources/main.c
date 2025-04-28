@@ -18,27 +18,27 @@ List create_bl(int id)
 	init_list(&new_bl);
 
 	departure_station = create_bs(1, "Autoroute", 10, 20);
-	arrival_station = create_bs(2, "Rivière", 20, 20);
-	route = create_br(id, departure_station, arrival_station, 500, 1200);
+	arrival_station = create_bs(2, "Rivière", 40, 20);
+	route = create_br(id, departure_station, arrival_station);
 
 	new_bl = insert_at_tail(new_bl, open_entity(1, departure_station));
 	new_bl = insert_at_tail(new_bl, open_entity(0, route));
 	new_bl = insert_at_tail(new_bl, open_entity(1, arrival_station));
 
-	departure_station = create_bs(3, "Centre ville", 30, 20);
-	route = create_br(id, arrival_station, departure_station, 800, 1600);
+	departure_station = create_bs(3, "Centre ville", 150, 20);
+	route = create_br(id, arrival_station, departure_station);
 
 	new_bl = insert_at_tail(new_bl, open_entity(0, route));
 	new_bl = insert_at_tail(new_bl, open_entity(1, departure_station));
 
-	arrival_station = create_bs(4, "Université", 40, 20);
-	route = create_br(id, departure_station, arrival_station, 200, 800);
+	arrival_station = create_bs(4, "Université", 599, 50);
+	route = create_br(id, departure_station, arrival_station);
 
 	new_bl = insert_at_tail(new_bl, open_entity(0, route));
 	new_bl = insert_at_tail(new_bl, open_entity(1, arrival_station));
 
-	departure_station = create_bs(5, "Ville Sud", 50, 20);
-	route = create_br(id, arrival_station, departure_station, 2400, 4000);
+	departure_station = create_bs(5, "Ville Sud", 843, 80);
+	route = create_br(id, arrival_station, departure_station);
 
 	new_bl = insert_at_tail(new_bl, open_entity(0, route));
 	new_bl = insert_at_tail(new_bl, open_entity(1, departure_station));
