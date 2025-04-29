@@ -9,7 +9,7 @@
 #include "utils.h"
 #include "api.h"
 
-#define MAX_NAME_LEN 30
+#define MAX_NAME_LEN		32
 
 struct BusStation
 {
