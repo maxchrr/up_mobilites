@@ -201,7 +201,7 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 		}
 		else
 		{
-			float ratio = (xa != xd) : abs((ya-yd)/(xa-xd)) ? 0.0f;
+			float ratio = (xa != xd) ? abs((ya-yd)/(xa-xd)) : 0.0f;
 			if (xa>xd)	*incx = padError;
 			else if (xa<xd)	*incx = -padError;
 			if (ya>yd)	*incy = padError*ratio;
