@@ -1,47 +1,19 @@
-/* main.c */
-
+/*
+ * UPmobilites
+ * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
+ */
 #include <stdio.h>
-#include <stdlib.h>
-#include "api.c"
 #include "utils.h"
 
 int main(void)
 {
-    struct Bus_Stop  **sts;
-    struct Bus_Route **rts;
-    struct Bus_Line  **bls;
-    int n_sts, n_rts, n_bls;
-    int i;
+    List stations = NULL;
+    int bus_line_id = 0;
 
-    if (load_data("x.data", &sts, &n_sts, &rts, &n_rts, &bls, &n_bls) == 0)
-    {
-        /* affichage */
-        for (i = 0; i < n_bls; i++)
-            print_bl(bls[i], 0);
+    stations = import_stations_from_ini("../vendor/timetable.ini", &bus_line_id);
 
-        /* sauvegarde avant libération */
-        save_data("x.data", sts, n_sts, rts, n_rts, bls, n_bls);
-
-        /* libération de la mémoire */
-        for (i = 0; i < n_bls; i++) free_bl(bls[i]);
-        for (i = 0; i < n_rts; i++) free_br(rts[i]);
-        for (i = 0; i < n_sts; i++) free_bs(sts[i]);
-        free(bls);
-        free(rts);
-        free(sts);
-
-        return 0;
-    }
-
-    /* fallback : création manuelle si x.data introuvable */
-    struct Bus_Stop* bs1 = create_bs(1, "Foo", 10, 20);
-    struct Bus_Stop* bs2 = create_bs(2, "Bar", 20, 20);
-    struct Bus_Route* br = create_br(1, bs1, bs2, 1, 1);
-    struct Bus_Line* bl = create_bl(br);
-    print_bl(bl, 0);
-    free_bl(bl);
-    free_br(br);
-    free_bs(bs1);
-    free_bs(bs2);
+    printf("Ligne de bus lue depuis fichier : %d\n", bus_line_id);
+    print_list(stations);
+    destroy_list(stations);
     return 0;
 }

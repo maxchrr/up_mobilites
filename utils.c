@@ -2,195 +2,128 @@
  * Fonctions utilitaires
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include "utils.h"
+#include "api.h"
+#include "list.h" 
 
- #include <stdlib.h>
- #include <time.h>
- #include <stdio.h>
- #include <string.h>
- #include "utils.h"
- #include "api.h"
- 
- int rand_range(int min, int max)
+int rand_range(int min, int max)
 {
-    static int seeded = 0;
-    if (!seeded) {
-        srand(time(NULL) + clock());
-        seeded = 1;
+	static int seeded = 0;
+	if (!seeded)
+	{
+		srand(time(NULL) + clock());  // Génération pseudo-aléatoire
+		seeded = 1;
+	}
+	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
+}
+
+Date rand_date(int start_year, int end_year)
+{
+	int year = rand_range(start_year,end_year);
+	int month = rand_range(1,12);
+	int day = rand_range(1, (month == 2) ? (((year % 400 == 0) || (year % 4 == 0 && !(year % 100 == 0))) ? 29 : 28) : ((month == 4 || month == 6 || month == 9 || month == 11) ? 30 : 31));
+	Date date;
+	date.year = year;
+	date.month = month;
+	date.day = day;
+	return date;
+}
+
+List import_stations_from_ini(const char* filename, int* bl_id_out)
+{
+    FILE* file = fopen(filename, "r");
+    if (!file)
+    {
+        perror("Erreur ouverture fichier");
+        return NULL;
     }
-    return min + rand() / (RAND_MAX / (max - min + 1) + 1);
-}
 
-struct Date rand_date(int start_year, int end_year)
-{
-    int year  = rand_range(start_year, end_year);
-    int month = rand_range(1, 12);
-    int day   = rand_range(1,
-        (month == 2)                                   ? 28 :
-        (month == 4 || month == 6 || month == 9 ||
-         month == 11)                                  ? 30 :
-                                                         31
-    );
-    return (struct Date){ day, month, year };
-}
+    List station_list = NULL;
+    char line[512]; // large pour tous lire si beaucoup d'info
+    bool first_line_read = false;
 
-/*copyright (c) 2025 Emilio Decaix-Masiani. All Rights Reserved lol.*/
-/* charge stations, routes et lignes */
-int load_data(const char* filename,
-	struct Bus_Stop*** sts, int* n_sts,
-	struct Bus_Route*** rts, int* n_rts,
-	struct Bus_Line*** bls, int* n_bls)
-{
-FILE* f = fopen(filename, "r");
-if (!f) {
-return -1;
-}
+    while (fgets(line, sizeof(line), file))
+    {
+        // on regarde pas les commentaires ( au cas ou )
+        if (line[0] == '#' || line[0] == '\n' || line[0] == '\r') continue;
 
-int    i;
-int    id;
-int    x;
-int    y;
-int    pr;
-int    d;
-int    m;
-int    yv;
-char   name[30];
+        // on enlève les saut de ligne
+        line[strcspn(line, "\r\n")] = 0;
 
-/* --- Stations --- */
-if (fscanf(f, "%d", n_sts) != 1) {
-fclose(f);
-return -1;
-}
-*sts = malloc(*n_sts * sizeof(struct Bus_Stop*));
+        if (!first_line_read)
+        {
+            *bl_id_out = atoi(line);
+            first_line_read = true;
+            continue;
+        }
 
-i = 0;
-while (i < *n_sts) {
-if (fscanf(f, "%d %29s %d %d %d %d %d %d",
-		 &id, name, &x, &y, &pr, &d, &m, &yv) != 8) {
-  fclose(f);
-  return -1;
-}
-(*sts)[i] = create_bs(id, name, x, y);
-bs_setmaint_price((*sts)[i], pr);
-bs_setlast_maint_date((*sts)[i], (struct Date){ d, m, yv });
-i++;
-}
+        int id = 0, posx = 0, posy = 0;
+        char name[128] = {0};
 
-/* --- Routes --- */
-if (fscanf(f, "%d", n_rts) != 1) {
-fclose(f);
-return -1;
-}
-*rts = malloc(*n_rts * sizeof(struct Bus_Route*));
+        // Lire l'id
+        char* p = line;
+        if (sscanf(p, "%d", &id) != 1)
+        {
+            printf("Erreur lecture id sur la ligne : %s\n", line);
+            continue;
+        }
 
-i = 0;
-while (i < *n_rts) {
-int lid;
-int dep_id;
-int arr_id;
-struct Bus_Stop* sdep = NULL;
-struct Bus_Stop* sarr = NULL;
+        // Avancer après l'id
+        while (*p && (*p == ' ' || *p == '\t' || (*p >= '0' && *p <= '9')))
+            p++;
 
-if (fscanf(f, "%d %d %d", &lid, &dep_id, &arr_id) != 3) {
-  fclose(f);
-  return -1;
-}
+        char* end = p;
+        // Chercher la position où posx commence
+        while (*end)
+        {
+            if ((*end >= '0' && *end <= '9') && 
+                (end == p || *(end-1) == ' ' || *(end-1) == '\t'))
+            {
+                // Vérifier qu'il reste deux entiers
+                int dummy_x, dummy_y;
+                if (sscanf(end, "%d %d", &dummy_x, &dummy_y) == 2)
+                    break;
+            }
+            end++;
+        }
 
-int j = 0;
-while (j < *n_sts) {
-  if (bs_getid((*sts)[j]) == dep_id) {
-	  sdep = (*sts)[j];
-  }
-  if (bs_getid((*sts)[j]) == arr_id) {
-	  sarr = (*sts)[j];
-  }
-  j++;
-}
+        // Copier le nom entre p et end
+        int len = end - p;
+        if (len <= 0 || len >= sizeof(name))
+        {
+            printf("Erreur lecture nom sur la ligne : %s\n", line);
+            continue;
+        }
+        strncpy(name, p, len);
+        name[len] = '\0';
 
-int dx   = bs_getposx(sdep) - bs_getposx(sarr);
-int dy   = bs_getposy(sdep) - bs_getposy(sarr);
-int dist = abs(dx) + abs(dy);
+        // Nettoyer les espaces de fin du nom
+        for (int i = strlen(name) - 1; i >= 0 && (name[i] == ' ' || name[i] == '\t'); i--)
+            name[i] = '\0';
 
-(*rts)[i] = create_br(lid, sdep, sarr, dist, dist);
-i++;
-}
+        // Lire posx et posy
+        if (sscanf(end, "%d %d", &posx, &posy) != 2)
+        {
+            printf("Erreur lecture posx/posy sur la ligne : %s\n", line);
+            continue;
+        }
 
-/* --- Lignes (1 ligne = 1 route) --- */
-if (fscanf(f, "%d", n_bls) != 1) {
-fclose(f);
-return -1;
-}
-*bls = malloc(*n_bls * sizeof(struct Bus_Line*));
+        // Créer la station
+        BusStation* bs = create_bs(id, name, posx, posy);
+        if (!bs)
+        {
+            printf("Erreur allocation station pour : %s\n", line);
+            continue;
+        }
 
-i = 0;
-while (i < *n_bls) {
-int idx;
-if (fscanf(f, "%d", &idx) != 1) {
-  fclose(f);
-  return -1;
-}
-(*bls)[i] = create_bl((*rts)[idx]);
-i++;
-}
+        BusEntity* entity = open_entity(1, bs);
+        station_list = insert_at_tail(station_list, entity);
+    }
 
-fclose(f);
-return 0;
-}
-
-/* écrit stations, routes et lignes */
-int save_data(const char* filename,
-	struct Bus_Stop** sts, int n_sts,
-	struct Bus_Route** rts, int n_rts,
-	struct Bus_Line** bls, int n_bls)
-{
-FILE* f = fopen(filename, "w");
-if (!f) {
-return -1;
-}
-
-int         i;
-struct Date dt;
-struct Bus_Stop*   bs;
-struct Bus_Route*  br;
-
-/* --- Stations --- */
-fprintf(f, "%d\n", n_sts);
-i = 0;
-while (i < n_sts) {
-bs = sts[i];
-dt = bs_getlast_maint_date(bs);
-fprintf(f,
-  "%d %s %d %d %d %02d %02d %04d\n",
-  bs_getid(bs),
-  bs_getname(bs),
-  bs_getposx(bs),
-  bs_getposy(bs),
-  bs_getmaint_price(bs),
-  dt.day, dt.month, dt.year
-);
-i++;
-}
-
-/* --- Routes --- */
-fprintf(f, "%d\n", n_rts);
-i = 0;
-while (i < n_rts) {
-br = rts[i];
-fprintf(f, "%d %d %d\n",
-  br_getbl_id(br),
-  bs_getid(br_getdeparture(br)),
-  bs_getid(br_getarrival(br))
-);
-i++;
-}
-
-/* --- Lignes --- */
-fprintf(f, "%d\n", n_bls);
-i = 0;
-while (i < n_bls) {
-fprintf(f, "%d\n", i);
-i++;
-}
-
-fclose(f);
-return 0;
+    fclose(file);
+    return station_list;
 }

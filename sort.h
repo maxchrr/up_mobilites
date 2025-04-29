@@ -1,14 +1,17 @@
 /*
  * Fonctions de tri
- * Copyright (c) 2025 Emilio Decaix-Massiani. All Rights Reserved.
+ * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
 #ifndef SORT_H_
 #define SORT_H_
 
-#include <stdbool.h>
+#include "list.h"
 
-bool _is_date_more_recent(Bus_Line_Object* bl1, Bus_Line_Object* bl2);
-bool _is_price_higher(Bus_Line_Object* bl1, Bus_Line_Object* bl2);
-void sort_bus_line(List_Bus_Line l);
+/* Fonctions de comparaisons */
+int compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b);
+int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b);
+
+/* Unique fonction de tri */
+List sort_list(List l, int (*cmp)(const BusEntity*, const BusEntity*));
 
 #endif // SORT_H_
