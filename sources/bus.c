@@ -173,7 +173,7 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 	static bool isStopping = false;
 	if (isStopping)
 	{
-		if (GetTime()-stopTime>=2.0f)
+		if (GetTime()-stopTime >= 2.0f)
 			isStopping = false;
 		return;
 	}
@@ -201,7 +201,7 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 		}
 		else
 		{
-			float ratio = (xa == xd) ? 0.0f : abs((ya-yd)/(xa-xd));
+			float ratio = (xa != xd) : abs((ya-yd)/(xa-xd)) ? 0.0f;
 			if (xa>xd)	*incx = padError;
 			else if (xa<xd)	*incx = -padError;
 			if (ya>yd)	*incy = padError*ratio;
