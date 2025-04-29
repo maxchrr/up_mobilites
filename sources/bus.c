@@ -11,10 +11,17 @@
 
 BusPtr init_bus(int id, List bl)
 {
-	BusPtr new_bus = malloc(sizeof(BusPtr));
+	BusPtr new_bus = malloc(sizeof(Bus));
 	new_bus->id = id;
 	bus_departure(new_bus, bl, DEP_TO_ARR);
-	new_bus->bl_id = br_getbl_id(_get_node(_get_next_node(bl))->br);
+	Node* next = _get_next_node(bl);
+	if (is_empty(next))
+	{
+		fprintf(stderr, "Mauvais type\n");
+		free(new_bus);
+		return NULL;
+	}
+	new_bus->bl_id = br_getbl_id(_get_node(next)->br);
 	return new_bus;
 }
 
@@ -33,6 +40,7 @@ void print_bus(const BusPtr bus)
 
 void destroy_bus(BusPtr bus)
 {
+	destroy_list(bus->bl);
 	free(bus);
 }
 
@@ -182,7 +190,7 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 		}
 		else
 		{
-			float ratio = abs(ya-yd)/abs(xa-xd);
+			float ratio = (xa == xd) ? 0.0f : abs((ya-yd)/(xa-xd));
 			if (xa>xd)	*incx = padError;
 			else if (xa<xd)	*incx = -padError;
 			if (ya>yd)	*incy = padError*ratio;
