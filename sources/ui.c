@@ -2,6 +2,7 @@
  * Fonctions d'interface
  * Copyright (c) 2025 Max Charrier. All Rights Reserved.
  */
+#include <stdio.h>
 #include <stdlib.h>
 #include "api.h"
 #include "bus.h"
@@ -23,9 +24,14 @@ void draw_bl(List l, Font font, Color color)
 	}
 	int pCount = segCount+1;
 	Vector2* points = malloc(sizeof(Vector2)*pCount);
+	if (!points)
+	{
+		fprintf(stderr, "Memory allocation failed\n");
+		return;
+	}
 	int idx = 0;
 	Node* head = l;
-	while (!is_empty(_get_next_node(head)))
+	while (!is_empty(head) && !is_empty(_get_next_node(head)))
 	{
 		BusEntity* e = _get_node(head);
 		if (e->station)
