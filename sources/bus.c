@@ -8,6 +8,7 @@
 #include "api.h"
 #include "list.h"
 #include "bus.h"
+#include "raylib.h"
 
 BusPtr init_bus(int id, List bl)
 {
@@ -168,6 +169,14 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 {
 	int padError = 2;
 	List current;
+	static float stopTime = 0;
+	static bool isStopping = false;
+	if (isStopping)
+	{
+		if (GetTime()-stopTime>=2.0f)
+			isStopping = false;
+		return;
+	}
 	if (direction == DEP_TO_ARR)
 	{
 		current = bl_getnext_bs(bus_getbl(bus));
@@ -187,6 +196,8 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 		{
 			bus_setbl(bus, current);
 			print_bus(bus);
+			stopTime = GetTime();
+			isStopping = true;
 		}
 		else
 		{
