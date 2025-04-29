@@ -51,7 +51,7 @@ List _alloc_node(BusEntity* obj)
 	List new_node = malloc(sizeof(Node));
 	if (!new_node)
 	{
-		printf("Memory allocation failed for the node\n");
+		fprintf(stderr, "Memory allocation failed for the node\n");
 		return NULL;
 	}
 	new_node->data = obj; // Set pointer as new pointer
@@ -177,19 +177,23 @@ Node* _get_last_node(List l)
 
 Node* _get_next_node(List l)
 {
-	if (is_empty(l->next)) return NULL;
+	if (is_empty(l)) return NULL;
 	return l->next;
 }
 
 Node* _get_prev_node(List l)
 {
-	if (is_empty(l->prev)) return NULL;
+	if (is_empty(l)) return NULL;
 	return l->prev;
 }
 
 BusEntity* _get_node(Node* n)
 {
-	if (is_empty(n)) return NULL;
+	if (is_empty(n))
+	{
+		fprintf(stderr, "Trying to access data of a NULL node\n");
+		return NULL;
+	}
 	return n->data;
 }
 

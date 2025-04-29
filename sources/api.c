@@ -49,10 +49,14 @@ BusStation* create_bs(int id, char* name, int posx, int posy)
 
 static void print_bs(const BusStation* bs, int indent)
 {
+	if (!bs)
+	{
+		fprintf(stdout, "[NULL station]\n");
+		return;
+	}
 	fprintf(
 		stdout,
-		"%*sArrêt %d \"%s\" (%d,%d)\n",
-		indent, "",
+		"Arrêt %d \"%s\" (%d,%d)\n",
 		bs->id,
 		bs->name,
 		bs->posx,
@@ -93,13 +97,17 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 
 static void print_br(const BusRoute* br, int indent)
 {
+	if (!br)
+	{
+		fprintf(stdout, "[NULL route]\n");
+		return;
+	}
 	fprintf(stdout, "*****************************************\n");
 	fprintf(stdout, "*\t\tLigne %d\t\t*\n", br->bl_id);
 	fprintf(stdout, "*****************************************\n");
 	fprintf(
 		stdout,
-		"%*sParcours > distance %dm / temps %ds\n",
-		indent,"",
+		"Parcours > distance %dm / temps %ds\n",
 		br->distance_due,
 		br->time_due
 	);
