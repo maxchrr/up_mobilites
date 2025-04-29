@@ -6,5 +6,6 @@
 !*.c
 !*.h
 !vendor/
+!selawk.ttf
 !timetable.ini
 !Makefile
