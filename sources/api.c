@@ -9,22 +9,24 @@
 #include "utils.h"
 #include "api.h"
 
+#define MAX_NAME_LEN 30
+
 struct BusStation
 {
-	int id;                       // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
-	char name[30];                // Nom de l'arrêt (pour l'affichage)
-	int posx, posy;               // Coordonées sur le plan
-	int maint_price;              // Prix de maintenance (keuro)
-	Date last_maint_date;  // Date de la dernière maintenance
+	int id;                   // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
+	char name[MAX_NAME_LEN];  // Nom de l'arrêt (pour l'affichage)
+	int posx, posy;           // Coordonées sur le plan
+	int maint_price;          // Prix de maintenance (keuro)
+	Date last_maint_date;     // Date de la dernière maintenance
 };
 
 struct BusRoute
 {
-	int bl_id;                      // Identifiant de la ligne de bus entrante
+	int bl_id;              // Identifiant de la ligne de bus entrante
 	BusStation* departure;  // Pointeur sur l'arrêt entrant
 	BusStation* arrival;    // Pointeur sur l'arrêt sortant
-	int distance_due;               // Coût en distance (mètres)
-	int time_due;                   // Coût en temps de parcours (secondes)
+	int distance_due;       // Coût en distance (mètres)
+	int time_due;           // Coût en temps de parcours (secondes)
 };
 
 BusStation* create_bs(int id, const char* name, int posx, int posy)
