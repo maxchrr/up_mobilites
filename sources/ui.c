@@ -4,13 +4,15 @@
  */
 #include <stdlib.h>
 #include "api.h"
+#include "bus.h"
 #include "list.h"
 #include "raylib.h"
 #include "ui.h"
 
+#define PADDING	200
+
 void draw_bl(List l, Font font, Color color)
 {
-	int padding = 200;
 	int segCount = 0;
 	Node* temp = l;
 	while (!is_empty(_get_next_node(temp)))
@@ -29,7 +31,7 @@ void draw_bl(List l, Font font, Color color)
 		if (e->station)
 		{
 			BusStation* s = e->bs;
-			points[idx++] = (Vector2){ bs_getposx(s)+padding, bs_getposy(s)+padding };
+			points[idx++] = (Vector2){ bs_getposx(s)+PADDING, bs_getposy(s)+PADDING };
 		}
 		head = _get_next_node(head);
 	}
@@ -48,14 +50,23 @@ void draw_bl(List l, Font font, Color color)
 		if (e->station)
 		{
 			BusStation* s = e->bs;
-			int dx = bs_getposx(s)+padding;
-			int dy = bs_getposy(s)+padding;
+			int dx = bs_getposx(s)+PADDING;
+			int dy = bs_getposy(s)+PADDING;
 			DrawCircle(dx, dy, 8+4,	BLACK);
 			DrawCircle(dx, dy, 8+2,	WHITE);
 			DrawCircle(dx, dy, 8,	color);
-			Vector2 labelPos = { dx-8-4, dy-16-8-4 };
+			Vector2 labelPos = { dx-8*2, dy-16-8*2 };
 			DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		}
 		head = _get_next_node(head);
 	}
+}
+
+void draw_bus(BusPtr bus, Color color)
+{
+	int dx = bus_getposx(bus)+PADDING;
+	int dy = bus_getposy(bus)+PADDING;
+	DrawCircle(dx, dy, 16, BLACK);
+	DrawCircle(dx, dy, 16-2, WHITE);
+	DrawCircle(dx, dy, 16-4, color);
 }

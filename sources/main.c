@@ -4,6 +4,7 @@
  */
 #include <stdio.h>
 #include "api.h"
+#include "bus.h"
 #include "list.h"
 #include "raylib.h"
 #include "ui.h"
@@ -20,7 +21,7 @@ List create_bl1(const int id)
 	List new_bl;
 	init_list(&new_bl);
 	d = create_bs(1, "Autoroute", 100, 100);
-	a = create_bs(2, "Rivière", 300, 100);
+	a = create_bs(2, "Riviere", 300, 100);
 	r = create_br(id, d, a);
 	new_bl = insert_at_tail(new_bl, open_entity(1, d));
 	new_bl = insert_at_tail(new_bl, open_entity(0, r));
@@ -29,7 +30,7 @@ List create_bl1(const int id)
 	r = create_br(id, a, d);
 	new_bl = insert_at_tail(new_bl, open_entity(0, r));
 	new_bl = insert_at_tail(new_bl, open_entity(1, d));
-	a = create_bs(4, "Université", 700, 100);
+	a = create_bs(4, "Universite", 700, 100);
 	r = create_br(id, d, a);
 	new_bl = insert_at_tail(new_bl, open_entity(0, r));
 	new_bl = insert_at_tail(new_bl, open_entity(1, a));
@@ -48,7 +49,7 @@ List create_bl2(const int id)
 	List new_bl;
 	init_list(&new_bl);
 	d = create_bs(1, "Maison Royale", 400, 0);
-	a = create_bs(2, "Place du marché", 400, 150);
+	a = create_bs(2, "Place du marche", 400, 150);
 	r = create_br(id, d, a);
 	new_bl = insert_at_tail(new_bl, open_entity(1, d));
 	new_bl = insert_at_tail(new_bl, open_entity(0, r));
@@ -57,7 +58,7 @@ List create_bl2(const int id)
 	r = create_br(id, a, d);
 	new_bl = insert_at_tail(new_bl, open_entity(0, r));
 	new_bl = insert_at_tail(new_bl, open_entity(1, d));
-	a = create_bs(4, "Téléport", 400, 450);
+	a = create_bs(4, "Teleport", 400, 450);
 	r = create_br(id, d, a);
 	new_bl = insert_at_tail(new_bl, open_entity(0, r));
 	new_bl = insert_at_tail(new_bl, open_entity(1, a));
@@ -73,22 +74,29 @@ int main(void)
 	List bl2 = create_bl2(102);
 	print_list(bl2);
 
+	BusPtr bus = init_bus(1, bl1);
+
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
 	SetTargetFPS(60);
 
-	Font font = LoadFontEx("vendor/selawk.ttf", 36, NULL, 0);
+	Font font = LoadFontEx("vendor/Luciole-Regular.ttf", 18, NULL, 0);
+
+	ClearBackground(RAYWHITE);
+	draw_bl(bl1, font, DARKGREEN);
+	draw_bl(bl2, font, DARKBLUE);
+	draw_bus(bus, YELLOW);
+	int incx = 0, incy = 0;
 
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
-		ClearBackground(RAYWHITE);
-		draw_bl(bl1, font, DARKGREEN);
-		draw_bl(bl2, font, DARKBLUE);
+		//bus_travel(bus, bus_getdirection(bus), &incx, &incy);
 		EndDrawing();
 	}
 
 	UnloadFont(font);
 	CloseWindow();
+	destroy_bus(bus);
 	destroy_list(bl1);
 	destroy_list(bl2);
 	return 0;
