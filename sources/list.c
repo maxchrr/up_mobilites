@@ -18,7 +18,7 @@ void print_list(List l)
 	Node* temp = l;
 	if (temp == NULL)
 	{
-		printf("List is empty\n");
+		fprintf(stderr, "List is empty\n");
 		return;
 	}
 	while(temp != NULL)
