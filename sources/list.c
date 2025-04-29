@@ -124,22 +124,29 @@ List insert(List l, int p, BusEntity* obj)
 
 List delete_at_head(List l)
 {
-	if (is_empty(l))
-		return l;
+	if (is_empty(l)) return l;
 	Node* head = l->next; // Pointer to next Node
-	head->prev = NULL;
+	if (!is_empty(head))
+		head->prev = NULL;
 	_free_node(l);
 	l = head;
-	return l;
+	return head;
 }
 
 List delete_at_tail(List l)
 {
-	Node* temp = l;
-	while (!is_empty(temp->next))
-		temp = temp->next; // Go to last Node
-	temp->prev->next = NULL;
-	_free_node(temp);
+	if (is_empty(l)) return l;
+	if (is_empty(l->next))
+	{
+		_free_node(l);
+		return NULL;
+	}
+	Node* tail = l;
+	while (!is_empty(tail->next))
+		tail = tail->next; // Go to last Node
+	if (!is_empty(tail->prev))
+		tail->prev->next = NULL;
+	_free_node(tail);
 	return l;
 }
 
@@ -188,9 +195,9 @@ BusEntity* _get_node(Node* n)
 
 void swap_node(Node* n1, Node* n2)
 {
-	Node* temp = n1;
+	BusEntity* temp = _get_node(n1);
 	n1->data = _get_node(n2);
-	n2->data = _get_node(temp);
+	n2->data = temp;
 }
 
 int length(List l)
@@ -229,10 +236,12 @@ List merge(List l1, List l2)
 
 List append(List l1, List l2)
 {
-	Node* temp = _get_last_node(l1); // Go to last Node of the first List
-	temp->next = l2;
-	l2->prev = temp; // Append the second List
-	l1 = temp;
+	if (is_empty(l1)) return l2;
+	if (is_empty(l2)) return l1;
+	Node* tail = _get_last_node(l1); // Go to last Node of the first List
+	tail->next = l2;
+	if (!is_empty(l2))
+		l2->prev = tail; // Append the second List
 	return l1;
 }
 
