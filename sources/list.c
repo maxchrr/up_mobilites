@@ -208,7 +208,7 @@ int length(List l)
 
 int sizeof_bytes(List l)
 {
-	return length(l)*sizeof(List);
+	return length(l)*sizeof(Node);
 }
 
 List merge(List l1, List l2)
@@ -275,7 +275,7 @@ int count_node(List l, BusEntity* obj)
 {
 	if (is_empty(l)) return 0;
 	int c=0;
-	while (!is_empty(_get_next_node(l)))
+	while (!is_empty(l))
 	{
 		if (_get_node(l) == obj) ++c;
 		l = _get_next_node(l);
