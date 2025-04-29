@@ -123,7 +123,7 @@ List delete_at_head(List l)
 		head->prev = NULL;
 	_free_node(l);
 	l = head;
-	return head;
+	return l;
 }
 
 List delete_at_tail(List l)
