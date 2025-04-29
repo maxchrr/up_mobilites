@@ -49,7 +49,7 @@ List create_bl2(const int id)
 	List new_bl;
 	init_list(&new_bl);
 	d = create_bs(1, "Maison Royale", 400, 0);
-	a = create_bs(2, "Place du marche", 400, 150);
+	a = create_bs(2, "Place du marché", 400, 150);
 	r = create_br(id, d, a);
 	new_bl = insert_at_tail(new_bl, open_entity(1, d));
 	new_bl = insert_at_tail(new_bl, open_entity(0, r));
