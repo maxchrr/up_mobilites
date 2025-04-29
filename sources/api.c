@@ -27,7 +27,7 @@ struct BusRoute
 	int time_due;                   // Coût en temps de parcours (secondes)
 };
 
-BusStation* create_bs(int id, char* name, int posx, int posy)
+BusStation* create_bs(int id, const char* name, int posx, int posy)
 {
 	BusStation* new_bs = malloc(sizeof(BusStation));
 	if (!new_bs)
@@ -38,7 +38,6 @@ BusStation* create_bs(int id, char* name, int posx, int posy)
 	memset(new_bs, 0, sizeof(BusStation));
 	new_bs->id = id;
 	strncpy(new_bs->name, name, sizeof(new_bs->name));
-	new_bs->name[sizeof(new_bs->name) - 1] = '\0';
 	new_bs->posx = posx;
 	new_bs->posy = posy;
 	new_bs->maint_price = rand_range(10,100);
@@ -47,7 +46,7 @@ BusStation* create_bs(int id, char* name, int posx, int posy)
 	return new_bs;
 }
 
-static void print_bs(const BusStation* bs, int indent)
+void print_bs(const BusStation* bs, int indent)
 {
 	if (!bs)
 	{
@@ -89,13 +88,15 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 	new_br->bl_id = bl_id;
 	new_br->departure = departure;
 	new_br->arrival = arrival;
-	int due = sqrt(pow(bs_getposx(arrival)-bs_getposx(departure),2) + pow(bs_getposy(arrival)-bs_getposy(departure),2)); // Distance entre deux points, avec leurs coordonnées cartésiennes
+	int dx = bs_getposx(arrival)-bs_getposx(departure);
+	int dy = bs_getposy(arrival)-bs_getposy(departure);
+	int due = hypot(dx,dy); // Distance entre deux points, avec leurs coordonnées cartésiennes
 	new_br->distance_due = due;
 	new_br->time_due = due;
 	return new_br;
 }
 
-static void print_br(const BusRoute* br, int indent)
+void print_br(const BusRoute* br, int indent)
 {
 	if (!br)
 	{
@@ -156,11 +157,21 @@ void print_entity(const BusEntity* obj, int indent)
 		);
 		return;
 	}
-	/*if (obj->station && !obj->route)
+	EntityType type = gettype(obj);
+	if (type == INVALID)
+	{
+		fprintf(
+			stdout,
+			"%*sType inconnue ?\n",
+			indent,""
+		);
+		return;
+	}
+	/*if (type == STATION)
 	{
 		print_bs(obj->bs, indent);
 	}*/
-	if (!obj->station && obj->route)
+	if (type == ROUTE)
 	{
 		print_br(obj->br, indent);
 	}
@@ -239,4 +250,17 @@ int br_getdistance_due(const BusRoute* br)
 int br_gettime_due(const BusRoute* br)
 {
 	return br->time_due;
+}
+
+EntityType gettype(const BusEntity* obj)
+{
+	if (obj->station && !obj->route)
+	{
+		return STATION;
+	}
+	else if (!obj->station && obj->route)
+	{
+		return ROUTE;
+	}
+	else	return INVALID;
 }
