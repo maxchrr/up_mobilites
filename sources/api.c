@@ -47,7 +47,7 @@ BusStation* create_bs(int id, char* name, int posx, int posy)
 	return new_bs;
 }
 
-static void print_bs(BusStation* bs, int indent)
+static void print_bs(const BusStation* bs, int indent)
 {
 	fprintf(
 		stdout,
@@ -91,7 +91,7 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 	return new_br;
 }
 
-static void print_br(BusRoute* br, int indent)
+static void print_br(const BusRoute* br, int indent)
 {
 	fprintf(stdout, "*****************************************\n");
 	fprintf(stdout, "*\t\tLigne %d\t\t*\n", br->bl_id);
@@ -137,13 +137,13 @@ BusEntity* open_entity(int is_station, void* data)
 	return new_entity;
 }
 
-void print_entity(BusEntity* obj, int indent)
+void print_entity(const BusEntity* obj, int indent)
 {
 	if (obj == NULL)
 	{
 		fprintf(
 			stdout,
-			"%*sLigne inexistante ou non allouée\n",
+			"%*sEntité inexistante ou non allouée\n",
 			indent,""
 		);
 		return;
@@ -168,32 +168,32 @@ void close_entity(BusEntity* obj)
 	}
 }
 
-int bs_getid(BusStation* bs)
+int bs_getid(const BusStation* bs)
 {
 	return bs->id;
 }
 
-char* bs_getname(BusStation* bs)
+const char* bs_getname(const BusStation* bs)
 {
 	return bs->name;
 }
 
-int bs_getposx(BusStation* bs)
+int bs_getposx(const BusStation* bs)
 {
 	return bs->posx;
 }
 
-int bs_getposy(BusStation* bs)
+int bs_getposy(const BusStation* bs)
 {
 	return bs->posy;
 }
 
-int bs_getmaint_price(BusStation* bs)
+int bs_getmaint_price(const BusStation* bs)
 {
 	return bs->maint_price;
 }
 
-Date bs_getlast_maint_date(BusStation* bs)
+Date bs_getlast_maint_date(const BusStation* bs)
 {
 	return bs->last_maint_date;
 }
@@ -208,27 +208,27 @@ void bs_setlast_maint_date(BusStation* bs, Date date)
 	bs->last_maint_date = date;
 }
 
-int br_getbl_id(BusRoute* br)
+int br_getbl_id(const BusRoute* br)
 {
 	return br->bl_id;
 }
 
-BusStation* br_getdeparture(BusRoute* br)
+BusStation* br_getdeparture(const BusRoute* br)
 {
 	return br->departure;
 }
 
-BusStation* br_getarrival(BusRoute* br)
+BusStation* br_getarrival(const BusRoute* br)
 {
 	return br->arrival;
 }
 
-int br_getdistance_due(BusRoute* br)
+int br_getdistance_due(const BusRoute* br)
 {
 	return br->distance_due;
 }
 
-int br_gettime_due(BusRoute* br)
+int br_gettime_due(const BusRoute* br)
 {
 	return br->time_due;
 }
