@@ -59,7 +59,7 @@ void draw_bl(List l, Font font, Color color)
 			DrawCircle(dx, dy, 8+4,	BLACK);
 			DrawCircle(dx, dy, 8+2,	WHITE);
 			DrawCircle(dx, dy, 8,	color);
-			Vector2 labelPos = { dx-8*2, dy-16-8*2 };
+			Vector2 labelPos = { dx-16-8*2, dy-16-8*2 };
 			DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		}
 		temp = _get_next_node(temp);
