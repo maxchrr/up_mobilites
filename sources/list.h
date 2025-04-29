@@ -8,7 +8,12 @@
 #include <stdbool.h>
 #include "api.h"
 
-typedef struct Node Node;
+typedef struct Node
+{
+	BusEntity* data;    // Data held by the node - pointer on entity
+	struct Node* next;
+	struct Node* prev;
+} Node;
 typedef struct Node* List;
 
 void  init_list(List* l);

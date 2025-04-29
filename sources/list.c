@@ -7,13 +7,6 @@
 #include "api.h"
 #include "list.h"
 
-struct Node
-{
-	BusEntity* data;    // Data held by the node - pointer on entity
-	struct Node* next;
-	struct Node* prev;
-};
-
 void init_list(List* l)
 {
 	if (l == NULL) exit(EXIT_FAILURE);
