@@ -1,3 +1,7 @@
+/*
+ * UPmobilites
+ * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
+ */
 #include <stdio.h>
 #include "api.h"
 #include "list.h"
