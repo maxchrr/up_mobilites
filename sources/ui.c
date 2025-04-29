@@ -16,7 +16,7 @@ void draw_bl(List l, Font font, Color color)
 {
 	int segCount = 0;
 	Node* temp = l;
-	while (!is_empty(_get_next_node(temp)))
+	while (!is_empty(temp))
 	{
 		BusEntity* e = _get_node(temp);
 		if (e->route) ++segCount;
@@ -30,16 +30,16 @@ void draw_bl(List l, Font font, Color color)
 		return;
 	}
 	int idx = 0;
-	Node* head = l;
-	while (!is_empty(head))
+	temp = l;
+	while (!is_empty(temp))
 	{
-		BusEntity* e = _get_node(head);
+		BusEntity* e = _get_node(temp);
 		if (e->station)
 		{
 			BusStation* s = e->bs;
 			points[idx++] = (Vector2){ bs_getposx(s)+PADDING, bs_getposy(s)+PADDING };
 		}
-		head = _get_next_node(head);
+		temp = _get_next_node(temp);
 	}
 	// Draw the lines connecting the stations
 	for (int i=0; i<idx-1; ++i)
@@ -47,10 +47,10 @@ void draw_bl(List l, Font font, Color color)
 	for (int i=0; i<idx-1; ++i)
 		DrawLineEx(points[i], points[i+1], 4.0f, color);
 	// Draw the stations
-	head = l;
-	while (!is_empty(head))
+	temp = l;
+	while (!is_empty(temp))
 	{
-		BusEntity* e = _get_node(head);
+		BusEntity* e = _get_node(temp);
 		if (e->station)
 		{
 			BusStation* s = e->bs;
@@ -62,7 +62,7 @@ void draw_bl(List l, Font font, Color color)
 			Vector2 labelPos = { dx-8*2, dy-16-8*2 };
 			DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		}
-		head = _get_next_node(head);
+		temp = _get_next_node(temp);
 	}
 	free(points);
 }
