@@ -15,7 +15,7 @@ struct BusStation
 	char name[30];                // Nom de l'arrêt (pour l'affichage)
 	int posx, posy;               // Coordonées sur le plan
 	int maint_price;              // Prix de maintenance (keuro)
-	struct Date last_maint_date;  // Date de la dernière maintenance
+	Date last_maint_date;  // Date de la dernière maintenance
 };
 
 struct BusRoute
@@ -42,7 +42,7 @@ BusStation* create_bs(int id, char* name, int posx, int posy)
 	new_bs->posx = posx;
 	new_bs->posy = posy;
 	new_bs->maint_price = rand_range(10,100);
-	struct Date maint_date = rand_date(2018, 2024);
+	Date maint_date = rand_date(2018, 2024);
 	new_bs->last_maint_date = maint_date;
 	return new_bs;
 }
@@ -193,7 +193,7 @@ int bs_getmaint_price(BusStation* bs)
 	return bs->maint_price;
 }
 
-struct Date bs_getlast_maint_date(BusStation* bs)
+Date bs_getlast_maint_date(BusStation* bs)
 {
 	return bs->last_maint_date;
 }
@@ -203,7 +203,7 @@ void bs_setmaint_price(BusStation* bs, int value)
 	bs->maint_price = value;
 }
 
-void bs_setlast_maint_date(BusStation* bs, struct Date date)
+void bs_setlast_maint_date(BusStation* bs, Date date)
 {
 	bs->last_maint_date = date;
 }

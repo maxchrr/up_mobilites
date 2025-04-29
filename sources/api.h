@@ -42,7 +42,7 @@ char*        bs_getname(BusStation* bs);
 int          bs_getposx(BusStation* bs);
 int          bs_getposy(BusStation* bs);
 int          bs_getmaint_price(BusStation* bs);
-struct Date  bs_getlast_maint_date(BusStation* bs);
+Date  bs_getlast_maint_date(BusStation* bs);
 
 int               br_getbl_id(BusRoute* br);
 BusStation*  br_getdeparture(BusRoute* br);
@@ -52,6 +52,6 @@ int               br_gettime_due(BusRoute* br);
 
 /* Mutateur */
 void  bs_setmaint_price(BusStation* bs, int value);
-void  bs_setlast_maint_date(BusStation* bs, struct Date date);
+void  bs_setlast_maint_date(BusStation* bs, Date date);
 
 #endif // API_H_

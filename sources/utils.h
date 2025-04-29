@@ -7,13 +7,13 @@
 
 int rand_range(int min, int max);
 
-struct Date
+typedef struct
 {
 	int day;
 	int month;
 	int year;
-};
+} Date;
 
-struct Date rand_date(int start_year, int end_year);
+Date rand_date(int start_year, int end_year);
 
 #endif // UTILS_H_

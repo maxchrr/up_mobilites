@@ -1,12 +1,6 @@
 #include <stdio.h>
-#include "raylib.h"
 #include "api.h"
 #include "list.h"
-
-#define SCREEN_WIDTH	1200
-#define SCREEN_HEIGHT	400
-
-#define WINDOW_TITLE	"UPmobilites"
 
 List create_bl(int id)
 {
