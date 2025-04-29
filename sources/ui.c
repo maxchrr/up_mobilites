@@ -31,7 +31,7 @@ void draw_bl(List l, Font font, Color color)
 	}
 	int idx = 0;
 	Node* head = l;
-	while (!is_empty(head) && !is_empty(_get_next_node(head)))
+	while (!is_empty(head))
 	{
 		BusEntity* e = _get_node(head);
 		if (e->station)
@@ -41,16 +41,14 @@ void draw_bl(List l, Font font, Color color)
 		}
 		head = _get_next_node(head);
 	}
-
+	// Draw the lines connecting the stations
 	for (int i=0; i<idx-1; ++i)
 		DrawLineEx(points[i], points[i+1], 8.0f, WHITE);
 	for (int i=0; i<idx-1; ++i)
 		DrawLineEx(points[i], points[i+1], 4.0f, color);
-
-	free(points);
-
+	// Draw the stations
 	head = l;
-	while (!is_empty(_get_next_node(head)))
+	while (!is_empty(head))
 	{
 		BusEntity* e = _get_node(head);
 		if (e->station)
@@ -66,6 +64,7 @@ void draw_bl(List l, Font font, Color color)
 		}
 		head = _get_next_node(head);
 	}
+	free(points);
 }
 
 void draw_bus(BusPtr bus, Color color)

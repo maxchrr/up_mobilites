@@ -62,8 +62,6 @@ List create_bl2(const int id)
 	r = create_br(id, d, a);
 	new_bl = insert_at_tail(new_bl, open_entity(0, r));
 	new_bl = insert_at_tail(new_bl, open_entity(1, a));
-	r = create_br(id, a, d);
-	new_bl = insert_at_tail(new_bl, open_entity(0, r));
 	return new_bl;
 }
 
@@ -90,7 +88,11 @@ int main(void)
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
-		//bus_travel(bus, bus_getdirection(bus), &incx, &incy);
+		ClearBackground(RAYWHITE);
+		draw_bl(bl1, font, DARKGREEN);
+		draw_bl(bl2, font, DARKBLUE);
+		bus_travel(bus, bus_getdirection(bus), &incx, &incy);
+		draw_bus(bus, YELLOW);
 		EndDrawing();
 	}
 
