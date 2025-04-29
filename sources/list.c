@@ -170,14 +170,12 @@ Node* _get_last_node(List l)
 
 Node* _get_next_node(List l)
 {
-	if (is_empty(l)) return NULL;
-	return l->next;
+	return l ? l->next : NULL;
 }
 
 Node* _get_prev_node(List l)
 {
-	if (is_empty(l)) return NULL;
-	return l->prev;
+	return l ? l->prev : NULL;
 }
 
 BusEntity* _get_node(Node* n)
@@ -199,9 +197,8 @@ void swap_node(Node* n1, Node* n2)
 
 int length(List l)
 {
-	if (is_empty(l)) return 0;
-	int c=1;
-	while (!is_empty(_get_next_node(l)))
+	int c=0;
+	while (!is_empty(l))
 	{
 		++c;
 		l = _get_next_node(l);
@@ -211,7 +208,7 @@ int length(List l)
 
 int sizeof_bytes(List l)
 {
-	return (length(l)*sizeof(List));
+	return length(l)*sizeof(List);
 }
 
 List merge(List l1, List l2)
@@ -220,12 +217,36 @@ List merge(List l1, List l2)
 	init_list(&new_list); // Create a new empty List
 	while (!is_empty(l1))
 	{
-		new_list = insert_at_tail(new_list, _get_node(l1));
+		BusEntity* orig = _get_node(l1);
+		BusEntity* copy = NULL;
+		if (gettype(orig) == STATION)
+		{
+			BusStation* bs = orig->bs;
+			copy = open_entity(1, create_bs(bs_getid(bs), bs_getname(bs), bs_getposx(bs), bs_getposy(bs)));
+		}
+		if (gettype(orig) == ROUTE)
+		{
+			BusRoute* br = orig->br;
+			copy = open_entity(0, create_br(br_getbl_id(br), br_getdeparture(br), br_getarrival(br)));
+		}
+		new_list = insert_at_tail(new_list, copy);
 		l1 = _get_next_node(l1); // Copy each Node of the first List
 	}
 	while (!is_empty(l2))
 	{
-		new_list = insert_at_tail(new_list, _get_node(l2));
+		BusEntity* orig = _get_node(l2);
+		BusEntity* copy = NULL;
+		if (gettype(orig) == STATION)
+		{
+			BusStation* bs = orig->bs;
+			copy = open_entity(1, create_bs(bs_getid(bs), bs_getname(bs), bs_getposx(bs), bs_getposy(bs)));
+		}
+		if (gettype(orig) == ROUTE)
+		{
+			BusRoute* br = orig->br;
+			copy = open_entity(0, create_br(br_getbl_id(br), br_getdeparture(br), br_getarrival(br)));
+		}
+		new_list = insert_at_tail(new_list, copy);
 		l2 = _get_next_node(l2); // Copy each Node of the second List
 	}
 	return new_list;
