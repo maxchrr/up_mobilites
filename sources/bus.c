@@ -40,7 +40,7 @@ void print_bus(const BusPtr bus)
 
 void destroy_bus(BusPtr bus)
 {
-	destroy_list(bus->bl);
+	//destroy_list(bus->bl);
 	free(bus);
 }
 
