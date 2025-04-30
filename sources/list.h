@@ -42,8 +42,9 @@ void  swap_node(Node* n1, Node* n2);
 int   length(List l);
 int   sizeof_bytes(List l);
 
-List  merge(List l1, List l2);
-List  append(List l1, List l2);
+BusEntity*  _copy_entity(BusEntity* orig);
+List        merge(List l1, List l2);
+List        append(List l1, List l2);
 
 Node*  find_node(List l, BusEntity* obj);
 int    count_node(List l, BusEntity* obj);
