@@ -190,6 +190,7 @@ void close_entity(BusEntity* obj)
 
 int bs_getid(const BusStation* bs)
 {
+	if (!bs) return -1;
 	return bs->id;
 }
 
