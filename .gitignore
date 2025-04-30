@@ -6,6 +6,7 @@
 !*.c
 !*.h
 !vendor/
-!selawk.ttf
-!timetable.ini
+!Luciole-Regular.ttf
+!vendor/timetables/
+!timetable*.ini
 !Makefile
