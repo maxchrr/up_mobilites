@@ -266,9 +266,12 @@ List append(List l1, List l2)
 Node* find_node(List l, BusEntity* obj)
 {
 	if (is_empty(l)) return NULL;
-	while (_get_node(l) != obj && !is_empty(_get_next_node(l)))
+	while (!is_empty(l))
+	{
+		if (_get_node(l) == obj) return l;
 		l = _get_next_node(l); // Get the first occurence of x
-	return l;
+	}
+	return NULL;
 }
 
 int count_node(List l, BusEntity* obj)
