@@ -91,7 +91,7 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 	new_br->arrival = arrival;
 	int dx = bs_getposx(arrival)-bs_getposx(departure);
 	int dy = bs_getposy(arrival)-bs_getposy(departure);
-	int due = hypot(dx,dy); // Distance entre deux points, avec leurs coordonnées cartésiennes
+	int due = (int)round(hypot(dx,dy)); // Distance entre deux points, avec leurs coordonnées cartésiennes
 	new_br->distance_due = due;
 	new_br->time_due = due;
 	return new_br;
