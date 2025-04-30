@@ -37,7 +37,6 @@ BusStation* create_bs(int id, const char* name, int posx, int posy)
 		fprintf(stderr, "Memory allocation failed\n");
 		return NULL;
 	}
-	memset(new_bs, 0, sizeof(BusStation));
 	new_bs->id = id;
 	strncpy(new_bs->name, name, sizeof(new_bs->name));
 	new_bs->posx = posx;
