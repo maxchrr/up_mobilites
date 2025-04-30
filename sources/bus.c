@@ -110,25 +110,25 @@ List bl_getprev_bs(List l)
 List bl_getnext_br(List l)
 {
 	if (is_empty(l)) return NULL;
-	if (gettype(_get_node(l)) == STATION)
-		return _get_next_node(l); // Le suivant est une route
-	else
+	if (gettype(_get_node(l)) != STATION)
 	{
 		fprintf(stdout, "Attention déjà sur une route\n");
-		return l;
+		return NULL;
 	}
+	else
+		return _get_next_node(l); // Le suivant est une route
 }
 
 List bl_getprev_br(List l)
 {
 	if (is_empty(l)) return NULL;
-	if (gettype(_get_node(l)) == STATION)
-		return _get_prev_node(l); // Le précédent est une route
-	else
+	if (gettype(_get_node(l)) != STATION)
 	{
 		fprintf(stdout, "Attention déjà sur une route\n");
-		return l;
+		return NULL;
 	}
+	else
+		return _get_prev_node(l); // Le précédent est une route
 }
 
 void bus_setposx(BusPtr bus, int value)
