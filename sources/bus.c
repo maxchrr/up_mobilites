@@ -209,7 +209,11 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 	}
 	current = (direction == DEP_TO_ARR) ? bl_getnext_bs(bus_getbl(bus))
 	                                    : bl_getprev_bs(bus_getbl(bus));
-	if (is_empty(current)) return;
+	if (is_empty(current))
+	{
+		bus_setdirection(bus, (direction == DEP_TO_ARR) ? ARR_TO_DEP : DEP_TO_ARR); // Changement de direction automatique au terminus
+		return;
+	}
 	int xd = bus_getposx(bus);
 	int yd = bus_getposy(bus);
 	int xa = bl_getposx(current);
@@ -228,9 +232,8 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 	float delta = GetFrameTime();
 	float speed = bus_getspeed(bus);
 	float move = speed*delta;
-	float ratio = move/dist;
-	dx = dx*ratio;
-	dy = dy*ratio;
+	dx *= move/dist;
+	dy *= move/dist;
 	bus_setposx(bus, xd+dx);
 	bus_setposy(bus, yd+dy);
 	*incx = (int)dx;
