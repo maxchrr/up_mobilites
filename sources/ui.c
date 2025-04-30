@@ -37,7 +37,7 @@ void draw_bl(List l, Font font, Color color)
 		if (e->station)
 		{
 			BusStation* s = e->bs;
-			points[idx++] = (Vector2){ bs_getposx(s)+PADDING, bs_getposy(s)+PADDING };
+			points[idx++] = (Vector2){ bs_getposx(s)+PADDING/2, bs_getposy(s)+PADDING };
 		}
 		temp = _get_next_node(temp);
 	}
@@ -54,7 +54,7 @@ void draw_bl(List l, Font font, Color color)
 		if (e->station)
 		{
 			BusStation* s = e->bs;
-			int dx = bs_getposx(s)+PADDING;
+			int dx = bs_getposx(s)+PADDING/2;
 			int dy = bs_getposy(s)+PADDING;
 			DrawCircle(dx, dy, 8+4,	BLACK);
 			DrawCircle(dx, dy, 8+2,	WHITE);
@@ -69,7 +69,7 @@ void draw_bl(List l, Font font, Color color)
 
 void draw_bus(BusPtr bus, Color color)
 {
-	int dx = bus_getposx(bus)+PADDING;
+	int dx = bus_getposx(bus)+PADDING/2;
 	int dy = bus_getposy(bus)+PADDING;
 	DrawCircle(dx+3, dy+3, 16-4, Fade(BLACK, 0.2f));
 	DrawCircle(dx, dy, 16, BLACK);
