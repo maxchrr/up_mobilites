@@ -182,7 +182,7 @@ Node* _get_prev_node(List l)
 
 BusEntity* _get_node(Node* n)
 {
-	if (is_empty(n))
+	if (n == NULL)
 	{
 		fprintf(stderr, "Trying to access data of a NULL node\n");
 		return NULL;
@@ -259,7 +259,7 @@ List append(List l1, List l2)
 	if (is_empty(l1)) return l2;
 	if (is_empty(l2)) return l1;
 	Node* tail = _get_last_node(l1); // Go to last Node of the first List
-	tail->next = l2;
+	tail->next = l2; // Not deep-copied
 	if (!is_empty(l2))
 		l2->prev = tail; // Append the second List
 	return l1;
