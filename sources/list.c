@@ -159,11 +159,13 @@ List delete(List l, int p)
 
 Node* _get_first_node(List l)
 {
+	if (is_empty(l)) return NULL;
 	return l;
 }
 
 Node* _get_last_node(List l)
 {
+	if (is_empty(l)) return NULL;
 	while (!is_empty(l->next)) l = l->next;
 	return l;
 }
