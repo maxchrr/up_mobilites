@@ -17,6 +17,7 @@ typedef struct Bus
 	int bl_id;               // Identifant de la ligne de bus courante
 	List bl;                 // Pointeur sur l'entité courante de la ligne de bus (une Station ou une Route)
 	BusDirection direction;  // Sens de circulation du bus
+	float speed;             // Vitesse de circulation
 	float stop_time;         // Temps d'arrêt à une station
 	bool is_stopping;        // État de l'attente
 } Bus;
@@ -33,6 +34,7 @@ int           bus_getposy(const BusPtr bus);
 int           bus_getbl_id(const BusPtr bus);
 List          bus_getbl(const BusPtr bus);
 BusDirection  bus_getdirection(const BusPtr bus);
+float         bus_getspeed(const BusPtr bus);
 float         bus_getstop_time(const BusPtr bus);
 bool          bus_getis_stopping(const BusPtr bus);
 
@@ -49,6 +51,7 @@ void  bus_setposy(BusPtr bus, int value);
 void  bus_setbl_id(BusPtr bus, int value);
 void  bus_setbl(BusPtr bus, List bl);
 void  bus_setdirection(BusPtr bus, BusDirection value);
+void  bus_setspeed(BusPtr bus, float value);
 void  bus_setstop_time(BusPtr bus, float value);
 void  bus_setis_stopping(BusPtr bus, bool value);
 

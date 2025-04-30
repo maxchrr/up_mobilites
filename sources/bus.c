@@ -23,6 +23,7 @@ BusPtr init_bus(int id, List bl)
 		return NULL;
 	}
 	new_bus->bl_id = br_getbl_id(_get_node(next)->br);
+	new_bus->speed = 100.0f;
 	new_bus->stop_time = 0.0f;
 	new_bus->is_stopping = false;
 	return new_bus;
@@ -75,6 +76,11 @@ List bus_getbl(const BusPtr bus)
 BusDirection bus_getdirection(const BusPtr bus)
 {
 	return bus->direction;
+}
+
+float bus_getspeed(const BusPtr bus)
+{
+	return bus->speed;
 }
 
 float bus_getstop_time(const BusPtr bus)
@@ -168,6 +174,11 @@ void bus_setdirection(BusPtr bus, BusDirection value)
 	bus->direction = value;
 }
 
+void bus_setspeed(BusPtr bus, float value)
+{
+	bus->speed = value;
+}
+
 void bus_setstop_time(BusPtr bus, float value)
 {
 	bus->stop_time = value;
@@ -189,7 +200,6 @@ void bus_departure(BusPtr bus, List bl, BusDirection direction)
 
 void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 {
-	int padError = 2;
 	List current;
 	if (bus_getis_stopping(bus))
 	{
@@ -199,28 +209,30 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 	}
 	current = (direction == DEP_TO_ARR) ? bl_getnext_bs(bus_getbl(bus))
 	                                    : bl_getprev_bs(bus_getbl(bus));
-	if (!is_empty(current))
+	if (is_empty(current)) return;
+	int xd = bus_getposx(bus);
+	int yd = bus_getposy(bus);
+	int xa = bl_getposx(current);
+	int ya = bl_getposy(current);
+	float dx = xa-xd;
+	float dy = ya-yd;
+	float dist = sqrtf(dx*dx + dy*dy);
+	if (dist < 1.0f) // Arrêt si proche
 	{
-		int xd = bus_getposx(bus);
-		int yd = bus_getposy(bus);
-		int xa = bl_getposx(current);
-		int ya = bl_getposy(current);
-		float dx = xa-xd;
-		float dy = ya-yd;
-		float dist = sqrtf(dx*dx + dy*dy);
-		if (dist <= padError)
-		{
-			print_bus(bus);
-			bus_setbl(bus, current);
-			bus_setstop_time(bus, GetTime());
-			bus_setis_stopping(bus, true);
-			return;
-		}
-		dx = (dx/dist)*padError;
-		dy = (dy/dist)*padError;
-		*incx = (int)dx;
-		*incy = (int)dy;
-		bus_setposx(bus, xd+*incx);
-		bus_setposy(bus, yd+*incy);
+		print_bus(bus);
+		bus_setbl(bus, current);
+		bus_setstop_time(bus, GetTime());
+		bus_setis_stopping(bus, true);
+		return;
 	}
+	float delta = GetFrameTime();
+	float speed = bus_getspeed(bus);
+	float move = speed*delta;
+	float ratio = move/dist;
+	dx = dx*ratio;
+	dy = dy*ratio;
+	bus_setposx(bus, xd+dx);
+	bus_setposy(bus, yd+dy);
+	*incx = (int)dx;
+	*incy = (int)dy;
 }
