@@ -34,7 +34,7 @@ BusRoute*  create_br(int bl_id, BusStation* departure, BusStation* arrival);
 void       print_br(const BusRoute* br, int indent);
 void       destroy_br(BusRoute* br);
 
-BusEntity*  open_entity(int is_station, void* data);
+BusEntity*  open_entity(EntityType type, void* data);
 void        print_entity(const BusEntity* obj, int indent);
 void        close_entity(BusEntity* obj);
 

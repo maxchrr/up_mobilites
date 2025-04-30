@@ -124,7 +124,7 @@ void destroy_br(BusRoute* br)
 	free(br);
 }
 
-BusEntity* open_entity(int is_station, void* data)
+BusEntity* open_entity(EntityType type, void* data)
 {
 	BusEntity* new_entity = malloc(sizeof(BusEntity));
 	if (!new_entity)
@@ -132,13 +132,13 @@ BusEntity* open_entity(int is_station, void* data)
 		fprintf(stderr, "Memory allocation failed\n");
 		return NULL;
 	}
-	if (is_station)
+	if (type == STATION)
 	{
 		new_entity->station = 1;
 		new_entity->route = 0;
 		new_entity->bs = (BusStation*)data;
 	}
-	else
+	else if (type == ROUTE)
 	{
 		new_entity->station = 0;
 		new_entity->route = 1;
