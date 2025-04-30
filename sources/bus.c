@@ -23,6 +23,8 @@ BusPtr init_bus(int id, List bl)
 		return NULL;
 	}
 	new_bus->bl_id = br_getbl_id(_get_node(next)->br);
+	new_bus->stop_time = 0.0f;
+	new_bus->is_stopping = false;
 	return new_bus;
 }
 
@@ -73,6 +75,16 @@ List bus_getbl(const BusPtr bus)
 BusDirection bus_getdirection(const BusPtr bus)
 {
 	return bus->direction;
+}
+
+float bus_getstop_time(const BusPtr bus)
+{
+	return bus->stop_time;
+}
+
+bool bus_getis_stopping(const BusPtr bus)
+{
+	return bus->is_stopping;
 }
 
 int bl_getposx(List l)
@@ -151,9 +163,19 @@ void bus_setbl(BusPtr bus, List bl)
 	bus->bl = bl;
 }
 
-void bus_setdirection(BusPtr bus, BusDirection direction)
+void bus_setdirection(BusPtr bus, BusDirection value)
 {
-	bus->direction = direction;
+	bus->direction = value;
+}
+
+void bus_setstop_time(BusPtr bus, float value)
+{
+	bus->stop_time = value;
+}
+
+void bus_setis_stopping(BusPtr bus, bool value)
+{
+	bus->is_stopping = value;
 }
 
 void bus_departure(BusPtr bus, List bl, BusDirection direction)
@@ -169,45 +191,36 @@ void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
 {
 	int padError = 2;
 	List current;
-	static float stopTime = 0;
-	static bool isStopping = false;
-	if (isStopping)
+	if (bus_getis_stopping(bus))
 	{
-		if (GetTime()-stopTime >= 2.0f)
-			isStopping = false;
+		if (GetTime()-bus_getstop_time(bus) >= 2.0f)
+			bus_setis_stopping(bus, false);
 		return;
 	}
-	if (direction == DEP_TO_ARR)
-	{
-		current = bl_getnext_bs(bus_getbl(bus));
-	}
-	else if (direction == ARR_TO_DEP)
-	{
-		current = bl_getprev_bs(bus_getbl(bus));
-	}
-	*incx = 0; *incy = 0;
+	current = (direction == DEP_TO_ARR) ? bl_getnext_bs(bus_getbl(bus))
+	                                    : bl_getprev_bs(bus_getbl(bus));
 	if (!is_empty(current))
 	{
 		int xd = bus_getposx(bus);
 		int yd = bus_getposy(bus);
 		int xa = bl_getposx(current);
 		int ya = bl_getposy(current);
-		if (abs(xd-xa)<=padError && abs(yd-ya)<=padError)
+		float dx = xa-xd;
+		float dy = ya-yd;
+		float dist = sqrtf(dx*dx + dy*dy);
+		if (dist <= padError)
 		{
-			bus_setbl(bus, current);
 			print_bus(bus);
-			stopTime = GetTime();
-			isStopping = true;
+			bus_setbl(bus, current);
+			bus_setstop_time(bus, GetTime());
+			bus_setis_stopping(bus, true);
+			return;
 		}
-		else
-		{
-			float ratio = (xa != xd) ? abs((ya-yd)/(xa-xd)) : 0.0f;
-			if (xa>xd)	*incx = padError;
-			else if (xa<xd)	*incx = -padError;
-			if (ya>yd)	*incy = padError*ratio;
-			else if (yd<ya)	*incy = -padError*ratio;
-			bus_setposx(bus, bus_getposx(bus)+*incx);
-			bus_setposy(bus, bus_getposy(bus)+*incy);
-		}
+		dx = (dx/dist)*padError;
+		dy = (dy/dist)*padError;
+		*incx = (int)dx;
+		*incy = (int)dy;
+		bus_setposx(bus, xd+*incx);
+		bus_setposy(bus, yd+*incy);
 	}
 }

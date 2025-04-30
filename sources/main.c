@@ -111,7 +111,7 @@ int main(void)
 	List bl2 = create_bl2(102);
 	List bl3 = create_bl3(103);
 	BusPtr bus1 = init_bus(1, bl1); // Bus sur ligne 1
-	BusPtr bus2 = init_bus(1, bl2); // Bus sur ligne 2
+	BusPtr bus2 = init_bus(2, bl2); // Bus sur ligne 2
 	print_list(bl1);
 	print_list(bl2);
 	print_list(bl3);
