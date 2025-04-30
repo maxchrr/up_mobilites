@@ -33,12 +33,13 @@ void print_bus(const BusPtr bus)
 {
 	fprintf(
 		stdout,
-		"Bus %d sur ligne %d départ %s (%d,%d)\n",
+		"Bus %d sur ligne %d départ %s (%d,%d) direction %s\n",
 		bus_getid(bus),
 		bus_getbl_id(bus),
 		bs_getname(_get_node(bus->bl)->bs),
 		bus_getposx(bus),
-		bus_getposy(bus)
+		bus_getposy(bus),
+		(bus_getdirection(bus) == DEP_TO_ARR) ? "Terminus" : "Départ"
 	);
 }
 
