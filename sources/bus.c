@@ -16,7 +16,7 @@ BusPtr init_bus(int id, List bl)
 	new_bus->id = id;
 	bus_departure(new_bus, bl, DEP_TO_ARR);
 	Node* next = _get_next_node(bl);
-	if (is_empty(next))
+	if (is_empty(next) || gettype(_get_node(next)) != ROUTE)
 	{
 		fprintf(stderr, "Mauvais type\n");
 		free(new_bus);
