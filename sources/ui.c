@@ -71,6 +71,7 @@ void draw_bus(BusPtr bus, Color color)
 {
 	int dx = bus_getposx(bus)+PADDING;
 	int dy = bus_getposy(bus)+PADDING;
+	DrawCircle(dx+3, dy+3, 16-4, Fade(BLACK, 0.2f));
 	DrawCircle(dx, dy, 16, BLACK);
 	DrawCircle(dx, dy, 16-2, WHITE);
 	DrawCircle(dx, dy, 16-4, color);
