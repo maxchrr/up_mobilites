@@ -6,7 +6,7 @@
 #include "api.h"
 #include "sort.h"
 
-int compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b)
+bool compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b)
 {
 	if (gettype(a) != STATION || gettype(b) != STATION) return 0;
 	int cost_a = bs_getmaint_price(a->bs);
@@ -14,7 +14,7 @@ int compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b)
 	return cost_a < cost_b;
 }
 
-int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b)
+bool compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b)
 {
 	if (gettype(a) != STATION || gettype(b) != STATION) return 0;
 	Date d1 = bs_getlast_maint_date(a->bs);

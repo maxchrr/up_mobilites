@@ -10,8 +10,8 @@
 typedef int (*cmp)(const BusEntity*, const BusEntity*);
 
 /* Fonctions de comparaisons */
-int compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b);
-int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b);
+bool compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b);
+bool compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b);
 
 List sort_list(List l, bool (*compare)(const BusEntity*, const BusEntity*));
 

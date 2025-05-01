@@ -9,6 +9,8 @@
 #include "raylib.h"
 #include "ui.h"
 #include "loader.h"
+#include "sort.h"
+
 
 #define SCREEN_WIDTH	1200
 #define SCREEN_HEIGHT	800
