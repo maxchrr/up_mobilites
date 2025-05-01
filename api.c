@@ -9,25 +9,27 @@
 #include "utils.h"
 #include "api.h"
 
+#define MAX_NAME_LEN		32
+
 struct BusStation
 {
-	int id;                       // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
-	char name[30];                // Nom de l'arrêt (pour l'affichage)
-	int posx, posy;               // Coordonées sur le plan
-	int maint_price;              // Prix de maintenance (keuro)
-	Date last_maint_date;  // Date de la dernière maintenance
+	int id;                   // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
+	char name[MAX_NAME_LEN];  // Nom de l'arrêt (pour l'affichage)
+	int posx, posy;           // Coordonées sur le plan
+	int maint_price;          // Prix de maintenance (keuro)
+	Date last_maint_date;     // Date de la dernière maintenance
 };
 
 struct BusRoute
 {
-	int bl_id;                      // Identifiant de la ligne de bus entrante
+	int bl_id;              // Identifiant de la ligne de bus entrante
 	BusStation* departure;  // Pointeur sur l'arrêt entrant
 	BusStation* arrival;    // Pointeur sur l'arrêt sortant
-	int distance_due;               // Coût en distance (mètres)
-	int time_due;                   // Coût en temps de parcours (secondes)
+	int distance_due;       // Coût en distance (mètres)
+	int time_due;           // Coût en temps de parcours (secondes)
 };
 
-BusStation* create_bs(int id, char* name, int posx, int posy)
+BusStation* create_bs(int id, const char* name, int posx, int posy)
 {
 	BusStation* new_bs = malloc(sizeof(BusStation));
 	if (!new_bs)
@@ -35,10 +37,8 @@ BusStation* create_bs(int id, char* name, int posx, int posy)
 		fprintf(stderr, "Memory allocation failed\n");
 		return NULL;
 	}
-	memset(new_bs, 0, sizeof(BusStation));
 	new_bs->id = id;
 	strncpy(new_bs->name, name, sizeof(new_bs->name));
-	new_bs->name[sizeof(new_bs->name) - 1] = '\0';
 	new_bs->posx = posx;
 	new_bs->posy = posy;
 	new_bs->maint_price = rand_range(10,100);
@@ -89,7 +89,9 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 	new_br->bl_id = bl_id;
 	new_br->departure = departure;
 	new_br->arrival = arrival;
-	int due = sqrt(pow(bs_getposx(arrival)-bs_getposx(departure),2) + pow(bs_getposy(arrival)-bs_getposy(departure),2)); // Distance entre deux points, avec leurs coordonnées cartésiennes
+	int dx = bs_getposx(arrival)-bs_getposx(departure);
+	int dy = bs_getposy(arrival)-bs_getposy(departure);
+	int due = (int)round(hypot(dx,dy)); // Distance entre deux points, avec leurs coordonnées cartésiennes
 	new_br->distance_due = due;
 	new_br->time_due = due;
 	return new_br;
@@ -122,7 +124,7 @@ void destroy_br(BusRoute* br)
 	free(br);
 }
 
-BusEntity* open_entity(int is_station, void* data)
+BusEntity* open_entity(EntityType type, void* data)
 {
 	BusEntity* new_entity = malloc(sizeof(BusEntity));
 	if (!new_entity)
@@ -130,13 +132,13 @@ BusEntity* open_entity(int is_station, void* data)
 		fprintf(stderr, "Memory allocation failed\n");
 		return NULL;
 	}
-	if (is_station)
+	if (type == STATION)
 	{
 		new_entity->station = 1;
 		new_entity->route = 0;
 		new_entity->bs = (BusStation*)data;
 	}
-	else
+	else if (type == ROUTE)
 	{
 		new_entity->station = 0;
 		new_entity->route = 1;
@@ -156,11 +158,21 @@ void print_entity(const BusEntity* obj, int indent)
 		);
 		return;
 	}
-	/*if (obj->station && !obj->route)
+	EntityType type = gettype(obj);
+	if (type == INVALID)
+	{
+		fprintf(
+			stdout,
+			"%*sType inconnue ?\n",
+			indent,""
+		);
+		return;
+	}
+	/*if (type == STATION)
 	{
 		print_bs(obj->bs, indent);
 	}*/
-	if (!obj->station && obj->route)
+	if (type == ROUTE)
 	{
 		print_br(obj->br, indent);
 	}
@@ -178,6 +190,7 @@ void close_entity(BusEntity* obj)
 
 int bs_getid(const BusStation* bs)
 {
+	if (!bs) return -1;
 	return bs->id;
 }
 
@@ -239,4 +252,17 @@ int br_getdistance_due(const BusRoute* br)
 int br_gettime_due(const BusRoute* br)
 {
 	return br->time_due;
+}
+
+EntityType gettype(const BusEntity* obj)
+{
+	if (obj->station && !obj->route)
+	{
+		return STATION;
+	}
+	else if (!obj->station && obj->route)
+	{
+		return ROUTE;
+	}
+	else	return INVALID;
 }

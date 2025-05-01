@@ -18,7 +18,7 @@ void print_list(List l)
 	Node* temp = l;
 	if (temp == NULL)
 	{
-		printf("List is empty\n");
+		fprintf(stderr, "List is empty\n");
 		return;
 	}
 	while(temp != NULL)
@@ -123,7 +123,7 @@ List delete_at_head(List l)
 		head->prev = NULL;
 	_free_node(l);
 	l = head;
-	return head;
+	return l;
 }
 
 List delete_at_tail(List l)
@@ -159,30 +159,30 @@ List delete(List l, int p)
 
 Node* _get_first_node(List l)
 {
+	if (is_empty(l)) return NULL;
 	return l;
 }
 
 Node* _get_last_node(List l)
 {
+	if (is_empty(l)) return NULL;
 	while (!is_empty(l->next)) l = l->next;
 	return l;
 }
 
 Node* _get_next_node(List l)
 {
-	if (is_empty(l)) return NULL;
-	return l->next;
+	return l ? l->next : NULL;
 }
 
 Node* _get_prev_node(List l)
 {
-	if (is_empty(l)) return NULL;
-	return l->prev;
+	return l ? l->prev : NULL;
 }
 
 BusEntity* _get_node(Node* n)
 {
-	if (is_empty(n))
+	if (n == NULL)
 	{
 		fprintf(stderr, "Trying to access data of a NULL node\n");
 		return NULL;
@@ -199,9 +199,8 @@ void swap_node(Node* n1, Node* n2)
 
 int length(List l)
 {
-	if (is_empty(l)) return 0;
-	int c=1;
-	while (!is_empty(_get_next_node(l)))
+	int c=0;
+	while (!is_empty(l))
 	{
 		++c;
 		l = _get_next_node(l);
@@ -211,7 +210,22 @@ int length(List l)
 
 int sizeof_bytes(List l)
 {
-	return (length(l)*sizeof(List));
+	return length(l)*sizeof(Node);
+}
+
+BusEntity* _copy_entity(BusEntity* orig)
+{
+	if (gettype(orig) == STATION)
+	{
+		BusStation* bs = orig->bs;
+		return open_entity(STATION, create_bs(bs_getid(bs), bs_getname(bs), bs_getposx(bs), bs_getposy(bs)));
+	}
+	if (gettype(orig) == ROUTE)
+	{
+		BusRoute* br = orig->br;
+		return open_entity(ROUTE, create_br(br_getbl_id(br), br_getdeparture(br), br_getarrival(br)));
+	}
+	return NULL;
 }
 
 List merge(List l1, List l2)
@@ -220,12 +234,16 @@ List merge(List l1, List l2)
 	init_list(&new_list); // Create a new empty List
 	while (!is_empty(l1))
 	{
-		new_list = insert_at_tail(new_list, _get_node(l1));
+		BusEntity* orig = _get_node(l1);
+		BusEntity* copy = _copy_entity(orig);
+		new_list = insert_at_tail(new_list, copy);
 		l1 = _get_next_node(l1); // Copy each Node of the first List
 	}
 	while (!is_empty(l2))
 	{
-		new_list = insert_at_tail(new_list, _get_node(l2));
+		BusEntity* orig = _get_node(l2);
+		BusEntity* copy = _copy_entity(orig);
+		new_list = insert_at_tail(new_list, copy);
 		l2 = _get_next_node(l2); // Copy each Node of the second List
 	}
 	return new_list;
@@ -236,7 +254,7 @@ List append(List l1, List l2)
 	if (is_empty(l1)) return l2;
 	if (is_empty(l2)) return l1;
 	Node* tail = _get_last_node(l1); // Go to last Node of the first List
-	tail->next = l2;
+	tail->next = l2; // Not deep-copied
 	if (!is_empty(l2))
 		l2->prev = tail; // Append the second List
 	return l1;
@@ -245,16 +263,19 @@ List append(List l1, List l2)
 Node* find_node(List l, BusEntity* obj)
 {
 	if (is_empty(l)) return NULL;
-	while (_get_node(l) != obj && !is_empty(_get_next_node(l)))
+	while (!is_empty(l))
+	{
+		if (_get_node(l) == obj) return l;
 		l = _get_next_node(l); // Get the first occurence of x
-	return l;
+	}
+	return NULL;
 }
 
 int count_node(List l, BusEntity* obj)
 {
 	if (is_empty(l)) return 0;
 	int c=0;
-	while (!is_empty(_get_next_node(l)))
+	while (!is_empty(l))
 	{
 		if (_get_node(l) == obj) ++c;
 		l = _get_next_node(l);

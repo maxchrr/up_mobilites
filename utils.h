@@ -5,6 +5,8 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#include "raylib.h"
+
 int rand_range(int min, int max);
 
 typedef struct
@@ -16,8 +18,6 @@ typedef struct
 
 Date rand_date(int start_year, int end_year);
 
-#include "list.h"
-
-List import_stations_from_ini(const char* filename, int* bl_id_out);
+Color random_color(void);
 
 #endif // UTILS_H_

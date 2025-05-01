@@ -3,17 +3,91 @@
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
 #include <stdio.h>
-#include "utils.h"
+#include "api.h"
+#include "bus.h"
+#include "list.h"
+#include "raylib.h"
+#include "ui.h"
+#include "loader.h"
+
+#define SCREEN_WIDTH	1200
+#define SCREEN_HEIGHT	800
+#define WINDOW_TITLE	"UPmobilites"
 
 int main(void)
 {
-    List stations = NULL;
-    int bus_line_id = 0;
+	Timetable timetables[MAX_TIMETABLES];
+	int total = load_timetables(timetables, "vendor/timetables");
+	if (total == 0)
+	{
+		fprintf(stderr, "Aucune ligne de bus chargée\n");
+		return 1;
+	}
+	for (int i=0; i<total; ++i)
+	{
+		print_list(timetables[i].list);
+	}
 
-    stations = import_stations_from_ini("../vendor/timetable.ini", &bus_line_id);
+	BusPtr buses[MAX_TIMETABLES];
+	int incx[MAX_TIMETABLES] = {0};
+	int incy[MAX_TIMETABLES] = {0};
 
-    printf("Ligne de bus lue depuis fichier : %d\n", bus_line_id);
-    print_list(stations);
-    destroy_list(stations);
-    return 0;
+	for (int i=0; i<total; ++i)
+	{
+		buses[i] = init_bus(i+1, timetables[i].list);
+		if (!buses[i])
+		{
+			fprintf(stderr, "Impossible d'initialiser un bus pour la ligne %d", timetables[i].id);
+			return 1;
+		}
+	}
+
+	char input;
+	scanf(" %c", &input);
+
+	if (input == 'c') {
+		for (int i = 0; i < total; ++i) {
+			timetables[i].list = sort_list(timetables[i].list, compare_by_maint_price_desc);
+			print_list(timetables[i].list);
+		}
+	} else if (input == 'd') {
+		for (int i = 0; i < total; ++i) {
+			timetables[i].list = sort_list(timetables[i].list, compare_by_last_maint_date_asc);
+			print_list(timetables[i].list);
+		}
+	}
+	
+
+	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
+	SetTargetFPS(60);
+
+	Font font = LoadFontEx("vendor/Luciole-Regular.ttf", 18, NULL, 255);
+	if (font.texture.id == 0)
+	{
+		fprintf(stderr, "Police non chargée\n");
+		return 1;
+	}
+
+	while (!WindowShouldClose())
+	{
+		BeginDrawing();
+		ClearBackground(RAYWHITE);
+
+		for (int i=0; i<total; ++i)
+		{
+			draw_bl(timetables[i].list, font, timetables[i].color);
+			draw_bus(buses[i], DARKPURPLE);
+			bus_travel(buses[i], bus_getdirection(buses[i]), &incx[i], &incy[i]);
+  		}
+
+		EndDrawing();
+	}
+
+	UnloadFont(font);
+	CloseWindow();
+	for (int i=0; i<total; ++i) {
+		destroy_bus(buses[i]);
+		destroy_list(timetables[i].list);
+	}
+	return 0;
 }

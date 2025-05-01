@@ -11,6 +11,8 @@
 typedef struct BusStation BusStation;
 typedef struct BusRoute BusRoute;
 
+typedef enum { INVALID, STATION, ROUTE } EntityType;
+
 /* Entité global via union */
 typedef struct BusEntity
 {
@@ -24,15 +26,15 @@ typedef struct BusEntity
 } BusEntity;
 
 /* Méthodes sur les entités */
-BusStation*         create_bs(int id, char* name, int posx, int posy);
+BusStation*  create_bs(int id, const char* name, int posx, int posy);
 void         print_bs(const BusStation* bs, int indent);
-void                destroy_bs(BusStation* bs);
+void         destroy_bs(BusStation* bs);
 
-BusRoute*          create_br(int bl_id, BusStation* departure, BusStation* arrival);
-void        print_br(const BusRoute* br, int indent);
-void               destroy_br(BusRoute* br);
+BusRoute*  create_br(int bl_id, BusStation* departure, BusStation* arrival);
+void       print_br(const BusRoute* br, int indent);
+void       destroy_br(BusRoute* br);
 
-BusEntity*  open_entity(int is_station, void* data);
+BusEntity*  open_entity(EntityType type, void* data);
 void        print_entity(const BusEntity* obj, int indent);
 void        close_entity(BusEntity* obj);
 
@@ -49,6 +51,8 @@ BusStation*  br_getdeparture(const BusRoute* br);
 BusStation*  br_getarrival(const BusRoute* br);
 int          br_getdistance_due(const BusRoute* br);
 int          br_gettime_due(const BusRoute* br);
+
+EntityType  gettype(const BusEntity* obj);
 
 /* Mutateur */
 void  bs_setmaint_price(BusStation* bs, int value);
