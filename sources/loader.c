@@ -49,11 +49,6 @@ int load_timetables(Timetable timetables[], const char* path)
 	struct dirent* entry;
 	int count = 0;
 	char buffer[256];
-	const Color colors[MAX_TIMETABLES] =
-	{
-		DARKGRAY, DARKGREEN, DARKBLUE, DARKPURPLE, DARKBROWN
-	};
-
 	while ((entry = readdir(dir)) != NULL && count < MAX_TIMETABLES)
 	{
 		const char* name = entry->d_name;
