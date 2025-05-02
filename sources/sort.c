@@ -25,40 +25,58 @@ int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b)
 	return				da.day - db.day;
 }
 
-static cmp curr_cmp = NULL;
-
-static int wrapper(const void* a, const void* b)
+static void split_list(List source, List* front_ref, List* back_ref)
 {
-	const BusEntity* ea = *(const BusEntity**)a;
-	const BusEntity* eb = *(const BusEntity**)b;
-	return curr_cmp(ea,eb);
+	if (!source || !_get_next_node(source))
+	{
+		*front_ref = source;
+		*back_ref = NULL;
+		return;
+	}
+	List slow = source;
+	List fast = _get_next_node(source);
+	// slow avance de 1, fast avance de 2 => division
+	while (fast)
+	{
+		fast = _get_next_node(fast);
+		if (fast)
+		{
+			slow = _get_next_node(slow);
+			fast = _get_next_node(fast);
+		}
+	}
+	// Division de la liste
+	*front_ref = source;
+	*back_ref = _get_next_node(slow);
+	slow->next = NULL;  // Point de séparation
 }
 
-BusLine sort_list(BusLine bl, cmp cmp)
+static List sorted_merge(List a, List b, cmp comparator)
 {
-	if (!bl || !cmp) return bl;
-	curr_cmp = cmp;  // enregistrement temporaire du comparateur
-	// Conversion en tableau
-	int n = length(bl);
-	BusEntity** arr = calloc(n,sizeof(BusEntity*));
-	if (!arr) return bl;
-	List head = bl;
-	int i=0;
-	while (!is_empty(head))
+	if (!a) return b;
+	if (!b) return a;
+	List result = NULL;
+	// Compare pour choisir qui de a ou b est le plus petit
+	if (comparator(_get_node(a), _get_node(b)) <= 0)
 	{
-		arr[i] = _get_node(head);
-		head = _get_next_node(head);
-		++i;
+		result = a;  // a plus petit -> commence avec a
+		result->next = sorted_merge(_get_next_node(a), b, comparator);  // fusionne le reste de a avec b
 	}
-	// Tri (quicksort)
-	qsort(arr, n, sizeof(BusEntity*), wrapper);
-	// Recréation de la liste
-	BusLine sorted = NULL;
-	init_list(&sorted);
-	for (int i=0; i<n; ++i)
+	else
 	{
-		sorted = insert_at_tail(sorted, arr[i]);
+		result = b;  // b plus petit -> commence avec b
+		result->next = sorted_merge(a, _get_next_node(b), comparator);  // fusionne le reste de b avec a
 	}
-	free(arr);
-	return sorted;
+	return result;
+}
+BusLine sort_list(BusLine bl, cmp comparator)
+{
+	if (!bl || !_get_next_node(bl) || !comparator) return bl;
+	List a = NULL, b = NULL;
+	split_list(bl, &a, &b);
+	// Trie des sous-listes récursif
+	a = sort_list(a, comparator);
+	b = sort_list(b, comparator);
+	// Fusion des deux sous-listes non triée en une seule liste triée
+	return sorted_merge(a, b, comparator);
 }

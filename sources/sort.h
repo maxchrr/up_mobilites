@@ -14,6 +14,6 @@ int  compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b);
 int  compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b);
 
 /* Unique fonction de tri */
-BusLine  sort_list(BusLine bl, cmp cmp);
+BusLine  sort_list(BusLine bl, cmp comparator);
 
 #endif // SORT_H_
