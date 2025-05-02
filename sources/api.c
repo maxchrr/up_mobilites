@@ -132,16 +132,16 @@ BusEntity* open_entity(EntityType type, void* e)
 		fprintf(stderr, "Memory allocation failed\n");
 		return NULL;
 	}
+	new_entity->station = 0;
+	new_entity->route = 0;
 	if (type == STATION)
 	{
-		new_entity->station = (type == STATION);
-		new_entity->route = (type == ROUTE);
+		new_entity->station = 1;
 		new_entity->bs = (BusStation*)e;
 	}
 	else if (type == ROUTE)
 	{
-		new_entity->station = (type == STATION);
-		new_entity->route = (type == ROUTE);
+		new_entity->route = 1;
 		new_entity->br = (BusRoute*)e;
 	}
 	return new_entity;
