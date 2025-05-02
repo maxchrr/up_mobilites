@@ -37,7 +37,7 @@ int main(void)
 		buses[i] = init_bus(i+1, timetables[i].list);
 		if (!buses[i])
 		{
-			fprintf(stderr, "Impossible d'initialiser un bus pour la ligne %d", timetables[i].id);
+			fprintf(stderr, "Impossible d'initialiser un bus pour la ligne %d\n", timetables[i].id);
 			return 1;
 		}
 	}
@@ -48,8 +48,8 @@ int main(void)
 	Font font = LoadFontEx("vendor/Luciole-Regular.ttf", 18, NULL, 255);
 	if (font.texture.id == 0)
 	{
-		fprintf(stderr, "Police non chargée\n");
-		return 1;
+		fprintf(stderr, "Police non chargée, utilisation de celle par défaut\n");
+		font = GetFontDefault();
 	}
 
 	while (!WindowShouldClose())
