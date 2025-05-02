@@ -5,6 +5,8 @@
 !sources/
 !*.c
 !*.h
+!tests/
+!*.c
 !vendor/
 !Luciole-Regular.ttf
 !vendor/timetables/

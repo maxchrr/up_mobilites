@@ -12,7 +12,7 @@ int compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b)
 	if (!a || !b || gettype(a) != STATION || gettype(b) != STATION) return 0;
 	int pa = bs_getmaint_price(a->bs);
 	int pb = bs_getmaint_price(b->bs);
-	return pa - pb;  // décroissant
+	return pb - pa;  // décroissant
 }
 
 int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b)
@@ -25,7 +25,7 @@ int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b)
 	return				da.day - db.day;
 }
 
-static Compare curr_cmp = NULL;
+static cmp curr_cmp = NULL;
 
 static int wrapper(const void* a, const void* b)
 {
@@ -34,7 +34,7 @@ static int wrapper(const void* a, const void* b)
 	return curr_cmp(ea,eb);
 }
 
-BusLine sort_list(BusLine bl, Compare cmp)
+BusLine sort_list(BusLine bl, cmp cmp)
 {
 	if (!bl || !cmp) return bl;
 	curr_cmp = cmp;  // enregistrement temporaire du comparateur
@@ -43,10 +43,12 @@ BusLine sort_list(BusLine bl, Compare cmp)
 	BusEntity** arr = calloc(n,sizeof(BusEntity*));
 	if (!arr) return bl;
 	List head = bl;
-	for (int i=0; i<n && head; ++i)
+	int i=0;
+	while (!is_empty(head))
 	{
-		arr[i] = _get_node(_get_next_node(head));
+		arr[i] = _get_node(head);
 		head = _get_next_node(head);
+		++i;
 	}
 	// Tri (quicksort)
 	qsort(arr, n, sizeof(BusEntity*), wrapper);
@@ -56,10 +58,6 @@ BusLine sort_list(BusLine bl, Compare cmp)
 	for (int i=0; i<n; ++i)
 	{
 		sorted = insert_at_tail(sorted, arr[i]);
-	}
-	for (int i=0; i<n; ++i)
-	{
-		free(arr[i]);
 	}
 	free(arr);
 	return sorted;

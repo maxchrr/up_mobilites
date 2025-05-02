@@ -7,13 +7,13 @@
 
 #include "bus.h"
 
-typedef int (*Compare)(const BusEntity*, const BusEntity*);
+typedef int (*cmp)(const BusEntity*, const BusEntity*);
 
 /* Fonctions de comparaisons */
-int compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b);
-int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b);
+int  compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b);
+int  compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b);
 
 /* Unique fonction de tri */
-BusLine sort_list(BusLine bl, Compare cmp);
+BusLine  sort_list(BusLine bl, cmp cmp);
 
 #endif // SORT_H_
