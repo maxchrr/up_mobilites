@@ -15,14 +15,6 @@ Bus* init_bus(int id, BusLine bl)
 	Bus* new_bus = malloc(sizeof(Bus));
 	new_bus->id = id;
 	bus_departure(new_bus, bl, DEP_TO_ARR);
-	Node* next = _get_next_node(bl);
-	if (is_empty(next) || gettype(_get_node(next)) != ROUTE)
-	{
-		fprintf(stderr, "Mauvais type\n");
-		free(new_bus);
-		return NULL;
-	}
-	new_bus->bl_id = br_getbl_id(_get_node(next)->br);
 	new_bus->speed = 100.0f;
 	new_bus->stop_time = 0.0f;
 	new_bus->is_stopping = false;
@@ -94,12 +86,12 @@ bool bus_getis_stopping(const Bus* bus)
 	return bus->is_stopping;
 }
 
-int bl_getposx(BusLine l)
+int bl_getcurrent_posx(BusLine l)
 {
 	return bs_getposx(_get_node(l)->bs);
 }
 
-int bl_getposy(BusLine l)
+int bl_getcurrent_posy(BusLine l)
 {
 	return bs_getposy(_get_node(l)->bs);
 }
@@ -192,10 +184,17 @@ void bus_setis_stopping(Bus* bus, bool value)
 
 void bus_departure(Bus* bus, BusLine bl, BusDirection direction)
 {
+	Node* next = _get_next_node(bl);
+	if (is_empty(next) || gettype(_get_node(next)) != ROUTE)
+	{
+		fprintf(stderr, "Mauvais type\n");
+		return;
+	}
+	bus_setbl_id(bus, br_getbl_id(_get_node(next)->br));
 	bus_setbl(bus, bl);
 	bus_setdirection(bus, direction);
-	bus_setposx(bus, bl_getposx(bl));
-	bus_setposy(bus, bl_getposy(bl));
+	bus_setposx(bus, bl_getcurrent_posx(bl));
+	bus_setposy(bus, bl_getcurrent_posy(bl));
 	print_bus(bus);
 }
 
@@ -215,12 +214,9 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 		bus_setdirection(bus, (direction == DEP_TO_ARR) ? ARR_TO_DEP : DEP_TO_ARR); // Changement de direction automatique au terminus
 		return;
 	}
-	int xd = bus_getposx(bus);
-	int yd = bus_getposy(bus);
-	int xa = bl_getposx(current);
-	int ya = bl_getposy(current);
-	float dx = xa-xd;
-	float dy = ya-yd;
+	int xd = bus_getposx(bus), yd = bus_getposy(bus);
+	int xa = bl_getcurrent_posx(current), ya = bl_getcurrent_posy(current);
+	float dx = xa-xd, dy = ya-yd;
 	float dist = sqrtf(dx*dx + dy*dy);
 	if (dist < 1.0f) // Arrêt si proche
 	{
@@ -232,10 +228,7 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 	}
 	float speed = bus_getspeed(bus);
 	float move = speed*delta;
-	dx *= move/dist;
-	dy *= move/dist;
-	bus_setposx(bus, xd+dx);
-	bus_setposy(bus, yd+dy);
-	*incx = (int)dx;
-	*incy = (int)dy;
+	dx *= move/dist; dy *= move/dist;
+	bus_setposx(bus, xd+dx); bus_setposy(bus, yd+dy);
+	*incx = (int)dx; *incy = (int)dy;
 }

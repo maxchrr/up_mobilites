@@ -39,8 +39,8 @@ float         bus_getspeed(const Bus* bus);
 float         bus_getstop_time(const Bus* bus);
 bool          bus_getis_stopping(const Bus* bus);
 
-int      bl_getposx(BusLine l);
-int      bl_getposy(BusLine l);
+int      bl_getcurrent_posx(BusLine l);
+int      bl_getcurrent_posy(BusLine l);
 BusLine  bl_getnext_bs(BusLine l);
 BusLine  bl_getprev_bs(BusLine l);
 BusLine  bl_getnext_br(BusLine l);
