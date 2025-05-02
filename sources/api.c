@@ -108,6 +108,11 @@ void print_br(const BusRoute* br)
 		fprintf(stdout, "[NULL ROUTE]\n");
 		return;
 	}
+	if (!br->departure || !br->arrival)
+	{
+		fprintf(stdout, "  --> [MISSING STATION DATA]\n");
+	return;
+	}
 	fprintf(
 		stdout,
 		"[ROUTE #%d] %s -> %s (%dm / %ds)\n",
