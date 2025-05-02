@@ -31,12 +31,12 @@ int main(void)
 	printf("Avant tri par coût de maintenance décroissant :\n");
 	print_list(bl);
 
-	bl = sort_list(bl, compare_by_maint_price_desc);
+	bl = list_sort(bl, compare_by_maint_price_desc);
 
 	printf("\nAprès tri par coût de maintenance décroissant :\n");
 	print_list(bl);
 
-	bl = sort_list(bl, compare_by_last_maint_date_asc);
+	bl = list_sort(bl, compare_by_last_maint_date_asc);
 
 	printf("\nAprès tri par date de maintenance croissante :\n");
 	print_list(bl);

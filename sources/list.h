@@ -42,8 +42,8 @@ int   length(List l);
 int   sizeof_bytes(const List l);
 
 BusEntity*  copy_entity(BusEntity* orig);
-List        merge(List l1, List l2);
-List        append(List l1, List l2);
+List        list_merge(List l1, List l2);
+List        list_append(List l1, List l2);
 
 Node*  find_node(List l, BusEntity* obj);
 int    count_node(List l, BusEntity* obj);

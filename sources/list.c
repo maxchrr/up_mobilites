@@ -229,7 +229,7 @@ BusEntity* copy_entity(BusEntity* orig)
 	return NULL;
 }
 
-List merge(List l1, List l2)
+List list_merge(List l1, List l2)
 {
 	List new_list;
 	init_list(&new_list); // Create a new empty List
@@ -250,7 +250,7 @@ List merge(List l1, List l2)
 	return new_list;
 }
 
-List append(List l1, List l2)
+List list_append(List l1, List l2)
 {
 	if (list_is_empty(l1)) return l2;
 	if (list_is_empty(l2)) return l1;

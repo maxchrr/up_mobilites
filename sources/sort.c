@@ -69,14 +69,14 @@ static List sorted_merge(List a, List b, cmp comparator)
 	}
 	return result;
 }
-BusLine sort_list(BusLine bl, cmp comparator)
+BusLine list_sort(BusLine bl, cmp comparator)
 {
 	if (!bl || !list_getnext_node(bl) || !comparator) return bl;
 	List a = NULL, b = NULL;
 	split_list(bl, &a, &b);
 	// Trie des sous-listes récursif
-	a = sort_list(a, comparator);
-	b = sort_list(b, comparator);
+	a = list_sort(a, comparator);
+	b = list_sort(b, comparator);
 	// Fusion des deux sous-listes non triée en une seule liste triée
 	return sorted_merge(a, b, comparator);
 }
