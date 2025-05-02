@@ -2,8 +2,7 @@
  * Doubly Linked List implementation
  * Copyright (c) 2025 Max Charrier. All Rights Reserved.
  */
-#ifndef LIST_H_
-#define LIST_H_
+#pragma once
 
 #include <stdbool.h>
 #include "api.h"
@@ -48,5 +47,3 @@ List        append(List l1, List l2);
 
 Node*  find_node(List l, BusEntity* obj);
 int    count_node(List l, BusEntity* obj);
-
-#endif // LIST_H_

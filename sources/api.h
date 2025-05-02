@@ -2,8 +2,7 @@
  * Public API
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
-#ifndef API_H_
-#define API_H_
+#pragma once
 
 #include "utils.h"
 
@@ -59,5 +58,3 @@ EntityType  gettype(const BusEntity* obj);
 /* Mutateur */
 void  bs_setmaint_price(BusStation* bs, int value);
 void  bs_setlast_maint_date(BusStation* bs, Date date);
-
-#endif // API_H_

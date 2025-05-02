@@ -2,8 +2,7 @@
  * Fonctions de tri
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
-#ifndef SORT_H_
-#define SORT_H_
+#pragma once
 
 #include "bus.h"
 
@@ -15,5 +14,3 @@ int  compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b);
 
 /* Unique fonction de tri */
 BusLine  sort_list(BusLine bl, cmp comparator);
-
-#endif // SORT_H_
