@@ -6,9 +6,7 @@
 
 #include <stdbool.h>
 #include "api.h"
-#include "list.h"
-
-typedef List BusLine;  // Pour plus de lisibilité
+#include "busline.h"
 
 typedef enum { DEP_TO_ARR, ARR_TO_DEP} BusDirection;
 typedef struct Bus
@@ -37,13 +35,6 @@ BusDirection  bus_getdirection(const Bus* bus);
 float         bus_getspeed(const Bus* bus);
 float         bus_getstop_time(const Bus* bus);
 bool          bus_getis_stopping(const Bus* bus);
-
-int      bl_getcurrent_posx(BusLine l);
-int      bl_getcurrent_posy(BusLine l);
-BusLine  bl_getnext_bs(BusLine l);
-BusLine  bl_getprev_bs(BusLine l);
-BusLine  bl_getnext_br(BusLine l);
-BusLine  bl_getprev_br(BusLine l);
 
 /* Mutateur */
 void  bus_setposx(Bus* bus, int value);
