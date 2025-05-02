@@ -4,18 +4,36 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <time.h>
 #include "api.h"
 #include "bus.h"
 #include "list.h"
 #include "raylib.h"
 #include "ui.h"
 
-#define PADDING	200
+#define MAX_COLORS	256
+#define MAX_ATTEMPTS	1000  // limite de sécurité
+#define PADDING		200
+
+static Color used_colors[MAX_COLORS];
+static int color_count = 0;
+
+float color_distance(Color a, Color b)
+{
+	int dr = a.r - b.r;
+	int dg = a.g - b.g;
+	int db = a.b - b.b;
+	return sqrtf(dr * dr + dg * dg + db * db);  // distance euclidienne
+}
 
 Color random_color(void)
 {
+	SetRandomSeed((unsigned int)time(NULL));
 	Color c;
 	int max, min;
+	#define MIN_DIST	100.0f  // minimum acceptable distinct
+	int attempts = 0;
 	do
 	{
 		c = (Color){
@@ -26,7 +44,20 @@ Color random_color(void)
 		};
 		max = (c.r > c.g) ? ((c.r > c.b) ? c.r : c.b) : ((c.g > c.b) ? c.g : c.b);
 		min = (c.r < c.g) ? ((c.r < c.b) ? c.r : c.b) : ((c.g < c.b) ? c.g : c.b);
-	} while ((max-min) < 30);
+		if ((max-min) < 30) continue;
+		int too_close = 0;
+		for (int i=0; i<color_count; ++i)
+		{
+			if (color_distance(c, used_colors[i]) < MIN_DIST)
+			{
+				too_close = 1;
+				break;
+			}
+		}
+		if (!too_close) break;
+	} while (++attempts < MAX_ATTEMPTS);
+	#undef MIN_DIST
+	if (color_count < MAX_COLORS) used_colors[color_count++] = c;
 	return c;
 }
 
