@@ -4,6 +4,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include "list.h"
 #include "busline.h"
 
 int bl_getcurrent_posx(BusLine bl)
@@ -74,4 +75,21 @@ BusLine bl_getprev_br(BusLine bl)
 		return list_getprev_node(bl); // Le précédent est une route
 	else
 		return NULL;
+}
+
+void bl_remove(BusLine bl)
+{
+	bl = delete_at_tail(bl);  // Dernière station
+	bl = delete_at_tail(bl);  // Dernière route
+}
+
+BusLine bl_concat(BusLine bl1, BusLine bl2)
+{
+	BusStation* last_station = list_getnode(list_getlast_node(bl1))->bs;
+	BusRoute* last_route = list_getnode(list_getprev_node(list_getlast_node(bl1)))->br;
+	BusStation* new_first_station = list_getnode(list_getfirst_node(bl2))->bs;
+	last_route = create_br(br_getbl_id(last_route), last_station, new_first_station);
+	bl1 = insert_at_tail(bl1, open_entity(ROUTE, last_route));
+	bl1 = list_append(bl1, bl2);
+	return bl1;
 }

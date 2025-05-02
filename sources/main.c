@@ -52,11 +52,12 @@ int main(void)
 		fprintf(stderr, "Police non chargée, utilisation de celle par défaut\n");
 		font = GetFontDefault();
 	}
-
-	bool deleteMode = false;
+	
 	int* keys = calloc(total,sizeof(int));
 	for (int i=0; i<total; ++i)
 		keys[i] = KEY_ONE+i;  // Associe KEY_ONE, KEY_TWO, ..., en fonction de 'i'
+	bool deleteMode = false;
+	bool concatMode = false;
 	while (!WindowShouldClose())
 	{
 		// Mode suppression
@@ -79,10 +80,20 @@ int main(void)
 			}
 			// Si c'est un indice valide et qu'il reste plus d'un chemin => supprime
 			if (i > 0 && i <= total && length(timetables[i-1].list) > 3)
-			{
-				timetables[i-1].list = delete_at_tail(timetables[i-1].list);  // Dernière station
-				timetables[i-1].list = delete_at_tail(timetables[i-1].list);  // Dernière route
-			}
+				bl_remove(timetables[i-1].list);
+		}
+
+		// Mode concaténation
+		if (IsKeyPressed(KEY_C))
+		{
+			concatMode = true;
+			printf("[MODE] Concaténation\n");
+		}
+		if (concatMode)
+		{
+			concatMode = false;
+			timetables[0].list = bl_concat(timetables[0].list, timetables[1].list);;  // Réintégration de la liste concaténé
+			timetables[1].list = NULL;  // La liste est oublié, ne pas libérer ici, mais à la fin
 		}
 
 		// Boucle d'affichage
@@ -97,6 +108,13 @@ int main(void)
 			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
 			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
 			DrawTextEx(font, text, textPos, 20, 0, RED);
+		}
+		else if (concatMode)
+		{
+			const char* text = "-- CONCAT --";
+			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
+			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
+			DrawTextEx(font, text, textPos, 20, 0, GREEN);
 		}
 
 		for (int i=0; i<total; ++i)

@@ -254,10 +254,10 @@ List list_append(List l1, List l2)
 {
 	if (list_is_empty(l1)) return l2;
 	if (list_is_empty(l2)) return l1;
-	Node* tail = list_getlast_node(l1); // Go to last Node of the first List
-	tail->next = l2; // Not deep-copied
-	if (!list_is_empty(l2))
-		l2->prev = tail; // Append the second List
+	Node* tail = list_getlast_node(l1);  // Go to last Node of the first List
+	Node* head = list_getfirst_node(l2);  // Go to first Node of the second List
+	tail->next = head;  // Append the second List
+	head->prev = tail;  // Preprend the first List
 	return l1;
 }
 

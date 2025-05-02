@@ -14,3 +14,6 @@ BusLine  bl_getnext_bs(BusLine l);
 BusLine  bl_getprev_bs(BusLine l);
 BusLine  bl_getnext_br(BusLine l);
 BusLine  bl_getprev_br(BusLine l);
+
+void     bl_remove(BusLine bl);
+BusLine  bl_concat(BusLine bl1, BusLine bl2);
