@@ -17,7 +17,6 @@ Bus* init_bus(int id, BusLine bl)
 		return NULL;
 	}
 	new_bus->id = id;
-	memset(new_bus, 0, sizeof(Bus));  // pour la sécurité
 	bus_departure(new_bus, bl, DEP_TO_ARR);
 	new_bus->speed = 100.0f;
 	new_bus->stop_time = 0.0f;
@@ -32,7 +31,7 @@ void print_bus(const Bus* bus)
 		"[BUS #%d] ROUTE #%d \"%s\" (%d,%d) --> %s\n",
 		bus_getid(bus),
 		bus_getbl_id(bus),
-		bs_getname(_get_node(bus->bl)->bs),
+		bs_getname(list_getnode(bus->bl)->bs),
 		bus_getposx(bus),
 		bus_getposy(bus),
 		(bus_getdirection(bus) == DEP_TO_ARR) ? "ARR" : "DEP"
@@ -93,58 +92,64 @@ bool bus_getis_stopping(const Bus* bus)
 
 int bl_getcurrent_posx(BusLine l)
 {
-	return bs_getposx(_get_node(l)->bs);
+	return bs_getposx(list_getnode(l)->bs);
 }
 
 int bl_getcurrent_posy(BusLine l)
 {
-	return bs_getposy(_get_node(l)->bs);
+	return bs_getposy(list_getnode(l)->bs);
 }
 
 BusLine bl_getnext_bs(BusLine l)
 {
-	if (is_empty(l)) return NULL;
-	if (gettype(_get_node(l)) == STATION)
+	if (list_is_empty(l)) return NULL;
+	if (gettype(list_getnode(l)) == STATION)
 	{
-		if (is_empty(_get_next_node(l))) return NULL; // Terminus
-		else return _get_next_node(_get_next_node(l)); // Le suivant est une route, donc après une station
+		if (list_is_empty(list_getnext_node(l)))
+			return NULL; // Terminus
+		else
+			return list_getnext_node(list_getnext_node(l)); // Le suivant est une route, donc après une station
 	}
-	else return _get_next_node(l); // Le suivant est une station*/
+	else
+		return list_getnext_node(l); // Le suivant est une station
 }
 
 BusLine bl_getprev_bs(BusLine l)
 {
-	if (is_empty(l)) return NULL;
-	if (gettype(_get_node(l)) == STATION)
+	if (list_is_empty(l)) return NULL;
+	if (gettype(list_getnode(l)) == STATION)
 	{
-		if (is_empty(_get_prev_node(l))) return NULL; // Terminus
-		else return _get_prev_node(_get_prev_node(l)); // Le précédent est une route, donc avant une station
+		if (list_is_empty(list_getprev_node(l)))
+			return NULL; // Terminus
+		else
+			return list_getprev_node(list_getprev_node(l)); // Le précédent est une route, donc avant une station
 	}
-	else return _get_prev_node(l); // Le précédent est une station
+	else
+		return list_getprev_node(l); // Le précédent est une station
 }
 
 BusLine bl_getnext_br(BusLine l)
 {
-	if (is_empty(l)) return NULL;
-	if (gettype(_get_node(l)) != STATION)
+	if (list_is_empty(l)) return NULL;
+	if (gettype(list_getnode(l)) != STATION)
 	{
 		fprintf(stdout, "Attention déjà sur une route\n");
 		return NULL;
 	}
 	else
-		return _get_next_node(l); // Le suivant est une route
+		return list_getnext_node(l); // Le suivant est une route
 }
 
 BusLine bl_getprev_br(BusLine l)
 {
-	if (is_empty(l)) return NULL;
-	if (gettype(_get_node(l)) != STATION)
+	if (list_is_empty(l)) return NULL;
+	if (gettype(list_getnode(l)) != STATION)
 	{
 		fprintf(stdout, "Attention déjà sur une route\n");
 		return NULL;
 	}
 	else
-		return _get_prev_node(l); // Le précédent est une route
+		return list_getprev_node(l); // Le précédent est une route
 }
 
 void bus_setposx(Bus* bus, int value)
@@ -189,7 +194,7 @@ void bus_setis_stopping(Bus* bus, bool value)
 
 void bus_departure(Bus* bus, BusLine bl, BusDirection direction)
 {
-	BusEntity* next = _get_node(_get_next_node(bl));
+	BusEntity* next = list_getnode(list_getnext_node(bl));
 	bus_setbl_id(bus, (gettype(next) == ROUTE) ? br_getbl_id(next->br) : -1);
 	bus_setbl(bus, bl);
 	bus_setdirection(bus, direction);
@@ -209,7 +214,7 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 	}
 	current = (direction == DEP_TO_ARR) ? bl_getnext_bs(bus_getbl(bus))
 	                                    : bl_getprev_bs(bus_getbl(bus));
-	if (is_empty(current))
+	if (list_is_empty(current))
 	{
 		bus_setdirection(bus, (direction == DEP_TO_ARR) ? ARR_TO_DEP : DEP_TO_ARR); // Changement de direction automatique au terminus
 		return;

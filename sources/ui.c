@@ -34,10 +34,10 @@ int _count_segments(BusLine l)
 {
 	int c=0;
 	List head = l;
-	while (!is_empty(head))
+	while (!list_is_empty(head))
 	{
-		if (gettype(_get_node(head)) == ROUTE) ++c;
-		head = _get_next_node(head);
+		if (gettype(list_getnode(head)) == ROUTE) ++c;
+		head = list_getnext_node(head);
 	}
 	return c;
 }
@@ -46,15 +46,15 @@ void _bs_getpos(BusLine l, Vector2* points)
 {
 	int idx = 0;
 	List head = l;
-	while (!is_empty(head))
+	while (!list_is_empty(head))
 	{
-		BusEntity* e = _get_node(head);
+		BusEntity* e = list_getnode(head);
 		if (gettype(e) == STATION)
 		{
 			BusStation* s = e->bs;
 			points[idx++] = (Vector2){ bs_getposx(s)+PADDING/2, bs_getposy(s)+PADDING };
 		}
-		head = _get_next_node(head);
+		head = list_getnext_node(head);
 	}
 }
 
@@ -76,9 +76,9 @@ void draw_bl(BusLine l, Font font, Color color)
 		DrawLineEx(points[i], points[i+1], 4.0f, color);
 	// Desinner les stations
 	List head = l;
-	while (!is_empty(head))
+	while (!list_is_empty(head))
 	{
-		BusEntity* e = _get_node(head);
+		BusEntity* e = list_getnode(head);
 		if (e->station)
 		{
 			BusStation* s = e->bs;
@@ -91,7 +91,7 @@ void draw_bl(BusLine l, Font font, Color color)
 			Vector2 labelPos = { dx - labelSize.x / 2, dy - labelSize.y / 2 - 24 };
 			DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		}
-		head = _get_next_node(head);
+		head = list_getnext_node(head);
 	}
 	#undef SIZE
 }

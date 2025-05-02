@@ -27,27 +27,27 @@ int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b)
 
 static void split_list(List source, List* front_ref, List* back_ref)
 {
-	if (!source || !_get_next_node(source))
+	if (!source || !list_getnext_node(source))
 	{
 		*front_ref = source;
 		*back_ref = NULL;
 		return;
 	}
 	List slow = source;
-	List fast = _get_next_node(source);
+	List fast = list_getnext_node(source);
 	// slow avance de 1, fast avance de 2 => division
 	while (fast)
 	{
-		fast = _get_next_node(fast);
+		fast = list_getnext_node(fast);
 		if (fast)
 		{
-			slow = _get_next_node(slow);
-			fast = _get_next_node(fast);
+			slow = list_getnext_node(slow);
+			fast = list_getnext_node(fast);
 		}
 	}
 	// Division de la liste
 	*front_ref = source;
-	*back_ref = _get_next_node(slow);
+	*back_ref = list_getnext_node(slow);
 	slow->next = NULL;  // Point de séparation
 }
 
@@ -57,21 +57,21 @@ static List sorted_merge(List a, List b, cmp comparator)
 	if (!b) return a;
 	List result = NULL;
 	// Compare pour choisir qui de a ou b est le plus petit
-	if (comparator(_get_node(a), _get_node(b)) <= 0)
+	if (comparator(list_getnode(a), list_getnode(b)) <= 0)
 	{
 		result = a;  // a plus petit -> commence avec a
-		result->next = sorted_merge(_get_next_node(a), b, comparator);  // fusionne le reste de a avec b
+		result->next = sorted_merge(list_getnext_node(a), b, comparator);  // fusionne le reste de a avec b
 	}
 	else
 	{
 		result = b;  // b plus petit -> commence avec b
-		result->next = sorted_merge(a, _get_next_node(b), comparator);  // fusionne le reste de b avec a
+		result->next = sorted_merge(a, list_getnext_node(b), comparator);  // fusionne le reste de b avec a
 	}
 	return result;
 }
 BusLine sort_list(BusLine bl, cmp comparator)
 {
-	if (!bl || !_get_next_node(bl) || !comparator) return bl;
+	if (!bl || !list_getnext_node(bl) || !comparator) return bl;
 	List a = NULL, b = NULL;
 	split_list(bl, &a, &b);
 	// Trie des sous-listes récursif

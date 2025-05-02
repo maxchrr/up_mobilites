@@ -21,7 +21,7 @@ void  destroy_list(List l);
 
 List  _alloc_node(BusEntity* obj);
 void  _free_node(Node* n);
-bool  is_empty(List l);
+bool  list_is_empty(List l);
 
 List  insert_at_head(List l, BusEntity* obj);
 List  insert_at_tail(List l, BusEntity* obj);
@@ -31,17 +31,17 @@ List  delete_at_head(List l);
 List  delete_at_tail(List l);
 List  delete(List l, int p);
 
-Node*       _get_first_node(List l);
-Node*       _get_last_node(List l);
-Node*       _get_next_node(List l);
-Node*       _get_prev_node(List l);
-BusEntity*  _get_node(const Node* n);
+Node*       list_getfirst_node(List l);
+Node*       list_getlast_node(List l);
+Node*       list_getnext_node(List l);
+Node*       list_getprev_node(List l);
+BusEntity*  list_getnode(const Node* n);
 
 void  swap_node(Node* n1, Node* n2);
 int   length(List l);
 int   sizeof_bytes(const List l);
 
-BusEntity*  _copy_entity(BusEntity* orig);
+BusEntity*  copy_entity(BusEntity* orig);
 List        merge(List l1, List l2);
 List        append(List l1, List l2);
 
