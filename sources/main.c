@@ -63,7 +63,7 @@ int main(void)
 		{
 			draw_bl(timetables[i].list, font, timetables[i].color);
 			if (buses[i]) draw_bus(buses[i], DARKPURPLE);
-			bus_travel(buses[i], bus_getdirection(buses[i]), &incx[i], &incy[i], delta);
+			bus_travel(buses[i], bus_getdirection(buses[i]), &incx[i], &incy[i], delta, GetTime());
   		}
 
 		EndDrawing();

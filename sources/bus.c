@@ -8,7 +8,6 @@
 #include "api.h"
 #include "list.h"
 #include "bus.h"
-#include "raylib.h"
 
 Bus* init_bus(int id, BusLine bl)
 {
@@ -193,12 +192,12 @@ void bus_departure(Bus* bus, BusLine bl, BusDirection direction)
 	print_bus(bus);
 }
 
-void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta)
+void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta, double time)
 {
 	BusLine current;
 	if (bus_getis_stopping(bus))
 	{
-		if (GetTime()-bus_getstop_time(bus) >= 2.0f)
+		if (time-bus_getstop_time(bus) >= 2.0f)
 			bus_setis_stopping(bus, false);
 		return;
 	}
@@ -217,7 +216,7 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 	{
 		print_bus(bus);
 		bus_setbl(bus, current);
-		bus_setstop_time(bus, GetTime());
+		bus_setstop_time(bus, time);
 		bus_setis_stopping(bus, true);
 		return;
 	}

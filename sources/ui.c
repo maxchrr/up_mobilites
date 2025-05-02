@@ -12,6 +12,24 @@
 
 #define PADDING	200
 
+Color random_color(void)
+{
+	Color c;
+	int max, min;
+	do
+	{
+		c = (Color){
+			GetRandomValue(0, 127),  // Rouge
+			GetRandomValue(0, 127),  // Vert
+			GetRandomValue(0, 127),  // Bleu
+			255                       // Opacité
+		};
+		max = (c.r > c.g) ? ((c.r > c.b) ? c.r : c.b) : ((c.g > c.b) ? c.g : c.b);
+		min = (c.r < c.g) ? ((c.r < c.b) ? c.r : c.b) : ((c.g < c.b) ? c.g : c.b);
+	} while ((max-min) < 30);
+	return c;
+}
+
 int _count_segments(BusLine l)
 {
 	int c=0;

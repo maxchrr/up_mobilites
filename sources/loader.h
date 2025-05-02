@@ -16,7 +16,7 @@ typedef struct
 	Color color;
 } Timetable;
 
-BusLine init_from_file(int id, const char* path);
+BusLine  init_from_file(int id, const char* path);
 
 int   load_timetables(Timetable timetables[], const char* path);
 void  destroy_timetable(Timetable* t);

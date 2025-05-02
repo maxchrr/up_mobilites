@@ -124,7 +124,7 @@ void destroy_br(BusRoute* br)
 	free(br);
 }
 
-BusEntity* open_entity(EntityType type, void* data)
+BusEntity* open_entity(EntityType type, void* e)
 {
 	BusEntity* new_entity = malloc(sizeof(BusEntity));
 	if (!new_entity)
@@ -136,13 +136,13 @@ BusEntity* open_entity(EntityType type, void* data)
 	{
 		new_entity->station = (type == STATION);
 		new_entity->route = (type == ROUTE);
-		new_entity->bs = (BusStation*)data;
+		new_entity->bs = (BusStation*)e;
 	}
 	else if (type == ROUTE)
 	{
 		new_entity->station = (type == STATION);
 		new_entity->route = (type == ROUTE);
-		new_entity->br = (BusRoute*)data;
+		new_entity->br = (BusRoute*)e;
 	}
 	return new_entity;
 }

@@ -8,6 +8,8 @@
 #include "bus.h"
 #include "raylib.h"
 
+Color  random_color(void);
+
 int   _count_segments(BusLine l);
 void  _bs_getpos(BusLine l, Vector2* points);
 

@@ -8,6 +8,7 @@
 #include <string.h>
 #include "api.h"
 #include "utils.h"
+#include "ui.h"
 #include "loader.h"
 
 BusLine init_from_file(int id, const char* path)
