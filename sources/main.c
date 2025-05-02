@@ -73,7 +73,7 @@ int main(void)
 	CloseWindow();
 	for (int i=0; i<total; ++i) {
 		destroy_bus(buses[i]);
-		destroy_list(timetables[i].list);
+		destroy_timetable(&timetables[i]);
 	}
 	return 0;
 }

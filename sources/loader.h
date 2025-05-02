@@ -18,6 +18,7 @@ typedef struct
 
 BusLine init_from_file(int id, const char* path);
 
-int load_timetables(Timetable timetables[], const char* path);
+int   load_timetables(Timetable timetables[], const char* path);
+void  destroy_timetable(Timetable* t);
 
 #endif // LOADER_H_

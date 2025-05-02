@@ -80,3 +80,10 @@ int load_timetables(Timetable timetables[], const char* path)
 	closedir(dir);
 	return count;
 }
+
+void destroy_timetable(Timetable* t)
+{
+	if (!t) return;
+	destroy_list(t->list);
+	t->list = NULL;
+}
