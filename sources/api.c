@@ -73,7 +73,7 @@ void print_bs(const BusStation* bs)
 
 void destroy_bs(BusStation* bs)
 {
-	free(bs);
+	if (bs) free(bs);
 }
 
 BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
@@ -126,7 +126,7 @@ void print_br(const BusRoute* br)
 
 void destroy_br(BusRoute* br)
 {
-	free(br);
+	if (br) free(br);
 }
 
 BusEntity* open_entity(EntityType type, void* e)
