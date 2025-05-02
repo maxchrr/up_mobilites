@@ -7,7 +7,7 @@
 #include "api.h"
 #include "busline.h"
 
-typedef enum { DEP_TO_ARR, ARR_TO_DEP} BusDirection;
+typedef enum { FORWARD, BACKWARD } BusDirection;
 typedef struct Bus
 {
 	int id;                    // Identifiant du bus

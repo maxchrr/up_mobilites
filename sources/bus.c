@@ -16,7 +16,7 @@ Bus* init_bus(int id, BusLine bl)
 		return NULL;
 	}
 	new_bus->id = id;
-	bus_departure(new_bus, bl, DEP_TO_ARR);
+	bus_departure(new_bus, bl, FORWARD);
 	new_bus->speed = 100.0f;
 	new_bus->stop_time = 0.0f;
 	new_bus->is_stopping = false;
@@ -33,7 +33,7 @@ void print_bus(const Bus* bus)
 		bs_getname(list_getnode(bus->bl)->bs),
 		bus_getposx(bus),
 		bus_getposy(bus),
-		(bus_getdirection(bus) == DEP_TO_ARR) ? "ARR" : "DEP"
+		(bus_getdirection(bus) == FORWARD) ? "Avance" : "Recule"
 	);
 }
 
@@ -142,6 +142,7 @@ void bus_departure(Bus* bus, BusLine bl, BusDirection direction)
 
 void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta, double time)
 {
+	if (!bus) return;
 	BusLine current;
 	if (bus_getis_stopping(bus))
 	{
