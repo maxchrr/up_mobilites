@@ -50,8 +50,8 @@ Date         bs_getlast_maint_date(const BusStation* bs);
 int          br_getbl_id(const BusRoute* br);
 BusStation*  br_getdeparture(const BusRoute* br);
 BusStation*  br_getarrival(const BusRoute* br);
-int          br_getdistance_due(const BusRoute* br);
-int          br_gettime_due(const BusRoute* br);
+int          br_getdistance(const BusRoute* br);
+int          br_gettime(const BusRoute* br);
 
 EntityType  gettype(const BusEntity* obj);
 

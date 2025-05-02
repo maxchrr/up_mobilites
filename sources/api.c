@@ -23,8 +23,8 @@ struct BusRoute
 	int bl_id;              // Identifiant de la ligne de bus entrante
 	BusStation* departure;  // Pointeur sur l'arrêt entrant
 	BusStation* arrival;    // Pointeur sur l'arrêt sortant
-	int distance_due;       // Coût en distance (mètres)
-	int time_due;           // Coût en temps de parcours (secondes)
+	int distance;           // Coût en distance (mètres)
+	int time;               // Coût en temps de parcours (secondes)
 };
 
 BusStation* create_bs(int id, const char* name, int posx, int posy)
@@ -95,9 +95,9 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 	}
 	int dx = bs_getposx(arrival)-bs_getposx(departure);
 	int dy = bs_getposy(arrival)-bs_getposy(departure);
-	int due = (int)round(hypot(dx,dy));  // Distance entre deux points, avec leurs coordonnées cartésiennes
-	new_br->distance_due = due;
-	new_br->time_due = (int)due / 10.0;  // Coefficient arbitraire - vitesse de 10 m/s
+	int distance = (int)round(hypot(dx,dy));  // Distance entre deux points, avec leurs coordonnées cartésiennes
+	new_br->distance = distance;
+	new_br->time = (int)(distance / 10.0);  // Coefficient arbitraire - vitesse de 10 m/s
 	return new_br;
 }
 
@@ -114,8 +114,8 @@ void print_br(const BusRoute* br)
 		br->bl_id,
 		bs_getname(br->departure),
 		bs_getname(br->arrival),
-		br->distance_due,
-		br->time_due
+		br->distance,
+		br->time
 	);
 }
 
@@ -236,14 +236,14 @@ BusStation* br_getarrival(const BusRoute* br)
 	return br->arrival;
 }
 
-int br_getdistance_due(const BusRoute* br)
+int br_getdistance(const BusRoute* br)
 {
-	return br->distance_due;
+	return br->distance;
 }
 
-int br_gettime_due(const BusRoute* br)
+int br_gettime(const BusRoute* br)
 {
-	return br->time_due;
+	return br->time;
 }
 
 EntityType gettype(const BusEntity* obj)
