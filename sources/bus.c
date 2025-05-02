@@ -150,11 +150,11 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 			bus_setis_stopping(bus, 0);
 		return;
 	}
-	current = (direction == DEP_TO_ARR) ? bl_getnext_bs(bus_getbl(bus))
+	current = (direction == FORWARD) ? bl_getnext_bs(bus_getbl(bus))
 	                                    : bl_getprev_bs(bus_getbl(bus));
 	if (list_is_empty(current))
 	{
-		bus_setdirection(bus, (direction == DEP_TO_ARR) ? ARR_TO_DEP : DEP_TO_ARR); // Changement de direction automatique au terminus
+		bus_setdirection(bus, (direction == FORWARD) ? BACKWARD : FORWARD); // Changement de direction automatique au terminus
 		return;
 	}
 	int xd = bus_getposx(bus), yd = bus_getposy(bus);

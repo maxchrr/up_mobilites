@@ -54,6 +54,10 @@ int main(void)
 
 	while (!WindowShouldClose())
 	{
+		if (IsKeyPressed(KEY_D))
+		{
+			printf("D\n");
+		}
 		float delta = GetFrameTime();
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
