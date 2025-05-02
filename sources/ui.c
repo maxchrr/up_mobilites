@@ -22,7 +22,7 @@ Color random_color(void)
 			GetRandomValue(0, 127),  // Rouge
 			GetRandomValue(0, 127),  // Vert
 			GetRandomValue(0, 127),  // Bleu
-			255                       // Opacité
+			255                      // Opacité
 		};
 		max = (c.r > c.g) ? ((c.r > c.b) ? c.r : c.b) : ((c.g > c.b) ? c.g : c.b);
 		min = (c.r < c.g) ? ((c.r < c.b) ? c.r : c.b) : ((c.g < c.b) ? c.g : c.b);
@@ -30,7 +30,7 @@ Color random_color(void)
 	return c;
 }
 
-int _count_segments(BusLine l)
+int count_segments(BusLine l)
 {
 	int c=0;
 	List head = l;
@@ -42,7 +42,7 @@ int _count_segments(BusLine l)
 	return c;
 }
 
-void _bs_getpos(BusLine l, Vector2* points)
+void collect_station_positions(BusLine l, Vector2* points)
 {
 	int idx = 0;
 	List head = l;
@@ -60,7 +60,7 @@ void _bs_getpos(BusLine l, Vector2* points)
 
 void draw_bl(BusLine l, Font font, Color color)
 {
-	int count = _count_segments(l);
+	int count = count_segments(l);
 	#define SIZE	128
 	if (count+1 > SIZE)
 	{
@@ -68,7 +68,7 @@ void draw_bl(BusLine l, Font font, Color color)
 		return;
 	}
 	Vector2 points[SIZE];
-	_bs_getpos(l, points);
+	collect_station_positions(l, points);
 	// Dessiner les routes
 	for (int i=0; i<count; ++i)
 		DrawLineEx(points[i], points[i+1], 8.0f, WHITE);
