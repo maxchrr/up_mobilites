@@ -184,13 +184,8 @@ void bus_setis_stopping(Bus* bus, bool value)
 
 void bus_departure(Bus* bus, BusLine bl, BusDirection direction)
 {
-	Node* next = _get_next_node(bl);
-	if (is_empty(next) || gettype(_get_node(next)) != ROUTE)
-	{
-		fprintf(stderr, "Mauvais type\n");
-		return;
-	}
-	bus_setbl_id(bus, br_getbl_id(_get_node(next)->br));
+	BusEntity* next = _get_node(_get_next_node(bl));
+	bus_setbl_id(bus, (gettype(next) == ROUTE) ? br_getbl_id(next->br) : -1);
 	bus_setbl(bus, bl);
 	bus_setdirection(bus, direction);
 	bus_setposx(bus, bl_getcurrent_posx(bl));
