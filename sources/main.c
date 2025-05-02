@@ -3,6 +3,7 @@
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include "api.h"
 #include "bus.h"
 #include "list.h"
@@ -52,27 +53,63 @@ int main(void)
 		font = GetFontDefault();
 	}
 
+	bool deleteMode = false;
+	int* keys = calloc(total,sizeof(int));
+	for (int i=0; i<total; ++i)
+		keys[i] = KEY_ONE+i;  // Associe KEY_ONE, KEY_TWO, ..., en fonction de 'i'
 	while (!WindowShouldClose())
 	{
+		// Mode suppression
 		if (IsKeyPressed(KEY_D))
 		{
-			printf("D\n");
+			deleteMode = true;
+			printf("[MODE] Suppression\n");
 		}
+		if (deleteMode)
+		{
+			int i = -1;
+			for (int j=0; j<total; ++j)
+			{
+				if (IsKeyPressed(keys[j]))
+				{
+					deleteMode = false;
+					i = j + 1;  // Assigner l'indice (1 pour KEY_ONE, 2 pour KEY_TWO, etc.)
+					break;
+				}
+			}
+			// Si c'est un indice valide et qu'il reste plus d'un chemin => supprime
+			if (i > 0 && i <= total && length(timetables[i-1].list) > 3)
+			{
+				timetables[i-1].list = delete_at_tail(timetables[i-1].list);  // Dernière station
+				timetables[i-1].list = delete_at_tail(timetables[i-1].list);  // Dernière route
+			}
+		}
+
+		// Boucle d'affichage
 		float delta = GetFrameTime();
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
 		DrawText(TextFormat("FPS: %d", GetFPS()), 10, 10, 20, GRAY);
+
+		if (deleteMode)
+		{
+			const char* text = "-- DELETE --";
+			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
+			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
+			DrawTextEx(font, text, textPos, 20, 0, RED);
+		}
 
 		for (int i=0; i<total; ++i)
 		{
 			draw_bl(timetables[i].list, font, timetables[i].color);
 			if (buses[i]) draw_bus(buses[i], DARKPURPLE);
 			bus_travel(buses[i], bus_getdirection(buses[i]), &incx[i], &incy[i], delta, GetTime());
-  		}
+		}
 
 		EndDrawing();
 	}
 
+	free(keys);
 	UnloadFont(font);
 	CloseWindow();
 	for (int i=0; i<total; ++i) {
