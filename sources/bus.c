@@ -110,8 +110,10 @@ BusLine bl_getnext_bs(BusLine l)
 		else
 			return list_getnext_node(list_getnext_node(l)); // Le suivant est une route, donc après une station
 	}
-	else
+	else if (gettype(list_getnode(l)) == ROUTE)
 		return list_getnext_node(l); // Le suivant est une station
+	else
+		return NULL;
 }
 
 BusLine bl_getprev_bs(BusLine l)
@@ -124,8 +126,10 @@ BusLine bl_getprev_bs(BusLine l)
 		else
 			return list_getprev_node(list_getprev_node(l)); // Le précédent est une route, donc avant une station
 	}
-	else
+	else if (gettype(list_getnode(l)) == ROUTE)
 		return list_getprev_node(l); // Le précédent est une station
+	else
+		return NULL;
 }
 
 BusLine bl_getnext_br(BusLine l)
@@ -136,8 +140,10 @@ BusLine bl_getnext_br(BusLine l)
 		fprintf(stdout, "Attention déjà sur une route\n");
 		return NULL;
 	}
-	else
+	else if (gettype(list_getnode(l)) != ROUTE)
 		return list_getnext_node(l); // Le suivant est une route
+	else
+		return NULL;
 }
 
 BusLine bl_getprev_br(BusLine l)
@@ -148,8 +154,10 @@ BusLine bl_getprev_br(BusLine l)
 		fprintf(stdout, "Attention déjà sur une route\n");
 		return NULL;
 	}
-	else
+	else if (gettype(list_getnode(l)) != ROUTE)
 		return list_getprev_node(l); // Le précédent est une route
+	else
+		return NULL;
 }
 
 void bus_setposx(Bus* bus, int value)
