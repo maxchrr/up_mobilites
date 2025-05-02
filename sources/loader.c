@@ -59,7 +59,9 @@ int load_timetables(Timetable timetables[], const char* path)
 			base[sizeof(base) - 1] = '\0';
 			char* dot = strrchr(base, '.');
 			if (dot) *dot = '\0';  // remove extension
-			int line_id = atoi(base + 9);
+			int line_id;
+			if (sscanf(base+9, "%d", &line_id) != 1) continue;
+			line_id = atoi(base+9);
 			snprintf(buffer, sizeof(buffer), "%s/%s", path, entry->d_name);
 			BusLine bl = init_from_file(line_id, buffer);
 			if (bl != NULL)
