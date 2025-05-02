@@ -140,18 +140,21 @@ void draw_bus(Bus* bus, Color color)
 	int dy = bus_getposy(bus)+PADDING;
 	if (bus_getis_stopping(bus))
 	{
-		if ((GetTime()*4.0f - (int)(GetTime()*4.0f)) < 0.5f)
-		{
-			DrawCircle(dx, dy, 20, Fade(DARKBLUE, 0.4f));  // effet de halo clignotant
+		float blink = GetTime() * 4.0f;
+		if ((blink - (int)blink) < 0.5f) {
+			DrawCircle(dx, dy, 20, Fade(DARKBLUE, 0.4f));  // halo clignotant
 		}
 	}
+	// Ombre
 	DrawCircle(dx+3, dy+3, 16-4, Fade(BLACK, 0.2f));
+	// Contour et remplissage
 	DrawCircle(dx, dy, 16, BLACK);
 	DrawCircle(dx, dy, 16-2, WHITE);
 	DrawCircle(dx, dy, 16-4, color);
-	Font font = GetFontDefault();
+	// Texte
 	char label[8];
 	snprintf(label, sizeof(label), "%d", bus_getid(bus));
+	Font font = GetFontDefault();
 	Vector2 labelSize = MeasureTextEx(font, label, 16, 0);
 	Vector2 labelPos = { dx-labelSize.x/2, dy-labelSize.y/2 };
 	DrawTextEx(font, TextFormat("%d", bus_getid(bus)), labelPos, 16, 0, WHITE);
