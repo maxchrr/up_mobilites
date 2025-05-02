@@ -70,6 +70,7 @@ void draw_bl(BusLine l, Font font, Color color)
 
 void draw_bus(Bus* bus, Color color)
 {
+	if (!bus) return;
 	int dx = bus_getposx(bus)+PADDING/2;
 	int dy = bus_getposy(bus)+PADDING;
 	DrawCircle(dx+3, dy+3, 16-4, Fade(BLACK, 0.2f));
