@@ -58,7 +58,6 @@ int main(void)
 		keys[i] = KEY_ONE+i;  // Associe KEY_ONE, KEY_TWO, ..., en fonction de 'i'
 	bool deleteMode = false;
 	bool concatMode = false;
-	bool loopMode = false;
 	while (!WindowShouldClose())
 	{
 		// Mode suppression
@@ -97,29 +96,6 @@ int main(void)
 			timetables[1].list = NULL;  // La liste est oublié, ne pas libérer ici, mais à la fin
 		}
 
-		// Mode boucle
-		if (IsKeyPressed(KEY_L))
-		{
-			loopMode = true;
-			printf("[MODE] Boucle\n");
-		}
-		if (loopMode)
-		{
-			int i = -1;
-			for (int j=0; j<total; ++j)
-			{
-				if (IsKeyPressed(keys[j]))
-				{
-					loopMode = false;
-					i = j + 1;  // Assigner l'indice (1 pour KEY_ONE, 2 pour KEY_TWO, etc.)
-					break;
-				}
-			}
-			// Si c'est un indice valide => mettre en mode boucle
-			if (i > 0 && i <= total)
-				bus_loopback(buses[i], bus_getdirection(buses[i]));
-		}
-
 		// Boucle d'affichage
 		float delta = GetFrameTime();
 		BeginDrawing();
@@ -139,13 +115,6 @@ int main(void)
 			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
 			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
 			DrawTextEx(font, text, textPos, 20, 0, GREEN);
-		}
-		else if (loopMode)
-		{
-			const char* text = "-- LOOP --";
-			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
-			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
-			DrawTextEx(font, text, textPos, 20, 0, BLUE);
 		}
 
 		for (int i=0; i<total; ++i)

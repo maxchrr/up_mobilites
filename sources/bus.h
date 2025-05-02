@@ -18,6 +18,7 @@ typedef struct Bus
 	BusDirection direction;    // Sens de circulation du bus
 	float speed;               // Vitesse de circulation
 	float stop_time;           // Temps d'arrêt à une station
+	int looping_count;         // Nombre de tours bouclé
 	unsigned is_stopping : 1;  // État de l'attente
 } Bus;
 
@@ -36,6 +37,7 @@ BusLine       bus_getbl(const Bus* bus);
 BusDirection  bus_getdirection(const Bus* bus);
 float         bus_getspeed(const Bus* bus);
 float         bus_getstop_time(const Bus* bus);
+int           bus_getlooping_count(const Bus* bus);
 unsigned      bus_getis_stopping(const Bus* bus);
 
 /* Mutateur */
@@ -48,9 +50,10 @@ void  bus_setbl(Bus* bus, BusLine bl);
 void  bus_setdirection(Bus* bus, BusDirection value);
 void  bus_setspeed(Bus* bus, float value);
 void  bus_setstop_time(Bus* bus, float value);
+void  bus_setlooping_count(Bus* bus, int value);
 void  bus_setis_stopping(Bus* bus, unsigned value);
 
 /* Méthodes */
 void  bus_departure(Bus* bus, BusLine bl, BusDirection direction);
 void  bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta, double time);
-void  bus_loopback(Bus* bus, BusDirection direction);
+void  bus_loopback(Bus* bus);

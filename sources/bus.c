@@ -26,6 +26,7 @@ Bus* init_bus(int id, BusLine bl)
 	new_bus->fy = y;
 	new_bus->posx = x;
 	new_bus->posy = y;
+	new_bus->looping_count = 0;
 	bus_departure(new_bus, bl, FORWARD);
 	return new_bus;
 }
@@ -34,13 +35,14 @@ void print_bus(const Bus* bus)
 {
 	fprintf(
 		stdout,
-		"[BUS #%d] ROUTE #%d \"%s\" (%d,%d) --> %s\n",
+		"[BUS #%d] ROUTE #%d \"%s\" (%d,%d) --> %s (%d)\n",
 		bus_getid(bus),
 		bus_getbl_id(bus),
 		bs_getname(list_getnode(bus->bl)->bs),
 		bus_getposx(bus),
 		bus_getposy(bus),
-		(bus_getdirection(bus) == FORWARD) ? "Avance" : "Recule"
+		(bus_getdirection(bus) == FORWARD) ? "Avance" : "Recule",
+		bus_getlooping_count(bus)
 	);
 }
 
@@ -101,6 +103,11 @@ float bus_getstop_time(const Bus* bus)
 	return bus->stop_time;
 }
 
+int bus_getlooping_count(const Bus* bus)
+{
+	return bus->looping_count;
+}
+
 unsigned bus_getis_stopping(const Bus* bus)
 {
 	return bus->is_stopping;
@@ -151,6 +158,11 @@ void bus_setstop_time(Bus* bus, float value)
 	bus->stop_time = value;
 }
 
+void bus_setlooping_count(Bus* bus, int value)
+{
+	bus->looping_count = value;
+}
+
 void bus_setis_stopping(Bus* bus, unsigned value)
 {
 	bus->is_stopping = value;
@@ -184,7 +196,12 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 	BusLine current = (direction == FORWARD)
 		? bl_getnext_bs(bus_getbl(bus))
 		: bl_getprev_bs(bus_getbl(bus));
-	if (list_is_empty(current)) return;
+	if (list_is_empty(current))
+	{
+		bus_loopback(bus);
+		bus_setlooping_count(bus, bus_getlooping_count(bus)+1);
+		return;
+	}
 	int xa = bl_getcurrent_posx(current);
 	int ya = bl_getcurrent_posy(current);
 	float dx = xa - bus_getfx(bus);
@@ -215,8 +232,8 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 	bus_setposy(bus, newy);
 }
 
-void bus_loopback(Bus* bus, BusDirection direction)
+void bus_loopback(Bus* bus)
 {
 	if (!bus) return;
-	bus_setdirection(bus, (direction == FORWARD) ? BACKWARD : FORWARD); // Changement de direction automatique au terminus
+	bus_setdirection(bus, (bus_getdirection(bus) == FORWARD) ? BACKWARD : FORWARD); // Changement de direction automatique au terminus
 }
