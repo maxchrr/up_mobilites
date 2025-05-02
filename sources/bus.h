@@ -56,6 +56,6 @@ void  bus_setis_stopping(Bus* bus, bool value);
 
 /* Méthodes */
 void  bus_departure(Bus* bus, List bl, BusDirection direction);
-void  bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy);
+void  bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta);
 
 #endif // BUS_H_

@@ -54,14 +54,16 @@ int main(void)
 
 	while (!WindowShouldClose())
 	{
+		float delta = GetFrameTime();
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
+		printf("%f\n", GetFrameTime());
 
 		for (int i=0; i<total; ++i)
 		{
 			draw_bl(timetables[i].list, font, timetables[i].color);
 			draw_bus(buses[i], DARKPURPLE);
-			bus_travel(buses[i], bus_getdirection(buses[i]), &incx[i], &incy[i]);
+			bus_travel(buses[i], bus_getdirection(buses[i]), &incx[i], &incy[i], delta);
   		}
 
 		EndDrawing();

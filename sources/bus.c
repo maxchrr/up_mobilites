@@ -199,7 +199,7 @@ void bus_departure(Bus* bus, List bl, BusDirection direction)
 	print_bus(bus);
 }
 
-void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy)
+void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta)
 {
 	List current;
 	if (bus_getis_stopping(bus))
@@ -230,7 +230,6 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy)
 		bus_setis_stopping(bus, true);
 		return;
 	}
-	float delta = GetFrameTime();
 	float speed = bus_getspeed(bus);
 	float move = speed*delta;
 	dx *= move/dist;
