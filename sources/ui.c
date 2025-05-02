@@ -88,7 +88,7 @@ void draw_bl(BusLine l, Font font, Color color)
 			DrawCircle(dx, dy, 8+2,	WHITE);
 			DrawCircle(dx, dy, 8,	color);
 			Vector2 labelSize = MeasureTextEx(font, bs_getname(s), 16, 0);
-			Vector2 labelPos = { dx - labelSize.x / 2, dy - labelSize.y / 2 - 24 };
+			Vector2 labelPos = { dx-labelSize.x/2, dy-labelSize.y/2-24 };
 			DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		}
 		head = list_getnext_node(head);
@@ -112,4 +112,10 @@ void draw_bus(Bus* bus, Color color)
 	DrawCircle(dx, dy, 16, BLACK);
 	DrawCircle(dx, dy, 16-2, WHITE);
 	DrawCircle(dx, dy, 16-4, color);
+	Font font = GetFontDefault();
+	char label[8];
+	snprintf(label, sizeof(label), "%d", bus_getid(bus));
+	Vector2 labelSize = MeasureTextEx(font, label, 16, 0);
+	Vector2 labelPos = { dx-labelSize.x/2, dy-labelSize.y/2 };
+	DrawTextEx(font, TextFormat("%d", bus_getid(bus)), labelPos, 16, 0, WHITE);
 }
