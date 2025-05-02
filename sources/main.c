@@ -57,6 +57,7 @@ int main(void)
 		float delta = GetFrameTime();
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
+		DrawText(TextFormat("FPS: %d", GetFPS()), 10, 10, 20, GRAY);
 
 		for (int i=0; i<total; ++i)
 		{
