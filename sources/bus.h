@@ -12,7 +12,7 @@ typedef struct Bus
 {
 	int id;                    // Identifiant du bus
 	int posx, posy;            // Coordonées sur le plan
-	float accumx, accumy;      // Déplacement fractionnaire accumulé
+	float fx, fy;              // Position réelle du bus
 	int bl_id;                 // Identifant de la ligne de bus courante
 	BusLine bl;                // Pointeur sur l'entité courante de la ligne de bus (une Station ou une Route)
 	BusDirection direction;    // Sens de circulation du bus
@@ -29,8 +29,8 @@ void  destroy_bus(Bus* bus);
 int           bus_getid(const Bus* bus);
 int           bus_getposx(const Bus* bus);
 int           bus_getposy(const Bus* bus);
-int           bus_getaccumx(const Bus* bus);
-int           bus_getaccumy(const Bus* bus);
+float         bus_getfx(const Bus* bus);
+float         bus_getfy(const Bus* bus);
 int           bus_getbl_id(const Bus* bus);
 BusLine       bus_getbl(const Bus* bus);
 BusDirection  bus_getdirection(const Bus* bus);
@@ -41,8 +41,8 @@ unsigned      bus_getis_stopping(const Bus* bus);
 /* Mutateur */
 void  bus_setposx(Bus* bus, int value);
 void  bus_setposy(Bus* bus, int value);
-void  bus_setaccumx(Bus* bus, int value);
-void  bus_setaccumy(Bus* bus, int value);
+void  bus_setfx(Bus* bus, float value);
+void  bus_setfy(Bus* bus, float value);
 void  bus_setbl_id(Bus* bus, int value);
 void  bus_setbl(Bus* bus, BusLine bl);
 void  bus_setdirection(Bus* bus, BusDirection value);

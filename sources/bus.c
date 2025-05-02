@@ -16,11 +16,16 @@ Bus* init_bus(int id, BusLine bl)
 		return NULL;
 	}
 	new_bus->id = id;
-	new_bus->accumx = 0.0f;
-	new_bus->accumy = 0.0f;
 	new_bus->speed = 100.0f;
 	new_bus->stop_time = 0.0f;
 	new_bus->is_stopping = false;
+	// Position initiale
+	int x = bl_getcurrent_posx(bl);
+	int y = bl_getcurrent_posy(bl);
+	new_bus->fx = x;
+	new_bus->fy = y;
+	new_bus->posx = x;
+	new_bus->posy = y;
 	bus_departure(new_bus, bl, FORWARD);
 	return new_bus;
 }
@@ -61,14 +66,14 @@ int bus_getposy(const Bus* bus)
 	return bus->posy;
 }
 
-int bus_getaccumx(const Bus* bus)
+float bus_getfx(const Bus* bus)
 {
-	return bus->accumx;
+	return bus->fx;
 }
 
-int bus_getaccumy(const Bus* bus)
+float bus_getfy(const Bus* bus)
 {
-	return bus->accumy;
+	return bus->fy;
 }
 
 int bus_getbl_id(const Bus* bus)
@@ -111,14 +116,14 @@ void bus_setposy(Bus* bus, int value)
 	bus->posy = value;
 }
 
-void bus_setaccumx(Bus* bus, int value)
+void bus_setfx(Bus* bus, float value)
 {
-	bus->accumx = value;
+	bus->fx = value;
 }
 
-void bus_setaccumy(Bus* bus, int value)
+void bus_setfy(Bus* bus, float value)
 {
-	bus->accumy = value;
+	bus->fy = value;
 }
 
 void bus_setbl_id(Bus* bus, int value)
@@ -158,29 +163,32 @@ void bus_departure(Bus* bus, BusLine bl, BusDirection direction)
 	bus_setbl_id(bus, (next && gettype(next) == ROUTE) ? br_getbl_id(next->br) : -1);
 	bus_setbl(bus, bl);
 	bus_setdirection(bus, direction);
-	bus_setposx(bus, bl_getcurrent_posx(bl));
-	bus_setposy(bus, bl_getcurrent_posy(bl));
+	int x = bl_getcurrent_posx(bl);
+	int y = bl_getcurrent_posy(bl);
+	bus_setfx(bus, x);
+	bus_setfy(bus, y);
+	bus_setposx(bus, x);
+	bus_setposy(bus, y);
 	print_bus(bus);
 }
 
 void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta, double time)
 {
 	if (!bus) return;
-	BusLine current;
 	if (bus_getis_stopping(bus))
 	{
 		if (time-bus_getstop_time(bus) >= 2.0f)
 			bus_setis_stopping(bus, 0);
 		return;
 	}
-	current = (direction == FORWARD)
+	BusLine current = (direction == FORWARD)
 		? bl_getnext_bs(bus_getbl(bus))
 		: bl_getprev_bs(bus_getbl(bus));
 	if (list_is_empty(current)) return;
-	int xd = bus_getposx(bus), yd = bus_getposy(bus);
-	int xa = bl_getcurrent_posx(current), ya = bl_getcurrent_posy(current);
-	float dx = xa - xd;
-	float dy = ya - yd;
+	int xa = bl_getcurrent_posx(current);
+	int ya = bl_getcurrent_posy(current);
+	float dx = xa - bus_getfx(bus);
+	float dy = ya - bus_getfy(bus);
 	float dist = sqrtf(dx * dx + dy * dy);
 	// Arrêt si proche
 	if (dist < 1.0f)
@@ -191,23 +199,20 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 		bus_setis_stopping(bus, 1);
 		return;
 	}
-	float speed = bus_getspeed(bus);
-	float move = speed*delta;
-	// Normaliser et appliquer le déplacement
-	dx = (dx/dist)*move;
-	dy = (dy/dist)*move;
-	// Ajout aux accumulateurs
-	bus_setaccumx(bus, bus_getaccumx(bus)+dx);
-	bus_setaccumy(bus, bus_getaccumy(bus)+dy);
+	float move = bus_getspeed(bus) * delta;
+	// Normalisation
+	dx = (dx/dist) * move;
+	dy = (dy/dist) * move;
+	bus_setfx(bus, bus_getfx(bus) + dx);
+	bus_setfy(bus, bus_getfy(bus) + dy);
 	// Déplacement appliquer à la frame courante
-	*incx = (int)bus_getaccumx(bus);
-	*incy = (int)bus_getaccumy(bus);
+	int newx = (int)(bus_getfx(bus) + 0.5f);
+	int newy = (int)(bus_getfy(bus) + 0.5f);
+	*incx = newx - bus_getposx(bus);
+	*incy = newy - bus_getposy(bus);
 	// Appliquer le déplacement
-	bus_setposx(bus, xd+dx);
-	bus_setposy(bus, yd+dy);
-	// Conserver la partie fractionnaire
-	bus_setaccumx(bus, bus_getaccumx(bus)-*incx);
-	bus_setaccumy(bus, bus_getaccumy(bus)-*incy);
+	bus_setposx(bus, newx);
+	bus_setposy(bus, newy);
 }
 
 void bus_loopback(Bus* bus, BusDirection direction)
