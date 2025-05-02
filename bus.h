@@ -2,12 +2,16 @@
  * Bus
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
-#ifndef BUS_H_
-#define BUS_H_
+#pragma once
 
 #include <stdbool.h>
 #include "api.h"
 #include "list.h"
+
+typedef List BusLine;  // Pour plus de lisibilité
+
+BusLine bus_line_create(int id, const char *name);
+void bus_line_add_station(BusLine *line, BusStation *station);
 
 typedef enum { DEP_TO_ARR, ARR_TO_DEP} BusDirection;
 typedef struct Bus
@@ -15,48 +19,47 @@ typedef struct Bus
 	int id;                  // Identifiant du bus
 	int posx, posy;          // Coordonées sur le plan
 	int bl_id;               // Identifant de la ligne de bus courante
-	List bl;                 // Pointeur sur l'entité courante de la ligne de bus (une Station ou une Route)
+	BusLine bl;              // Pointeur sur l'entité courante de la ligne de bus (une Station ou une Route)
 	BusDirection direction;  // Sens de circulation du bus
 	float speed;             // Vitesse de circulation
 	float stop_time;         // Temps d'arrêt à une station
 	bool is_stopping;        // État de l'attente
 } Bus;
-typedef struct Bus* BusPtr;
 
-BusPtr  init_bus(int id, List bl);
-void    print_bus(const BusPtr bus);
-void    destroy_bus(BusPtr bus);
+Bus*  init_bus(int id, BusLine bl);
+void  print_bus(const Bus* bus);
+void  destroy_bus(Bus* bus);
 
 /* Accesseur */
-int           bus_getid(const BusPtr bus);
-int           bus_getposx(const BusPtr bus);
-int           bus_getposy(const BusPtr bus);
-int           bus_getbl_id(const BusPtr bus);
-List          bus_getbl(const BusPtr bus);
-BusDirection  bus_getdirection(const BusPtr bus);
-float         bus_getspeed(const BusPtr bus);
-float         bus_getstop_time(const BusPtr bus);
-bool          bus_getis_stopping(const BusPtr bus);
+int           bus_getid(const Bus* bus);
+int           bus_getposx(const Bus* bus);
+int           bus_getposy(const Bus* bus);
+int           bus_getbl_id(const Bus* bus);
+BusLine       bus_getbl(const Bus* bus);
+BusDirection  bus_getdirection(const Bus* bus);
+float         bus_getspeed(const Bus* bus);
+float         bus_getstop_time(const Bus* bus);
+bool          bus_getis_stopping(const Bus* bus);
 
-int   bl_getposx(List l);
-int   bl_getposy(List l);
-List  bl_getnext_bs(List l);
-List  bl_getprev_bs(List l);
-List  bl_getnext_br(List l);
-List  bl_getprev_br(List l);
+int      bl_getcurrent_posx(BusLine l);
+int      bl_getcurrent_posy(BusLine l);
+BusLine  bl_getnext_bs(BusLine l);
+BusLine  bl_getprev_bs(BusLine l);
+BusLine  bl_getnext_br(BusLine l);
+BusLine  bl_getprev_br(BusLine l);
 
 /* Mutateur */
-void  bus_setposx(BusPtr bus, int value);
-void  bus_setposy(BusPtr bus, int value);
-void  bus_setbl_id(BusPtr bus, int value);
-void  bus_setbl(BusPtr bus, List bl);
-void  bus_setdirection(BusPtr bus, BusDirection value);
-void  bus_setspeed(BusPtr bus, float value);
-void  bus_setstop_time(BusPtr bus, float value);
-void  bus_setis_stopping(BusPtr bus, bool value);
+void  bus_setposx(Bus* bus, int value);
+void  bus_setposy(Bus* bus, int value);
+void  bus_setbl_id(Bus* bus, int value);
+void  bus_setbl(Bus* bus, BusLine bl);
+void  bus_setdirection(Bus* bus, BusDirection value);
+void  bus_setspeed(Bus* bus, float value);
+void  bus_setstop_time(Bus* bus, float value);
+void  bus_setis_stopping(Bus* bus, bool value);
 
 /* Méthodes */
-void  bus_departure(BusPtr bus, List bl, BusDirection direction);
-void  bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy);
+void  bus_departure(Bus* bus, BusLine bl, BusDirection direction);
+void  bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta, double time);
 
-#endif // BUS_H_
+BusLine create_from_existente(BusLine line1, BusLine line2);

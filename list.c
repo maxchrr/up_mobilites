@@ -23,7 +23,7 @@ void print_list(List l)
 	}
 	while(temp != NULL)
 	{
-		print_entity(temp->data, 0);
+		print_entity(temp->data);
 		temp = temp->next;
 	}
 }
@@ -103,8 +103,8 @@ List insert(List l, int p, BusEntity* obj)
 		l = new_node;
 		return l;
 	}
-	if (p == 1)
-		return insert_at_head(l, obj);
+	if (p < 1) return l;  // Maybe outside the subset
+	if (p == 1) return insert_at_head(l, obj);
 	for (int i=1; i<(p-1) && !is_empty(temp->next); ++i)
 		temp = temp->next; // Go to the (p-1)-th Node (starting at 1)
 	new_node->next = temp->next;
@@ -180,7 +180,7 @@ Node* _get_prev_node(List l)
 	return l ? l->prev : NULL;
 }
 
-BusEntity* _get_node(Node* n)
+BusEntity* _get_node(const Node* n)
 {
 	if (n == NULL)
 	{
@@ -208,7 +208,7 @@ int length(List l)
 	return c;
 }
 
-int sizeof_bytes(List l)
+int sizeof_bytes(const List l)
 {
 	return length(l)*sizeof(Node);
 }
@@ -225,6 +225,7 @@ BusEntity* _copy_entity(BusEntity* orig)
 		BusRoute* br = orig->br;
 		return open_entity(ROUTE, create_br(br_getbl_id(br), br_getdeparture(br), br_getarrival(br)));
 	}
+	fprintf(stderr, "Unsupported entity type\n");
 	return NULL;
 }
 

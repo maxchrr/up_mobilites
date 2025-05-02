@@ -2,10 +2,11 @@
  * Public API
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
-#ifndef API_H_
-#define API_H_
+#pragma once
 
 #include "utils.h"
+
+#define MAX_NAME_LEN		32
 
 /* Déclarations opaques des structures (encapsulation -> propriétées cachées) */
 typedef struct BusStation BusStation;
@@ -27,15 +28,15 @@ typedef struct BusEntity
 
 /* Méthodes sur les entités */
 BusStation*  create_bs(int id, const char* name, int posx, int posy);
-void         print_bs(const BusStation* bs, int indent);
+void         print_bs(const BusStation* bs);
 void         destroy_bs(BusStation* bs);
 
 BusRoute*  create_br(int bl_id, BusStation* departure, BusStation* arrival);
-void       print_br(const BusRoute* br, int indent);
+void       print_br(const BusRoute* br);
 void       destroy_br(BusRoute* br);
 
 BusEntity*  open_entity(EntityType type, void* data);
-void        print_entity(const BusEntity* obj, int indent);
+void        print_entity(const BusEntity* obj);
 void        close_entity(BusEntity* obj);
 
 /* Accesseur */
@@ -57,5 +58,3 @@ EntityType  gettype(const BusEntity* obj);
 /* Mutateur */
 void  bs_setmaint_price(BusStation* bs, int value);
 void  bs_setlast_maint_date(BusStation* bs, Date date);
-
-#endif // API_H_

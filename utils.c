@@ -4,7 +4,6 @@
  */
 #include <stdlib.h>
 #include <time.h>
-#include "raylib.h"
 #include "utils.h"
 
 int rand_range(int min, int max)
@@ -28,22 +27,4 @@ Date rand_date(int start_year, int end_year)
 	date.month = month;
 	date.day = day;
 	return date;
-}
-
-Color random_color(void)
-{
-	Color c;
-	int max, min;
-	do
-	{
-		c = (Color){
-			GetRandomValue(0, 127),  // Rouge
-			GetRandomValue(0, 127),  // Vert
-			GetRandomValue(0, 127),  // Bleu
-			255                       // Opacité
-		};
-		max = (c.r > c.g) ? ((c.r > c.b) ? c.r : c.b) : ((c.g > c.b) ? c.g : c.b);
-		min = (c.r < c.g) ? ((c.r < c.b) ? c.r : c.b) : ((c.g < c.b) ? c.g : c.b);
-	} while ((max-min) < 30);
-	return c;
 }

@@ -1,21 +1,31 @@
 /*
- * UPmobilites
- * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
- */
+* UPmobilites
+* Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
+*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "api.h"
 #include "bus.h"
 #include "list.h"
 #include "raylib.h"
 #include "ui.h"
 #include "loader.h"
-#include "sort.h"
-
-
+ 
 #define SCREEN_WIDTH	1200
 #define SCREEN_HEIGHT	800
 #define WINDOW_TITLE	"UPmobilites"
-
+ 
+void add_line_to_array(BusLine ***lines, int *count, BusLine *new_line) {
+	BusLine **tmp = realloc(*lines, sizeof(BusLine*) * (*count + 1));
+	if (tmp) {
+		*lines = tmp;
+		(*lines)[*count] = new_line;
+		(*count)++;
+	} else {
+		fprintf(stderr, "Erreur mémoire lors de l'ajout de la ligne fusionnée\n");
+	}
+}
+ 
 int main(void)
 {
 	Timetable timetables[MAX_TIMETABLES];
@@ -29,67 +39,49 @@ int main(void)
 	{
 		print_list(timetables[i].list);
 	}
-
-	BusPtr buses[MAX_TIMETABLES];
+ 
+	Bus* buses[MAX_TIMETABLES];
 	int incx[MAX_TIMETABLES] = {0};
 	int incy[MAX_TIMETABLES] = {0};
-
+ 
 	for (int i=0; i<total; ++i)
 	{
 		buses[i] = init_bus(i+1, timetables[i].list);
 		if (!buses[i])
 		{
-			fprintf(stderr, "Impossible d'initialiser un bus pour la ligne %d", timetables[i].id);
+			fprintf(stderr, "Impossible d'initialiser un bus pour la ligne %d\n", timetables[i].id);
 			return 1;
 		}
 	}
-
-	char input;
-	scanf(" %c", &input);
-
-	if (input == 'c') {
-		for (int i = 0; i < total; ++i) {
-			timetables[i].list = sort_list(timetables[i].list, compare_by_maint_price_desc);
-			print_list(timetables[i].list);
-		}
-	} else if (input == 'd') {
-		for (int i = 0; i < total; ++i) {
-			timetables[i].list = sort_list(timetables[i].list, compare_by_last_maint_date_asc);
-			print_list(timetables[i].list);
+ 
+	
+	if (total >= 2) {
+		BusLine fusion = create_from_existente(timetables[0].list, timetables[1].list);
+		if (fusion) {
+			printf("Ligne fusionnée créée avec succès entre %d et %d\n",
+				timetables[0].id, timetables[1].id);
+			print_list(fusion);
 		}
 	}
-	
-
+ 
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
 	SetTargetFPS(60);
-
-	Font font = LoadFontEx("vendor/Luciole-Regular.ttf", 18, NULL, 255);
-	if (font.texture.id == 0)
-	{
-		fprintf(stderr, "Police non chargée\n");
-		return 1;
-	}
-
+ 
+	Font font = LoadFont("vendor/Luciole-Regular.ttf");
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-
+ 
 		for (int i=0; i<total; ++i)
 		{
-			draw_bl(timetables[i].list, font, timetables[i].color);
-			draw_bus(buses[i], DARKPURPLE);
-			bus_travel(buses[i], bus_getdirection(buses[i]), &incx[i], &incy[i]);
-  		}
-
+			draw_bl(timetables[i].list, font, BLACK);
+			draw_bus(buses[i], RED);
+		}
+ 
 		EndDrawing();
 	}
-
-	UnloadFont(font);
+ 
 	CloseWindow();
-	for (int i=0; i<total; ++i) {
-		destroy_bus(buses[i]);
-		destroy_list(timetables[i].list);
-	}
 	return 0;
 }

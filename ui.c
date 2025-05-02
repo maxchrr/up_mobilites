@@ -12,45 +12,73 @@
 
 #define PADDING	200
 
-void draw_bl(List l, Font font, Color color)
+Color random_color(void)
 {
-	int segCount = 0;
-	Node* temp = l;
-	while (!is_empty(temp))
+	Color c;
+	int max, min;
+	do
 	{
-		BusEntity* e = _get_node(temp);
-		if (e->route) ++segCount;
-		temp = _get_next_node(temp);
-	}
-	int pCount = segCount+1;
-	Vector2* points = malloc(sizeof(Vector2)*pCount);
-	if (!points)
+		c = (Color){
+			GetRandomValue(0, 127),  // Rouge
+			GetRandomValue(0, 127),  // Vert
+			GetRandomValue(0, 127),  // Bleu
+			255                       // Opacité
+		};
+		max = (c.r > c.g) ? ((c.r > c.b) ? c.r : c.b) : ((c.g > c.b) ? c.g : c.b);
+		min = (c.r < c.g) ? ((c.r < c.b) ? c.r : c.b) : ((c.g < c.b) ? c.g : c.b);
+	} while ((max-min) < 30);
+	return c;
+}
+
+int _count_segments(BusLine l)
+{
+	int c=0;
+	List head = l;
+	while (!is_empty(head))
 	{
-		fprintf(stderr, "Memory allocation failed\n");
-		return;
+		if (gettype(_get_node(head)) == ROUTE) ++c;
+		head = _get_next_node(head);
 	}
+	return c;
+}
+
+void _bs_getpos(BusLine l, Vector2* points)
+{
 	int idx = 0;
-	temp = l;
-	while (!is_empty(temp))
+	List head = l;
+	while (!is_empty(head))
 	{
-		BusEntity* e = _get_node(temp);
-		if (e->station)
+		BusEntity* e = _get_node(head);
+		if (gettype(e) == STATION)
 		{
 			BusStation* s = e->bs;
 			points[idx++] = (Vector2){ bs_getposx(s)+PADDING/2, bs_getposy(s)+PADDING };
 		}
-		temp = _get_next_node(temp);
+		head = _get_next_node(head);
 	}
-	// Draw the lines connecting the stations
-	for (int i=0; i<idx-1; ++i)
-		DrawLineEx(points[i], points[i+1], 8.0f, WHITE);
-	for (int i=0; i<idx-1; ++i)
-		DrawLineEx(points[i], points[i+1], 4.0f, color);
-	// Draw the stations
-	temp = l;
-	while (!is_empty(temp))
+}
+
+void draw_bl(BusLine l, Font font, Color color)
+{
+	int count = _count_segments(l);
+	#define SIZE	128
+	if (count+1 > SIZE)
 	{
-		BusEntity* e = _get_node(temp);
+		fprintf(stderr, "Trop de stations\n");
+		return;
+	}
+	Vector2 points[SIZE];
+	_bs_getpos(l, points);
+	// Dessiner les routes
+	for (int i=0; i<count; ++i)
+		DrawLineEx(points[i], points[i+1], 8.0f, WHITE);
+	for (int i=0; i<count; ++i)
+		DrawLineEx(points[i], points[i+1], 4.0f, color);
+	// Desinner les stations
+	List head = l;
+	while (!is_empty(head))
+	{
+		BusEntity* e = _get_node(head);
 		if (e->station)
 		{
 			BusStation* s = e->bs;
@@ -63,15 +91,23 @@ void draw_bl(List l, Font font, Color color)
 			Vector2 labelPos = { dx - labelSize.x / 2, dy - labelSize.y / 2 - 24 };
 			DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		}
-		temp = _get_next_node(temp);
+		head = _get_next_node(head);
 	}
-	free(points);
+	#undef SIZE
 }
 
-void draw_bus(BusPtr bus, Color color)
+void draw_bus(Bus* bus, Color color)
 {
+	if (!bus) return;
 	int dx = bus_getposx(bus)+PADDING/2;
 	int dy = bus_getposy(bus)+PADDING;
+	if (bus_getis_stopping(bus))
+	{
+		if ((GetTime()*4.0f - (int)(GetTime()*4.0f)) < 0.5f)
+		{
+			DrawCircle(dx, dy, 20, Fade(DARKBLUE, 0.4f));  // effet de halo clignotant
+		}
+	}
 	DrawCircle(dx+3, dy+3, 16-4, Fade(BLACK, 0.2f));
 	DrawCircle(dx, dy, 16, BLACK);
 	DrawCircle(dx, dy, 16-2, WHITE);

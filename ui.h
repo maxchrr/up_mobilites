@@ -2,15 +2,15 @@
  * Fonctions d'interface
  * Copyright (c) 2025 Max Charrier. All Rights Reserved.
  */
-#ifndef UI_H_
-#define UI_H_
+#pragma once
 
 #include "bus.h"
-#include "list.h"
 #include "raylib.h"
 
-void draw_bl(List l, Font font, Color color);
+Color  random_color(void);
 
-void draw_bus(BusPtr bus, Color color);
+int   _count_segments(BusLine l);
+void  _bs_getpos(BusLine l, Vector2* points);
 
-#endif // UI_H_
+void  draw_bl(BusLine l, Font font, Color color);
+void  draw_bus(Bus* bus, Color color);

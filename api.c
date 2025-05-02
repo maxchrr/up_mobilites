@@ -9,8 +9,6 @@
 #include "utils.h"
 #include "api.h"
 
-#define MAX_NAME_LEN		32
-
 struct BusStation
 {
 	int id;                   // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
@@ -39,6 +37,7 @@ BusStation* create_bs(int id, const char* name, int posx, int posy)
 	}
 	new_bs->id = id;
 	strncpy(new_bs->name, name, sizeof(new_bs->name));
+	new_bs->name[MAX_NAME_LEN - 1] = '\0';  // Suppresion du surplus de caractère
 	new_bs->posx = posx;
 	new_bs->posy = posy;
 	new_bs->maint_price = rand_range(10,100);
@@ -47,16 +46,16 @@ BusStation* create_bs(int id, const char* name, int posx, int posy)
 	return new_bs;
 }
 
-void print_bs(const BusStation* bs, int indent)
+void print_bs(const BusStation* bs)
 {
 	if (!bs)
 	{
-		fprintf(stdout, "[NULL station]\n");
+		fprintf(stdout, "[NULL STATION]\n");
 		return;
 	}
 	fprintf(
 		stdout,
-		"Arrêt %d \"%s\" (%d,%d)\n",
+		"[STATION #%d] \"%s\" (%d,%d)\n",
 		bs->id,
 		bs->name,
 		bs->posx,
@@ -64,8 +63,7 @@ void print_bs(const BusStation* bs, int indent)
 	);
 	fprintf(
 		stdout,
-		"%*sDernière maintenance le %02d/%02d/%04d (%dk€)\n",
-		indent+4,"",
+		"  --> [MAINT] %02d/%02d/%04d (%dk€)\n",
 		bs->last_maint_date.day,
 		bs->last_maint_date.month,
 		bs->last_maint_date.year,
@@ -89,34 +87,36 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 	new_br->bl_id = bl_id;
 	new_br->departure = departure;
 	new_br->arrival = arrival;
+	if (!departure || !arrival)
+	{
+		fprintf(stderr, "Null pointer in create_br\n");
+		free(new_br);
+		return NULL;
+	}
 	int dx = bs_getposx(arrival)-bs_getposx(departure);
 	int dy = bs_getposy(arrival)-bs_getposy(departure);
-	int due = (int)round(hypot(dx,dy)); // Distance entre deux points, avec leurs coordonnées cartésiennes
+	int due = (int)round(hypot(dx,dy));  // Distance entre deux points, avec leurs coordonnées cartésiennes
 	new_br->distance_due = due;
-	new_br->time_due = due;
+	new_br->time_due = (int)due / 10.0;  // Coefficient arbitraire - vitesse de 10 m/s
 	return new_br;
 }
 
-void print_br(const BusRoute* br, int indent)
+void print_br(const BusRoute* br)
 {
 	if (!br)
 	{
-		fprintf(stdout, "[NULL route]\n");
+		fprintf(stdout, "[NULL ROUTE]\n");
 		return;
 	}
-	fprintf(stdout, "*****************************************\n");
-	fprintf(stdout, "*\t\tLigne %d\t\t*\n", br->bl_id);
-	fprintf(stdout, "*****************************************\n");
 	fprintf(
 		stdout,
-		"Parcours > distance %dm / temps %ds\n",
+		"[ROUTE #%d] %s -> %s (%dm / %ds)\n",
+		br->bl_id,
+		bs_getname(br->departure),
+		bs_getname(br->arrival),
 		br->distance_due,
 		br->time_due
 	);
-	fprintf(stdout, "%*s-- De : ", indent+2,"");
-	print_bs(br->departure, 0);
-	fprintf(stdout, "%*s-- À : ", indent+2,"");
-	print_bs(br->arrival, 0);
 }
 
 void destroy_br(BusRoute* br)
@@ -124,7 +124,7 @@ void destroy_br(BusRoute* br)
 	free(br);
 }
 
-BusEntity* open_entity(EntityType type, void* data)
+BusEntity* open_entity(EntityType type, void* e)
 {
 	BusEntity* new_entity = malloc(sizeof(BusEntity));
 	if (!new_entity)
@@ -134,47 +134,39 @@ BusEntity* open_entity(EntityType type, void* data)
 	}
 	if (type == STATION)
 	{
-		new_entity->station = 1;
-		new_entity->route = 0;
-		new_entity->bs = (BusStation*)data;
+		new_entity->station = (type == STATION);
+		new_entity->route = (type == ROUTE);
+		new_entity->bs = (BusStation*)e;
 	}
 	else if (type == ROUTE)
 	{
-		new_entity->station = 0;
-		new_entity->route = 1;
-		new_entity->br = (BusRoute*)data;
+		new_entity->station = (type == STATION);
+		new_entity->route = (type == ROUTE);
+		new_entity->br = (BusRoute*)e;
 	}
 	return new_entity;
 }
 
-void print_entity(const BusEntity* obj, int indent)
+void print_entity(const BusEntity* obj)
 {
 	if (obj == NULL)
 	{
-		fprintf(
-			stdout,
-			"%*sEntité inexistante ou non allouée\n",
-			indent,""
-		);
+		fprintf(stdout, "[NULL ENTITY]\n");
 		return;
 	}
 	EntityType type = gettype(obj);
 	if (type == INVALID)
 	{
-		fprintf(
-			stdout,
-			"%*sType inconnue ?\n",
-			indent,""
-		);
+		fprintf(stdout, "[INVALID ENTITY TYPE]\n");
 		return;
 	}
-	/*if (type == STATION)
+	if (type == STATION)
 	{
-		print_bs(obj->bs, indent);
-	}*/
+		print_bs(obj->bs);
+	}
 	if (type == ROUTE)
 	{
-		print_br(obj->br, indent);
+		print_br(obj->br);
 	}
 }
 
