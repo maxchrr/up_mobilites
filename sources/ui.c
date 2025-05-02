@@ -30,7 +30,7 @@ Color random_color(void)
 	return c;
 }
 
-int count_segments(BusLine l)
+int count_segments(const BusLine l)
 {
 	int c=0;
 	List head = l;
@@ -42,7 +42,7 @@ int count_segments(BusLine l)
 	return c;
 }
 
-void collect_station_positions(BusLine l, Vector2* points)
+void collect_station_positions(const BusLine l, Vector2* points)
 {
 	int idx = 0;
 	List head = l;
