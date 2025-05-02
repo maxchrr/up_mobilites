@@ -36,11 +36,11 @@ Node*       _get_first_node(List l);
 Node*       _get_last_node(List l);
 Node*       _get_next_node(List l);
 Node*       _get_prev_node(List l);
-BusEntity*  _get_node(Node* n);
+BusEntity*  _get_node(const Node* n);
 
 void  swap_node(Node* n1, Node* n2);
 int   length(List l);
-int   sizeof_bytes(List l);
+int   sizeof_bytes(const List l);
 
 BusEntity*  _copy_entity(BusEntity* orig);
 List        merge(List l1, List l2);
