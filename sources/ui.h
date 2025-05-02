@@ -8,8 +8,10 @@
 #include "bus.h"
 #include "raylib.h"
 
-void draw_bl(BusLine l, Font font, Color color);
+int   _count_segments(BusLine l);
+void  _bs_getpos(BusLine l, Vector2* points);
 
-void draw_bus(Bus* bus, Color color);
+void  draw_bl(BusLine l, Font font, Color color);
+void  draw_bus(Bus* bus, Color color);
 
 #endif // UI_H_
