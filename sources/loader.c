@@ -9,7 +9,7 @@
 #include "utils.h"
 #include "loader.h"
 
-List init_from_file(int id, const char* path)
+BusLine init_from_file(int id, const char* path)
 {
 	FILE* f = fopen(path, "r");
 	if (!f)
@@ -17,7 +17,7 @@ List init_from_file(int id, const char* path)
 		fprintf(stderr, "Erreur à la lecture du fichier %s\n", path);
 		exit(1);
 	}
-	List new_bl;
+	BusLine new_bl;
 	init_list(&new_bl);
 	BusStation* ps = NULL;
 	BusStation* cs = NULL;
@@ -61,7 +61,7 @@ int load_timetables(Timetable timetables[], const char* path)
 			if (dot) *dot = '\0';  // remove extension
 			int line_id = atoi(base + 9);
 			snprintf(buffer, sizeof(buffer), "%s/%s", path, entry->d_name);
-			List bl = init_from_file(line_id, buffer);
+			BusLine bl = init_from_file(line_id, buffer);
 			if (bl != NULL)
 			{
 				timetables[count].id = line_id;

@@ -5,18 +5,18 @@
 #ifndef LOADER_H_
 #define LOADER_H_
 
-#include "list.h"
+#include "bus.h"
 
 #define MAX_TIMETABLES	32
 
 typedef struct
 {
 	int id;
-	List list;
+	BusLine list;
 	Color color;
 } Timetable;
 
-List init_from_file(int id, const char* path);
+BusLine init_from_file(int id, const char* path);
 
 int load_timetables(Timetable timetables[], const char* path);
 

@@ -57,7 +57,6 @@ int main(void)
 		float delta = GetFrameTime();
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-		printf("%f\n", GetFrameTime());
 
 		for (int i=0; i<total; ++i)
 		{

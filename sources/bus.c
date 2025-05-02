@@ -10,7 +10,7 @@
 #include "bus.h"
 #include "raylib.h"
 
-Bus* init_bus(int id, List bl)
+Bus* init_bus(int id, BusLine bl)
 {
 	Bus* new_bus = malloc(sizeof(Bus));
 	new_bus->id = id;
@@ -69,7 +69,7 @@ int bus_getbl_id(const Bus* bus)
 	return bus->bl_id;
 }
 
-List bus_getbl(const Bus* bus)
+BusLine bus_getbl(const Bus* bus)
 {
 	return bus->bl;
 }
@@ -94,17 +94,17 @@ bool bus_getis_stopping(const Bus* bus)
 	return bus->is_stopping;
 }
 
-int bl_getposx(List l)
+int bl_getposx(BusLine l)
 {
 	return bs_getposx(_get_node(l)->bs);
 }
 
-int bl_getposy(List l)
+int bl_getposy(BusLine l)
 {
 	return bs_getposy(_get_node(l)->bs);
 }
 
-List bl_getnext_bs(List l)
+BusLine bl_getnext_bs(BusLine l)
 {
 	if (is_empty(l)) return NULL;
 	if (gettype(_get_node(l)) == STATION)
@@ -115,7 +115,7 @@ List bl_getnext_bs(List l)
 	else return _get_next_node(l); // Le suivant est une station*/
 }
 
-List bl_getprev_bs(List l)
+BusLine bl_getprev_bs(BusLine l)
 {
 	if (is_empty(l)) return NULL;
 	if (gettype(_get_node(l)) == STATION)
@@ -126,7 +126,7 @@ List bl_getprev_bs(List l)
 	else return _get_prev_node(l); // Le précédent est une station
 }
 
-List bl_getnext_br(List l)
+BusLine bl_getnext_br(BusLine l)
 {
 	if (is_empty(l)) return NULL;
 	if (gettype(_get_node(l)) != STATION)
@@ -138,7 +138,7 @@ List bl_getnext_br(List l)
 		return _get_next_node(l); // Le suivant est une route
 }
 
-List bl_getprev_br(List l)
+BusLine bl_getprev_br(BusLine l)
 {
 	if (is_empty(l)) return NULL;
 	if (gettype(_get_node(l)) != STATION)
@@ -165,7 +165,7 @@ void bus_setbl_id(Bus* bus, int value)
 	bus->bl_id = value;
 }
 
-void bus_setbl(Bus* bus, List bl)
+void bus_setbl(Bus* bus, BusLine bl)
 {
 	bus->bl = bl;
 }
@@ -190,7 +190,7 @@ void bus_setis_stopping(Bus* bus, bool value)
 	bus->is_stopping = value;
 }
 
-void bus_departure(Bus* bus, List bl, BusDirection direction)
+void bus_departure(Bus* bus, BusLine bl, BusDirection direction)
 {
 	bus_setbl(bus, bl);
 	bus_setdirection(bus, direction);
@@ -201,7 +201,7 @@ void bus_departure(Bus* bus, List bl, BusDirection direction)
 
 void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta)
 {
-	List current;
+	BusLine current;
 	if (bus_getis_stopping(bus))
 	{
 		if (GetTime()-bus_getstop_time(bus) >= 2.0f)

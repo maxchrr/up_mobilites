@@ -12,7 +12,7 @@
 
 #define PADDING	200
 
-void draw_bl(List l, Font font, Color color)
+void draw_bl(BusLine l, Font font, Color color)
 {
 	int segCount = 0;
 	Node* temp = l;
