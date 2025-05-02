@@ -68,7 +68,7 @@ void draw_bl(List l, Font font, Color color)
 	free(points);
 }
 
-void draw_bus(BusPtr bus, Color color)
+void draw_bus(Bus* bus, Color color)
 {
 	int dx = bus_getposx(bus)+PADDING/2;
 	int dy = bus_getposy(bus)+PADDING;

@@ -28,7 +28,7 @@ int main(void)
 		print_list(timetables[i].list);
 	}
 
-	BusPtr buses[MAX_TIMETABLES];
+	Bus* buses[MAX_TIMETABLES];
 	int incx[MAX_TIMETABLES] = {0};
 	int incy[MAX_TIMETABLES] = {0};
 

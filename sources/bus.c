@@ -10,9 +10,9 @@
 #include "bus.h"
 #include "raylib.h"
 
-BusPtr init_bus(int id, List bl)
+Bus* init_bus(int id, List bl)
 {
-	BusPtr new_bus = malloc(sizeof(Bus));
+	Bus* new_bus = malloc(sizeof(Bus));
 	new_bus->id = id;
 	bus_departure(new_bus, bl, DEP_TO_ARR);
 	Node* next = _get_next_node(bl);
@@ -29,7 +29,7 @@ BusPtr init_bus(int id, List bl)
 	return new_bus;
 }
 
-void print_bus(const BusPtr bus)
+void print_bus(const Bus* bus)
 {
 	fprintf(
 		stdout,
@@ -43,53 +43,53 @@ void print_bus(const BusPtr bus)
 	);
 }
 
-void destroy_bus(BusPtr bus)
+void destroy_bus(Bus* bus)
 {
 	//destroy_list(bus->bl);
 	free(bus);
 }
 
-int bus_getid(const BusPtr bus)
+int bus_getid(const Bus* bus)
 {
 	return bus->id;
 }
 
-int bus_getposx(const BusPtr bus)
+int bus_getposx(const Bus* bus)
 {
 	return bus->posx;
 }
 
-int bus_getposy(const BusPtr bus)
+int bus_getposy(const Bus* bus)
 {
 	return bus->posy;
 }
 
-int bus_getbl_id(const BusPtr bus)
+int bus_getbl_id(const Bus* bus)
 {
 	return bus->bl_id;
 }
 
-List bus_getbl(const BusPtr bus)
+List bus_getbl(const Bus* bus)
 {
 	return bus->bl;
 }
 
-BusDirection bus_getdirection(const BusPtr bus)
+BusDirection bus_getdirection(const Bus* bus)
 {
 	return bus->direction;
 }
 
-float bus_getspeed(const BusPtr bus)
+float bus_getspeed(const Bus* bus)
 {
 	return bus->speed;
 }
 
-float bus_getstop_time(const BusPtr bus)
+float bus_getstop_time(const Bus* bus)
 {
 	return bus->stop_time;
 }
 
-bool bus_getis_stopping(const BusPtr bus)
+bool bus_getis_stopping(const Bus* bus)
 {
 	return bus->is_stopping;
 }
@@ -150,47 +150,47 @@ List bl_getprev_br(List l)
 		return _get_prev_node(l); // Le précédent est une route
 }
 
-void bus_setposx(BusPtr bus, int value)
+void bus_setposx(Bus* bus, int value)
 {
 	bus->posx = value;
 }
 
-void bus_setposy(BusPtr bus, int value)
+void bus_setposy(Bus* bus, int value)
 {
 	bus->posy = value;
 }
 
-void bus_setbl_id(BusPtr bus, int value)
+void bus_setbl_id(Bus* bus, int value)
 {
 	bus->bl_id = value;
 }
 
-void bus_setbl(BusPtr bus, List bl)
+void bus_setbl(Bus* bus, List bl)
 {
 	bus->bl = bl;
 }
 
-void bus_setdirection(BusPtr bus, BusDirection value)
+void bus_setdirection(Bus* bus, BusDirection value)
 {
 	bus->direction = value;
 }
 
-void bus_setspeed(BusPtr bus, float value)
+void bus_setspeed(Bus* bus, float value)
 {
 	bus->speed = value;
 }
 
-void bus_setstop_time(BusPtr bus, float value)
+void bus_setstop_time(Bus* bus, float value)
 {
 	bus->stop_time = value;
 }
 
-void bus_setis_stopping(BusPtr bus, bool value)
+void bus_setis_stopping(Bus* bus, bool value)
 {
 	bus->is_stopping = value;
 }
 
-void bus_departure(BusPtr bus, List bl, BusDirection direction)
+void bus_departure(Bus* bus, List bl, BusDirection direction)
 {
 	bus_setbl(bus, bl);
 	bus_setdirection(bus, direction);
@@ -199,7 +199,7 @@ void bus_departure(BusPtr bus, List bl, BusDirection direction)
 	print_bus(bus);
 }
 
-void bus_travel(BusPtr bus, BusDirection direction, int* incx, int* incy)
+void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy)
 {
 	List current;
 	if (bus_getis_stopping(bus))
