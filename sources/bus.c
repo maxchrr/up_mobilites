@@ -12,7 +12,12 @@
 Bus* init_bus(int id, BusLine bl)
 {
 	Bus* new_bus = malloc(sizeof(Bus));
+	if (!new_bus) {
+		fprintf(stderr, "Memory allocation failed\n");
+		return NULL;
+	}
 	new_bus->id = id;
+	memset(new_bus, 0, sizeof(Bus));  // pour la sécurité
 	bus_departure(new_bus, bl, DEP_TO_ARR);
 	new_bus->speed = 100.0f;
 	new_bus->stop_time = 0.0f;
@@ -36,6 +41,7 @@ void print_bus(const Bus* bus)
 
 void destroy_bus(Bus* bus)
 {
+	// ATTENTION : ne pas libérer la ligne si elle est partagée entre plusieurs bus => voir destroy_timetable();
 	//destroy_list(bus->bl);
 	free(bus);
 }

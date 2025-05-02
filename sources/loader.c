@@ -118,7 +118,7 @@ int load_timetables(Timetable timetables[], const char* path)
 void destroy_timetable(Timetable* t)
 {
 	if (!t) return;
-	destroy_list(t->list);
+	destroy_list(t->list);  // on s'assure de libérer la ligne
 	t->list = NULL;
 	t->id = 0;
 	t->color = (Color){0};  // Pour nettoyage visuel
