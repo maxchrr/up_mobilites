@@ -24,15 +24,19 @@ BusLine init_from_file(int id, const char* path)
 	char name[64];
 	int x, y;
 	int i = 1;
-	while (fscanf(f, "%63[^,],%d,%d\n", name, &x, &y) == 3)
+	char line[128];
+	while (fgets(line, sizeof(line), f))
 	{
-		cs = create_bs(i++, name, x, y);
-		if (ps != NULL) {
-			BusRoute* r = create_br(id, ps, cs);
-			new_bl = insert_at_tail(new_bl, open_entity(ROUTE, r));
+		if (sscanf(line, "%63[^,],%d,%d\n", name, &x, &y) == 3)
+		{
+			cs = create_bs(i++, name, x, y);
+			if (ps != NULL) {
+				BusRoute* r = create_br(id, ps, cs);
+				new_bl = insert_at_tail(new_bl, open_entity(ROUTE, r));
+			}
+			new_bl = insert_at_tail(new_bl, open_entity(STATION, cs));
+			ps = cs;
 		}
-		new_bl = insert_at_tail(new_bl, open_entity(STATION, cs));
-		ps = cs;
 	}
 	fclose(f);
 	return new_bl;
