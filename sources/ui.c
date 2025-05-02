@@ -60,11 +60,12 @@ void collect_station_positions(const BusLine l, Vector2* points)
 
 void draw_bl(BusLine l, Font font, Color color)
 {
+	if (!l) return;
 	int count = count_segments(l);
 	#define SIZE	128
 	if (count+1 > SIZE)
 	{
-		fprintf(stderr, "Trop de stations\n");
+		fprintf(stderr, "Nombre maximal de stations atteint\n");
 		return;
 	}
 	Vector2 points[SIZE];
@@ -74,26 +75,31 @@ void draw_bl(BusLine l, Font font, Color color)
 		DrawLineEx(points[i], points[i+1], 8.0f, WHITE);
 	for (int i=0; i<count; ++i)
 		DrawLineEx(points[i], points[i+1], 4.0f, color);
+	#undef SIZE
 	// Desinner les stations
 	List head = l;
 	while (!list_is_empty(head))
 	{
 		BusEntity* e = list_getnode(head);
-		if (e->station)
+		if (gettype(e) == INVALID)
 		{
-			BusStation* s = e->bs;
-			int dx = bs_getposx(s)+PADDING/2;
-			int dy = bs_getposy(s)+PADDING;
-			DrawCircle(dx, dy, 8+4,	BLACK);
-			DrawCircle(dx, dy, 8+2,	WHITE);
-			DrawCircle(dx, dy, 8,	color);
-			Vector2 labelSize = MeasureTextEx(font, bs_getname(s), 16, 0);
-			Vector2 labelPos = { dx-labelSize.x/2, dy-labelSize.y/2-24 };
-			DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
+			fprintf(stderr, "Station invalide\n");
+			head = list_getnext_node(head);
+			continue;
 		}
+		BusStation* s = e->bs;
+		int dx = bs_getposx(s) + PADDING/2;
+		int dy = bs_getposy(s) + PADDING;
+		DrawCircle(dx, dy, 8+4,	BLACK);
+		DrawCircle(dx, dy, 8+2,	WHITE);
+		DrawCircle(dx, dy, 8,	color);
+		const char* name = bs_getname(s);
+		if (!name) fprintf(stderr, "Station sans nom\n");
+		Vector2 labelSize = MeasureTextEx(font, name, 16, 0);
+		Vector2 labelPos = { dx-labelSize.x/2, dy-labelSize.y/2-24 };
+		DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		head = list_getnext_node(head);
 	}
-	#undef SIZE
 }
 
 void draw_bus(Bus* bus, Color color)
