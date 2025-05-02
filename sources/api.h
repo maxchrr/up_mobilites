@@ -7,6 +7,8 @@
 
 #include "utils.h"
 
+#define MAX_NAME_LEN		32
+
 /* Déclarations opaques des structures (encapsulation -> propriétées cachées) */
 typedef struct BusStation BusStation;
 typedef struct BusRoute BusRoute;

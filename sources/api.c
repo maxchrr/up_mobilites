@@ -9,8 +9,6 @@
 #include "utils.h"
 #include "api.h"
 
-#define MAX_NAME_LEN		32
-
 struct BusStation
 {
 	int id;                   // Identifiant unique pour l'arrêt de bus (non liée à une ligne de bus)
