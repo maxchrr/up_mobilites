@@ -39,6 +39,7 @@ BusStation* create_bs(int id, const char* name, int posx, int posy)
 	}
 	new_bs->id = id;
 	strncpy(new_bs->name, name, sizeof(new_bs->name));
+	new_bs->name[MAX_NAME_LEN - 1] = '\0';  // Suppresion du surplus de caractère
 	new_bs->posx = posx;
 	new_bs->posy = posy;
 	new_bs->maint_price = rand_range(10,100);
