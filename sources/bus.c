@@ -84,7 +84,7 @@ float bus_getstop_time(const Bus* bus)
 	return bus->stop_time;
 }
 
-bool bus_getis_stopping(const Bus* bus)
+unsigned bus_getis_stopping(const Bus* bus)
 {
 	return bus->is_stopping;
 }
@@ -124,7 +124,7 @@ void bus_setstop_time(Bus* bus, float value)
 	bus->stop_time = value;
 }
 
-void bus_setis_stopping(Bus* bus, bool value)
+void bus_setis_stopping(Bus* bus, unsigned value)
 {
 	bus->is_stopping = value;
 }
@@ -146,7 +146,7 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 	if (bus_getis_stopping(bus))
 	{
 		if (time-bus_getstop_time(bus) >= 2.0f)
-			bus_setis_stopping(bus, false);
+			bus_setis_stopping(bus, 0);
 		return;
 	}
 	current = (direction == DEP_TO_ARR) ? bl_getnext_bs(bus_getbl(bus))
@@ -165,7 +165,7 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 		print_bus(bus);
 		bus_setbl(bus, current);
 		bus_setstop_time(bus, time);
-		bus_setis_stopping(bus, true);
+		bus_setis_stopping(bus, 1);
 		return;
 	}
 	float speed = bus_getspeed(bus);

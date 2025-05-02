@@ -4,21 +4,20 @@
  */
 #pragma once
 
-#include <stdbool.h>
 #include "api.h"
 #include "busline.h"
 
 typedef enum { DEP_TO_ARR, ARR_TO_DEP} BusDirection;
 typedef struct Bus
 {
-	int id;                  // Identifiant du bus
-	int posx, posy;          // Coordonées sur le plan
-	int bl_id;               // Identifant de la ligne de bus courante
-	BusLine bl;              // Pointeur sur l'entité courante de la ligne de bus (une Station ou une Route)
-	BusDirection direction;  // Sens de circulation du bus
-	float speed;             // Vitesse de circulation
-	float stop_time;         // Temps d'arrêt à une station
-	bool is_stopping;        // État de l'attente
+	int id;                    // Identifiant du bus
+	int posx, posy;            // Coordonées sur le plan
+	int bl_id;                 // Identifant de la ligne de bus courante
+	BusLine bl;                // Pointeur sur l'entité courante de la ligne de bus (une Station ou une Route)
+	BusDirection direction;    // Sens de circulation du bus
+	float speed;               // Vitesse de circulation
+	float stop_time;           // Temps d'arrêt à une station
+	unsigned is_stopping : 1;  // État de l'attente
 } Bus;
 
 Bus*  init_bus(int id, BusLine bl);
@@ -34,7 +33,7 @@ BusLine       bus_getbl(const Bus* bus);
 BusDirection  bus_getdirection(const Bus* bus);
 float         bus_getspeed(const Bus* bus);
 float         bus_getstop_time(const Bus* bus);
-bool          bus_getis_stopping(const Bus* bus);
+unsigned      bus_getis_stopping(const Bus* bus);
 
 /* Mutateur */
 void  bus_setposx(Bus* bus, int value);
@@ -44,7 +43,7 @@ void  bus_setbl(Bus* bus, BusLine bl);
 void  bus_setdirection(Bus* bus, BusDirection value);
 void  bus_setspeed(Bus* bus, float value);
 void  bus_setstop_time(Bus* bus, float value);
-void  bus_setis_stopping(Bus* bus, bool value);
+void  bus_setis_stopping(Bus* bus, unsigned value);
 
 /* Méthodes */
 void  bus_departure(Bus* bus, BusLine bl, BusDirection direction);
