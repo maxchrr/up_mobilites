@@ -169,10 +169,10 @@ void print_entity(const BusEntity* obj, int indent)
 		);
 		return;
 	}
-	/*if (type == STATION)
+	if (type == STATION)
 	{
 		print_bs(obj->bs, indent);
-	}*/
+	}
 	if (type == ROUTE)
 	{
 		print_br(obj->br, indent);
