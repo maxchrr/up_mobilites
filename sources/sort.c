@@ -3,76 +3,64 @@
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
 #include <stdlib.h>
-#include <stdbool.h>
 #include "api.h"
+#include "bus.h"
 #include "sort.h"
 
-bool compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b)
+int compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b)
 {
-	if (gettype(a) != STATION || gettype(b) != STATION) return 0;
-	int cost_a = bs_getmaint_price(a->bs);
-	int cost_b = bs_getmaint_price(b->bs);
-	return cost_b < cost_a;
+	if (!a || !b || gettype(a) != STATION || gettype(b) != STATION) return 0;
+	int pa = bs_getmaint_price(a->bs);
+	int pb = bs_getmaint_price(b->bs);
+	return pa - pb;  // décroissant
 }
 
-bool compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b)
+int compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b)
 {
-	if (gettype(a) != STATION || gettype(b) != STATION) return 0;
-	Date d1 = bs_getlast_maint_date(a->bs);
-	Date d2 = bs_getlast_maint_date(b->bs);
-	if (d1.year != d2.year) return d1.year - d2.year;
-	if (d1.month != d2.month) return d1.month - d2.month;
-	return d1.day > d2.day;
+	if (!a || !b || gettype(a) != STATION || gettype(b) != STATION) return 0;
+	Date da = bs_getlast_maint_date(a->bs);
+	Date db = bs_getlast_maint_date(b->bs);
+	if (da.year != db.year)		return da.year - db.year;
+	if (da.month != db.month)	return da.month - db.month;
+	return				da.day - db.day;
 }
 
-List _merge(List l, bool (*cmp)(const BusEntity*, const BusEntity*))
+static Compare curr_cmp = NULL;
+
+static int wrapper(const void* a, const void* b)
 {
-	if (!is_empty(l) || !is_empty(_get_next_node(l))) return l;
-	List slow = l, fast = _get_next_node(l);
-	while (fast && _get_next_node(fast))
-	{
-		slow = _get_next_node(slow);
-		fast = _get_next_node(_get_next_node(fast));
-	}
-	List temp = _get_next_node(slow);
-	slow->next = NULL;
-	if (temp) temp->prev = NULL;
-	List left = _merge(l, cmp);
-	List right = _merge(temp, cmp);
-	List head = NULL, tail = NULL;
-	while (left && right)
-	{
-		bool swap = cmp(_get_node(left), _get_node(right));
-		List selected = swap ? right : left;
-		if (!head)
-		{
-			head = selected;
-			tail = selected;
-		}
-		else
-		{
-			tail->next = selected;
-			selected->prev = tail;
-			tail = selected;
-		}
-		if (swap)	right = _get_next_node(right);
-		else		left = _get_next_node(left);
-	}
-	List rest = left ? left : right;
-	while (rest)
-	{
-		tail->next = rest;
-		rest->prev = tail;
-		tail = rest;
-		rest = _get_next_node(rest);
-	}
-	if (head) head->prev = NULL;
-	if (tail) tail->prev = NULL;
-	return head;
+	const BusEntity* ea = *(const BusEntity**)a;
+	const BusEntity* eb = *(const BusEntity**)b;
+	return curr_cmp(ea,eb);
 }
 
-List sort_list(List l, bool (*cmp)(const BusEntity*, const BusEntity*))
+BusLine sort_list(BusLine bl, Compare cmp)
 {
-	if (is_empty(l) || is_empty(_get_next_node(l))) return l;
-	return _merge(l, cmp);
+	if (!bl || !cmp) return bl;
+	curr_cmp = cmp;  // enregistrement temporaire du comparateur
+	// Conversion en tableau
+	int n = length(bl);
+	BusEntity** arr = calloc(n,sizeof(BusEntity*));
+	if (!arr) return bl;
+	List head = bl;
+	for (int i=0; i<n && head; ++i)
+	{
+		arr[i] = _get_node(_get_next_node(head));
+		head = _get_next_node(head);
+	}
+	// Tri (quicksort)
+	qsort(arr, n, sizeof(BusEntity*), wrapper);
+	// Recréation de la liste
+	BusLine sorted = NULL;
+	init_list(&sorted);
+	for (int i=0; i<n; ++i)
+	{
+		sorted = insert_at_tail(sorted, arr[i]);
+	}
+	for (int i=0; i<n; ++i)
+	{
+		free(arr[i]);
+	}
+	free(arr);
+	return sorted;
 }
