@@ -225,5 +225,10 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 	float move = speed*delta;
 	dx *= move/dist; dy *= move/dist;
 	bus_setposx(bus, xd+dx); bus_setposy(bus, yd+dy);
-	*incx = (int)dx; *incy = (int)dy;
+	// Ces valeurs accumulent les déplacements pour éviter les pertes dues au cast
+	static float accumx = 0.0f;
+	static float accumy = 0.0f;
+	accumx += dx; accumy += dy;
+	*incx = (int)accumx; *incy = (int)accumy;
+	accumx -= *incx; accumy -= *incy;
 }
