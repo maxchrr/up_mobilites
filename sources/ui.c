@@ -23,10 +23,10 @@ void draw_bl(BusLine l, Font font, Color color)
 		temp = _get_next_node(temp);
 	}
 	int pCount = segCount+1;
-	Vector2* points = malloc(sizeof(Vector2)*pCount);
-	if (!points)
+	Vector2 points[128];
+	if (pCount > 128)
 	{
-		fprintf(stderr, "Memory allocation failed\n");
+		fprintf(stderr, "Trop de stations\n");
 		return;
 	}
 	int idx = 0;
@@ -65,7 +65,6 @@ void draw_bl(BusLine l, Font font, Color color)
 		}
 		temp = _get_next_node(temp);
 	}
-	free(points);
 }
 
 void draw_bus(Bus* bus, Color color)
