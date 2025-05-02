@@ -46,16 +46,16 @@ BusStation* create_bs(int id, const char* name, int posx, int posy)
 	return new_bs;
 }
 
-void print_bs(const BusStation* bs, int indent)
+void print_bs(const BusStation* bs)
 {
 	if (!bs)
 	{
-		fprintf(stdout, "[NULL station]\n");
+		fprintf(stdout, "[NULL STATION]\n");
 		return;
 	}
 	fprintf(
 		stdout,
-		"Arrêt %d \"%s\" (%d,%d)\n",
+		"[STATION #%d] \"%s\" (%d,%d)\n",
 		bs->id,
 		bs->name,
 		bs->posx,
@@ -63,8 +63,7 @@ void print_bs(const BusStation* bs, int indent)
 	);
 	fprintf(
 		stdout,
-		"%*sDernière maintenance le %02d/%02d/%04d (%dk€)\n",
-		indent+4,"",
+		"  --> [MAINT] %02d/%02d/%04d (%dk€)\n",
 		bs->last_maint_date.day,
 		bs->last_maint_date.month,
 		bs->last_maint_date.year,
@@ -102,26 +101,22 @@ BusRoute* create_br(int bl_id, BusStation* departure, BusStation* arrival)
 	return new_br;
 }
 
-void print_br(const BusRoute* br, int indent)
+void print_br(const BusRoute* br)
 {
 	if (!br)
 	{
-		fprintf(stdout, "[NULL route]\n");
+		fprintf(stdout, "[NULL ROUTE]\n");
 		return;
 	}
-	fprintf(stdout, "*****************************************\n");
-	fprintf(stdout, "*\t\tLigne %d\t\t*\n", br->bl_id);
-	fprintf(stdout, "*****************************************\n");
 	fprintf(
 		stdout,
-		"Parcours > distance %dm / temps %ds\n",
+		"[ROUTE #%d] %s -> %s (%dm / %ds)\n",
+		br->bl_id,
+		bs_getname(br->departure),
+		bs_getname(br->arrival),
 		br->distance_due,
 		br->time_due
 	);
-	fprintf(stdout, "%*s-- De : ", indent+2,"");
-	print_bs(br->departure, 0);
-	fprintf(stdout, "%*s-- À : ", indent+2,"");
-	print_bs(br->arrival, 0);
 }
 
 void destroy_br(BusRoute* br)
@@ -152,34 +147,26 @@ BusEntity* open_entity(EntityType type, void* data)
 	return new_entity;
 }
 
-void print_entity(const BusEntity* obj, int indent)
+void print_entity(const BusEntity* obj)
 {
 	if (obj == NULL)
 	{
-		fprintf(
-			stdout,
-			"%*sEntité inexistante ou non allouée\n",
-			indent,""
-		);
+		fprintf(stdout, "[NULL ENTITY]\n");
 		return;
 	}
 	EntityType type = gettype(obj);
 	if (type == INVALID)
 	{
-		fprintf(
-			stdout,
-			"%*sType inconnue ?\n",
-			indent,""
-		);
+		fprintf(stdout, "[INVALID ENTITY TYPE]\n");
 		return;
 	}
 	if (type == STATION)
 	{
-		print_bs(obj->bs, indent);
+		print_bs(obj->bs);
 	}
 	if (type == ROUTE)
 	{
-		print_br(obj->br, indent);
+		print_br(obj->br);
 	}
 }
 

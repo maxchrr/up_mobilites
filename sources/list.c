@@ -23,7 +23,7 @@ void print_list(List l)
 	}
 	while(temp != NULL)
 	{
-		print_entity(temp->data, 0);
+		print_entity(temp->data);
 		temp = temp->next;
 	}
 }

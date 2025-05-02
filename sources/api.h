@@ -29,15 +29,15 @@ typedef struct BusEntity
 
 /* Méthodes sur les entités */
 BusStation*  create_bs(int id, const char* name, int posx, int posy);
-void         print_bs(const BusStation* bs, int indent);
+void         print_bs(const BusStation* bs);
 void         destroy_bs(BusStation* bs);
 
 BusRoute*  create_br(int bl_id, BusStation* departure, BusStation* arrival);
-void       print_br(const BusRoute* br, int indent);
+void       print_br(const BusRoute* br);
 void       destroy_br(BusRoute* br);
 
 BusEntity*  open_entity(EntityType type, void* data);
-void        print_entity(const BusEntity* obj, int indent);
+void        print_entity(const BusEntity* obj);
 void        close_entity(BusEntity* obj);
 
 /* Accesseur */

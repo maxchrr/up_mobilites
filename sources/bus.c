@@ -25,13 +25,13 @@ void print_bus(const Bus* bus)
 {
 	fprintf(
 		stdout,
-		"Bus %d sur ligne %d départ %s (%d,%d) direction %s\n",
+		"[BUS #%d] ROUTE #%d \"%s\" (%d,%d) --> %s\n",
 		bus_getid(bus),
 		bus_getbl_id(bus),
 		bs_getname(_get_node(bus->bl)->bs),
 		bus_getposx(bus),
 		bus_getposy(bus),
-		(bus_getdirection(bus) == DEP_TO_ARR) ? "Terminus" : "Départ"
+		(bus_getdirection(bus) == DEP_TO_ARR) ? "ARR" : "DEP"
 	);
 }
 
