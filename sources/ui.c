@@ -133,12 +133,12 @@ void draw_bl(BusLine l, Font font, Color color)
 	}
 }
 
-void draw_bus(Bus* bus, Color color)
+void draw_bus(Bus* bus, Color color, int paused)
 {
 	if (!bus) return;
 	int dx = bus_getposx(bus)+PADDING/2;
 	int dy = bus_getposy(bus)+PADDING;
-	if (bus_getis_stopping(bus))
+	if (bus_getis_stopping(bus) && !paused)
 	{
 		float blink = GetTime() * 4.0f;
 		if ((blink - (int)blink) < 0.5f) {

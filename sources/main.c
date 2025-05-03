@@ -43,6 +43,19 @@ int main(void)
 		}
 	}
 
+	int* keys = calloc(total,sizeof(int));
+	if (!keys) {
+		fprintf(stderr, "Memory allocation failed\n");
+		return 1;
+	}
+	for (int i=0; i<total; ++i)
+		keys[i] = KEY_ONE+i;  // Associe KEY_ONE, KEY_TWO, ..., en fonction de 'i'
+
+	// Modes
+	bool paused = false;
+	bool deleteMode = false;
+	bool concatMode = false;
+
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
 	SetTargetFPS(60);
 
@@ -52,14 +65,14 @@ int main(void)
 		fprintf(stderr, "Police non chargée, utilisation de celle par défaut\n");
 		font = GetFontDefault();
 	}
-	
-	int* keys = calloc(total,sizeof(int));
-	for (int i=0; i<total; ++i)
-		keys[i] = KEY_ONE+i;  // Associe KEY_ONE, KEY_TWO, ..., en fonction de 'i'
-	bool deleteMode = false;
-	bool concatMode = false;
 	while (!WindowShouldClose())
 	{
+		// Mode pause
+		if (IsKeyPressed(KEY_SPACE))
+		{
+			paused = !paused;
+			printf("[MODE] Pause\n");
+		}
 		// Mode suppression
 		if (IsKeyPressed(KEY_D))
 		{
@@ -96,13 +109,24 @@ int main(void)
 			timetables[1].list = NULL;  // La liste est oublié, ne pas libérer ici, mais à la fin
 		}
 
-		// Boucle d'affichage
+		// Variables temporelles
 		float delta = GetFrameTime();
+		double time = GetTime();
+		int fps = GetFPS();
+
+		// Boucle d'affichage
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-		DrawText(TextFormat("FPS: %d", GetFPS()), 10, 10, 20, GRAY);
+		DrawText(TextFormat("FPS: %d", fps), 10, 10, 20, GRAY);
 
-		if (deleteMode)
+		if (paused)
+		{
+			const char* text = "-- PAUSE --";
+			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
+			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
+			DrawTextEx(font, text, textPos, 20, 0, BLUE);
+		}
+		else if (deleteMode)
 		{
 			const char* text = "-- DELETE --";
 			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
@@ -114,14 +138,22 @@ int main(void)
 			const char* text = "-- CONCAT --";
 			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
 			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
-			DrawTextEx(font, text, textPos, 20, 0, GREEN);
+			DrawTextEx(font, text, textPos, 20, 0, YELLOW);
 		}
 
 		for (int i=0; i<total; ++i)
 		{
-			draw_bl(timetables[i].list, font, timetables[i].color);
-			if (buses[i]) draw_bus(buses[i], DARKPURPLE);
-			bus_travel(buses[i], bus_getdirection(buses[i]), &incx[i], &incy[i], delta, GetTime());
+			// Dessiner ligne de bus
+			Timetable timetable = timetables[i];
+			draw_bl(timetable.list, font, timetable.color);
+			// Dessiner bus et déplacement bus
+			Bus* bus = buses[i];
+			draw_bus(bus, DARKPURPLE, paused);
+			if (!paused)
+			{
+				BusDirection direction = bus_getdirection(bus);
+				bus_travel(bus, direction, &incx[i], &incy[i], delta, time);
+			}
 		}
 
 		EndDrawing();
