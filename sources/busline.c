@@ -138,11 +138,23 @@ void bl_add_bus(BusLine* bl, Bus* bus)
 	bl->bus_arr[bl->bus_count++] = bus;
 }
 
-void bl_remove_bus(BusLine* bl)
+void bl_remove_bus(BusLine* bl, int bus_id)
 {
 	if (bl->bus_count == 0) return;
-	bl->bus_arr[bl->bus_count] = NULL;
-	bl->bus_count--;
+	bool found = false;
+	// Chercher le bus
+	for (unsigned i=0; i<bl->bus_count; ++i)
+	{
+		if (!found && bl->bus_arr[i]->id == bus_id)
+		{
+			free(bl->bus_arr[i]);
+			found = true;
+		}
+		if (found && i < bl->bus_count-1)
+			bl->bus_arr[i] = bl->bus_arr[i+1];
+	}
+	if (found)
+		bl->bus_count--;
 }
 
 List bl_remove(List l)

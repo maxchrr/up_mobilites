@@ -39,12 +39,17 @@ void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 	// Mode suppression de bus
 	else if (cmd[0] == ':' && cmd[1] == 'd')
 	{
-		int line_num = atoi(&cmd[2]);
-		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
-		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
-		if (is_in_range && is_line_exist)
+		char* slash_pos = strchr(cmd, '/');
+		if (slash_pos)
 		{
-			bl_remove_bus(&lines[line_num-1]);
+			int line_num = atoi(&cmd[2]);
+			int bus_id = atoi(slash_pos+1);
+			bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
+			bool is_line_exist = !list_is_empty(lines[line_num-1].list);
+			if (is_in_range && is_line_exist)
+			{
+				bl_remove_bus(&lines[line_num-1], bus_id);
+			}
 		}
 	}
 	// Mode concaténation de ligne de bus
