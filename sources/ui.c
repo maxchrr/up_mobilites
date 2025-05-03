@@ -174,6 +174,32 @@ void draw_bl(BusLine bl, Font font, Color color)
 	}
 	Vector2 points[SIZE];
 	collect_station_positions(bl.list, points);
+	// Afficher le nom de la ligne à gauche de la première station
+	if (count >= 0 && bl.id)
+	{
+		char label[MAX_NAME_LEN];
+		snprintf(label, MAX_NAME_LEN, "Ligne %d", bl.id);
+		Vector2 nameSize = MeasureTextEx(font, label, 12, 0);
+		Vector2 namePos =
+		{
+			points[0].x - nameSize.x - 16,  // gauche de la première station
+			points[0].y - nameSize.y / 2  // centre
+		};
+		Rectangle box = {
+			namePos.x - 8,
+			namePos.y - 4,
+			nameSize.x + 8,
+			nameSize.y + 4
+		};
+		DrawRectangleRounded(box, 0.2f, 8, Fade(color, 0.2f));
+		DrawRectangleRoundedLines(box, 0.2f, 8, color);
+		Vector2 labelPos = {
+			box.x + (box.width - nameSize.x) / 2,  // centre
+			box.y + (box.height - nameSize.y) / 2   // centre
+		};
+		DrawTextEx(font, label, labelPos, 12, 0, BLACK);
+	}
+
 	// Dessiner les routes
 	for (int i=0; i<count; ++i)
 		DrawLineEx(points[i], points[i+1], 8.0f, WHITE);
@@ -200,7 +226,11 @@ void draw_bl(BusLine bl, Font font, Color color)
 		const char* name = bs_getname(s);
 		if (!name) fprintf(stderr, "Station sans nom\n");
 		Vector2 labelSize = MeasureTextEx(font, name, 16, 0);
-		Vector2 labelPos = { dx-labelSize.x/2, dy-labelSize.y/2-24 };
+		Vector2 labelPos =
+		{
+			dx - labelSize.x / 2,  // centre
+			dy - labelSize.y / 2 - 24  // centre légèrement au dessus
+		};
 		DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		head = list_getnext_node(head);
 	}
@@ -229,6 +259,10 @@ void draw_bus(Bus* bus, Color color, int paused)
 	snprintf(label, sizeof(label), "%d", bus_getid(bus));
 	Font font = GetFontDefault();
 	Vector2 labelSize = MeasureTextEx(font, label, 16, 0);
-	Vector2 labelPos = { dx-labelSize.x/2, dy-labelSize.y/2 };
+	Vector2 labelPos =
+	{
+		dx - labelSize.x / 2,  // centre du cercle
+		dy - labelSize.y / 2  // centre du cercle
+	};
 	DrawTextEx(font, TextFormat("%d", bus_getid(bus)), labelPos, 16, 0, WHITE);
 }

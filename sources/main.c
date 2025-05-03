@@ -103,14 +103,22 @@ int main(void)
 		{
 			const char* text = "-- PAUSE --";
 			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
-			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
+			Vector2 textPos =
+			{
+				SCREEN_WIDTH - textSize.x - 20,  // à droite légèrement décalé
+				textSize.y  // en haut
+			};
 			DrawTextEx(font, text, textPos, 20, 0, DARKBLUE);
 		}
 		else if (command_mode)
 		{
 			const char* text = cmd;
 			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
-			Vector2 textPos = { textSize.x, SCREEN_HEIGHT-textSize.y-10 };
+			Vector2 textPos =
+			{
+				textSize.x,  // à gauche
+				SCREEN_HEIGHT - textSize.y - 10  // en bas
+			};
 			DrawTextEx(font, text, textPos, 20, 0, DARKGRAY);
 		}
 
