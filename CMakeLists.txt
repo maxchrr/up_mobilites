@@ -51,13 +51,14 @@ endif()
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/tests/*.c") # Define TEST_SOURCES as a list of all test files
 
 # Declaring our executable
-add_executable(test_sort
+set(TEST_NAME test_sort)
+add_executable(${TEST_NAME}
     ${TEST_SOURCES}
     "${CMAKE_CURRENT_LIST_DIR}/sources/sort.c"
     "${CMAKE_CURRENT_LIST_DIR}/sources/api.c"
     "${CMAKE_CURRENT_LIST_DIR}/sources/utils.c"
     "${CMAKE_CURRENT_LIST_DIR}/sources/list.c"
 )
-target_sources(test_sort PRIVATE ${TEST_SOURCES})
-target_include_directories(test_sort PRIVATE ${PROJECT_INCLUDE})
-target_compile_options(${PROJECT_NAME} PRIVATE ${MY_C_FLAGS})
+target_sources(${TEST_NAME} PRIVATE ${TEST_SOURCES})
+target_include_directories(${TEST_NAME} PRIVATE ${PROJECT_INCLUDE})
+target_compile_options(${TEST_NAME} PRIVATE ${MY_C_FLAGS})
