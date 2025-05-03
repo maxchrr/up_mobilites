@@ -4,6 +4,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <time.h>
 #include "api.h"
@@ -18,6 +19,69 @@
 
 static Color used_colors[MAX_COLORS];
 static int color_count = 0;
+static int current_id = 0;
+
+void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
+{
+	// Mode insertion de bus
+	if (cmd[0] == ':' && cmd[1] == 'i')
+	{
+		int line_num = atoi(&cmd[2]);
+		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
+		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
+		if (is_in_range && is_line_exist)
+		{
+			Bus* new_bus = init_bus(++current_id, lines[line_num-1].list);
+			if (new_bus)
+				bl_add_bus(&lines[line_num-1], new_bus);
+		}
+	}
+	// Mode suppression de bus
+	else if (cmd[0] == ':' && cmd[1] == 'd')
+	{
+		int line_num = atoi(&cmd[2]);
+		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
+		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
+		if (is_in_range && is_line_exist)
+		{
+			bl_remove_bus(&lines[line_num-1]);
+		}
+	}
+	// Mode concaténation de ligne de bus
+	else if (cmd[0] == ':' && cmd[1] == 'c')
+	{
+		char* slash_pos = strchr(cmd, '/');
+		if (slash_pos)
+		{
+			int line_num1 = atoi(&cmd[2]);
+			int line_num2 = atoi(slash_pos+1);
+			bool is_in_range1 = line_num1 >= 1 && line_num1 <= (int)line_count;
+			bool is_in_range2 = line_num2 >= 1 && line_num2 <= (int)line_count;
+			bool is_in_range = is_in_range1 && is_in_range2;
+			bool is_line_exist1 = !list_is_empty(lines[line_num1-1].list);
+			bool is_line_exist2 = !list_is_empty(lines[line_num2-1].list);
+			bool is_line_exist = is_line_exist1 && is_line_exist2;
+			bool is_different = line_num1 != line_num2;
+			if (is_in_range && is_line_exist && is_different)
+			{
+				lines[line_num1-1].list = bl_concat(lines[line_num1-1].list, lines[line_num2-1].list);;  // Réintégration de la liste concaténé
+				lines[line_num2-1].list = NULL;  // La liste est oublié, ne pas libérer ici, mais à la fin
+			}
+		}
+	}
+	// Mode suppresion de chemin de ligne de bus
+	else if (cmd[0] == ':' && cmd[1] == 'r')
+	{
+		int line_num = atoi(&cmd[2]);
+		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
+		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
+		bool is_removable = length(lines[line_num-1].list) > 3;
+		if (is_in_range && is_line_exist && is_removable)
+		{
+			bl_remove(lines[line_num-1].list);
+		}
+	}
+}
 
 float color_distance(Color a, Color b)
 {

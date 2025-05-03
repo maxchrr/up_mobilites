@@ -9,6 +9,8 @@
 #include "bus.h"
 #include "raylib.h"
 
+void handle_command(const char* cmd, BusLine* lines, unsigned line_count);
+
 Color  random_color(void);
 
 int   count_segments(const List l);
