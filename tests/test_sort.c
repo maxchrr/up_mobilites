@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "api.h"
-#include "bus.h"
+#include "list.h"
 #include "sort.h"
 
 BusStation* mock_station(int id, const char* name, int price, Date date)
@@ -19,28 +19,28 @@ BusStation* mock_station(int id, const char* name, int price, Date date)
 
 int main(void)
 {
-	BusLine bl;
-	init_list(&bl);
+	List list;
+	init_list(&list);
 	Date d1 = {5, 5, 2021};
 	Date d2 = {15, 3, 2023};
 	Date d3 = {20, 7, 2019};
-	bl = insert_at_tail(bl, open_entity(STATION, mock_station(1, "Alpha", 50, d1)));
-	bl = insert_at_tail(bl, open_entity(STATION, mock_station(2, "Bravo", 80, d2)));
-	bl = insert_at_tail(bl, open_entity(STATION, mock_station(3, "Charlie", 30, d3)));
+	list = insert_at_tail(list, open_entity(STATION, mock_station(1, "Alpha", 50, d1)));
+	list = insert_at_tail(list, open_entity(STATION, mock_station(2, "Bravo", 80, d2)));
+	list = insert_at_tail(list, open_entity(STATION, mock_station(3, "Charlie", 30, d3)));
 
 	printf("Avant tri par coût de maintenance décroissant :\n");
-	print_list(bl);
+	print_list(list);
 
-	bl = list_sort(bl, compare_by_maint_price_desc);
+	list = list_sort(list, compare_by_maint_price_desc);
 
 	printf("\nAprès tri par coût de maintenance décroissant :\n");
-	print_list(bl);
+	print_list(list);
 
-	bl = list_sort(bl, compare_by_last_maint_date_asc);
+	list = list_sort(list, compare_by_last_maint_date_asc);
 
 	printf("\nAprès tri par date de maintenance croissante :\n");
-	print_list(bl);
+	print_list(list);
 
-	destroy_list(bl);
+	destroy_list(list);
 	return 0;
 }
