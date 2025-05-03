@@ -4,6 +4,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include "globals.h"
 #include "api.h"
 #include "list.h"
 #include "loader.h"
@@ -147,7 +148,10 @@ void bl_remove_bus(BusLine* bl, int bus_id)
 	{
 		if (!found && bl->bus_arr[i]->id == bus_id)
 		{
+			int freed_id = bl->bus_arr[i]->id;
 			free(bl->bus_arr[i]);
+			if (freed_bus_count < MAX_BUSES)
+				freed_bus_ids[freed_bus_count++] = freed_id;
 			found = true;
 		}
 		if (found && i < bl->bus_count-1)

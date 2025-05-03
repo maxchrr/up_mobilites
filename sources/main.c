@@ -5,16 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "globals.h"
 #include "list.h"
 #include "loader.h"
 #include "ui.h"
 #include "raylib.h"
-
-#define SCREEN_WIDTH	1200
-#define SCREEN_HEIGHT	800
-#define WINDOW_TITLE	"UPmobilites"
-
-#define MAX_INPUT_LENGTH 16
 
 int main(void)
 {

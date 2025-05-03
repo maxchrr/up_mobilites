@@ -7,19 +7,18 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include "globals.h"
 #include "api.h"
 #include "list.h"
 #include "bus.h"
 #include "raylib.h"
 #include "ui.h"
 
-#define MAX_COLORS	256
-#define MAX_ATTEMPTS	1000  // limite de sécurité
-#define PADDING		200
-
 static Color used_colors[MAX_COLORS];
 static int color_count = 0;
-static int current_id = 0;
+int freed_bus_ids[MAX_BUSES];
+int freed_bus_count = 0;
+int bus_id = 0;
 
 void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 {
@@ -31,7 +30,12 @@ void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
 		if (is_in_range && is_line_exist)
 		{
-			Bus* new_bus = init_bus(++current_id, lines[line_num-1].list);
+			int new_id;
+			if (freed_bus_count > 0)
+				new_id = freed_bus_ids[--freed_bus_count];
+			else
+				new_id = ++bus_id;
+			Bus* new_bus = init_bus(new_id, lines[line_num-1].list);
 			if (new_bus)
 				bl_add_bus(&lines[line_num-1], new_bus);
 		}

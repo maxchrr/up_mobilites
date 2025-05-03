@@ -4,10 +4,9 @@
  */
 #pragma once
 
+#include "globals.h"
 #include "busline.h"
 #include "list.h"
-
-#define MAX_BUFFER_SIZE 256
 
 typedef struct
 {
