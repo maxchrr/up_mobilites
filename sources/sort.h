@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "bus.h"
+#include "list.h"
 
 typedef int (*cmp)(const BusEntity*, const BusEntity*);
 
@@ -13,4 +13,4 @@ int  compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b);
 int  compare_by_last_maint_date_asc(const BusEntity* a, const BusEntity* b);
 
 /* Unique fonction de tri */
-BusLine  list_sort(BusLine bl, cmp comparator);
+List  list_sort(List l, cmp comparator);
