@@ -6,9 +6,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include "api.h"
+#include "busline.h"
 #include "bus.h"
 
-Bus* init_bus(int id, BusLine bl)
+Bus* init_bus(int id, List bl)
 {
 	Bus* new_bus = malloc(sizeof(Bus));
 	if (!new_bus) {
@@ -83,7 +84,7 @@ int bus_getbl_id(const Bus* bus)
 	return bus->bl_id;
 }
 
-BusLine bus_getbl(const Bus* bus)
+List bus_getbl(const Bus* bus)
 {
 	return bus->bl;
 }
@@ -138,7 +139,7 @@ void bus_setbl_id(Bus* bus, int value)
 	bus->bl_id = value;
 }
 
-void bus_setbl(Bus* bus, BusLine bl)
+void bus_setbl(Bus* bus, List bl)
 {
 	bus->bl = bl;
 }
@@ -168,7 +169,7 @@ void bus_setis_stopping(Bus* bus, unsigned value)
 	bus->is_stopping = value;
 }
 
-void bus_departure(Bus* bus, BusLine bl, BusDirection direction)
+void bus_departure(Bus* bus, List bl, BusDirection direction)
 {
 	Node* next_node = list_getnext_node(bl);
 	BusEntity* next = next_node ? list_getnode(next_node) : NULL;
@@ -193,7 +194,7 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 			bus_setis_stopping(bus, 0);
 		return;
 	}
-	BusLine current = (direction == FORWARD)
+	List current = (direction == FORWARD)
 		? bl_getnext_bs(bus_getbl(bus))
 		: bl_getprev_bs(bus_getbl(bus));
 	if (list_is_empty(current))

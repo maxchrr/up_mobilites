@@ -9,7 +9,7 @@
 
 void init_list(List* l)
 {
-	if (l == NULL) exit(EXIT_FAILURE);
+	if (l == NULL) return;
 	*l = NULL;
 }
 

@@ -4,7 +4,7 @@
  */
 #include <stdlib.h>
 #include "api.h"
-#include "bus.h"
+#include "list.h"
 #include "sort.h"
 
 int compare_by_maint_price_desc(const BusEntity* a, const BusEntity* b)
@@ -69,11 +69,11 @@ static List sorted_merge(List a, List b, cmp comparator)
 	}
 	return result;
 }
-BusLine list_sort(BusLine bl, cmp comparator)
+List list_sort(List l, cmp comparator)
 {
-	if (!bl || !list_getnext_node(bl) || !comparator) return bl;
+	if (!l || !list_getnext_node(l) || !comparator) return l;
 	List a = NULL, b = NULL;
-	split_list(bl, &a, &b);
+	split_list(l, &a, &b);
 	// Trie des sous-listes récursif
 	a = list_sort(a, comparator);
 	b = list_sort(b, comparator);

@@ -7,8 +7,8 @@
 #include <math.h>
 #include <time.h>
 #include "api.h"
-#include "bus.h"
 #include "list.h"
+#include "bus.h"
 #include "raylib.h"
 #include "ui.h"
 
@@ -61,7 +61,7 @@ Color random_color(void)
 	return c;
 }
 
-int count_segments(const BusLine l)
+int count_segments(const List l)
 {
 	int c=0;
 	List head = l;
@@ -73,7 +73,7 @@ int count_segments(const BusLine l)
 	return c;
 }
 
-void collect_station_positions(const BusLine l, Vector2* points)
+void collect_station_positions(const List l, Vector2* points)
 {
 	int idx = 0;
 	List head = l;
@@ -89,10 +89,10 @@ void collect_station_positions(const BusLine l, Vector2* points)
 	}
 }
 
-void draw_bl(BusLine l, Font font, Color color)
+void draw_bl(BusLine bl, Font font, Color color)
 {
-	if (!l) return;
-	int count = count_segments(l);
+	if (!bl.list) return;
+	int count = count_segments(bl.list);
 	#define SIZE	128
 	if (count+1 > SIZE)
 	{
@@ -100,7 +100,7 @@ void draw_bl(BusLine l, Font font, Color color)
 		return;
 	}
 	Vector2 points[SIZE];
-	collect_station_positions(l, points);
+	collect_station_positions(bl.list, points);
 	// Dessiner les routes
 	for (int i=0; i<count; ++i)
 		DrawLineEx(points[i], points[i+1], 8.0f, WHITE);
@@ -108,7 +108,7 @@ void draw_bl(BusLine l, Font font, Color color)
 		DrawLineEx(points[i], points[i+1], 4.0f, color);
 	#undef SIZE
 	// Desinner les stations
-	List head = l;
+	List head = bl.list;
 	while (!list_is_empty(head))
 	{
 		BusEntity* e = list_getnode(head);

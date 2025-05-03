@@ -5,7 +5,7 @@
 #pragma once
 
 #include "api.h"
-#include "busline.h"
+#include "list.h"
 
 typedef enum { FORWARD, BACKWARD } BusDirection;
 typedef struct Bus
@@ -14,7 +14,7 @@ typedef struct Bus
 	int posx, posy;            // Coordonées sur le plan
 	float fx, fy;              // Position réelle du bus
 	int bl_id;                 // Identifant de la ligne de bus courante
-	BusLine bl;                // Pointeur sur l'entité courante de la ligne de bus (une Station ou une Route)
+	List bl;                // Pointeur sur l'entité courante de la ligne de bus (une Station ou une Route)
 	BusDirection direction;    // Sens de circulation du bus
 	float speed;               // Vitesse de circulation
 	float stop_time;           // Temps d'arrêt à une station
@@ -22,7 +22,7 @@ typedef struct Bus
 	unsigned is_stopping : 1;  // État de l'attente
 } Bus;
 
-Bus*  init_bus(int id, BusLine bl);
+Bus*  init_bus(int id, List bl);
 void  print_bus(const Bus* bus);
 void  destroy_bus(Bus* bus);
 
@@ -33,7 +33,7 @@ int           bus_getposy(const Bus* bus);
 float         bus_getfx(const Bus* bus);
 float         bus_getfy(const Bus* bus);
 int           bus_getbl_id(const Bus* bus);
-BusLine       bus_getbl(const Bus* bus);
+List          bus_getbl(const Bus* bus);
 BusDirection  bus_getdirection(const Bus* bus);
 float         bus_getspeed(const Bus* bus);
 float         bus_getstop_time(const Bus* bus);
@@ -46,7 +46,7 @@ void  bus_setposy(Bus* bus, int value);
 void  bus_setfx(Bus* bus, float value);
 void  bus_setfy(Bus* bus, float value);
 void  bus_setbl_id(Bus* bus, int value);
-void  bus_setbl(Bus* bus, BusLine bl);
+void  bus_setbl(Bus* bus, List bl);
 void  bus_setdirection(Bus* bus, BusDirection value);
 void  bus_setspeed(Bus* bus, float value);
 void  bus_setstop_time(Bus* bus, float value);
@@ -54,6 +54,6 @@ void  bus_setlooping_count(Bus* bus, int value);
 void  bus_setis_stopping(Bus* bus, unsigned value);
 
 /* Méthodes */
-void  bus_departure(Bus* bus, BusLine bl, BusDirection direction);
+void  bus_departure(Bus* bus, List bl, BusDirection direction);
 void  bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float delta, double time);
 void  bus_loopback(Bus* bus);

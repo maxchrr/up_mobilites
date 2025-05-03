@@ -1,21 +1,22 @@
 /*
- * File loader
+ * Lecteur de fichier
  * Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani. All Rights Reserved.
  */
 #pragma once
 
-#include "bus.h"
+#include "busline.h"
+#include "list.h"
 
-#define MAX_TIMETABLES	32
+#define MAX_BUFFER_SIZE 256
 
 typedef struct
 {
-	int id;
-	BusLine list;
-	Color color;
-} Timetable;
+	int* ids;           // Tableau d'identifiants
+	char** files;       // Tableau de chemin de fichiers
+	unsigned count;     // Nombre de fichiers traités
+	unsigned capacity;  // Capacité des tableaux
+} Timetables;
 
-BusLine  init_from_file(int id, const char* path);
-
-int   load_timetables(Timetable timetables[], const char* path);
-void  destroy_timetable(Timetable* t);
+Timetables  load_dir(const char* path);
+List        read_file(const int bl_id, const char* path);
+void        free_timetables(Timetables t);

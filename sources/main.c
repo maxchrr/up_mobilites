@@ -4,109 +4,159 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "api.h"
-#include "bus.h"
+#include <string.h>
 #include "list.h"
-#include "raylib.h"
-#include "ui.h"
 #include "loader.h"
+#include "ui.h"
+#include "raylib.h"
 
 #define SCREEN_WIDTH	1200
 #define SCREEN_HEIGHT	800
 #define WINDOW_TITLE	"UPmobilites"
 
-int main(void)
+#define MAX_INPUT_LENGTH 16
+
+int bus_id = 0;
+
+void handle_command(const char* command, BusLine* lines, unsigned line_count)
 {
-	Timetable timetables[MAX_TIMETABLES];
-	int total = load_timetables(timetables, "vendor/timetables");
-	if (total == 0)
+	// Mode insertion de bus
+	if (command[0] == ':' && command[1] == 'i')
 	{
-		fprintf(stderr, "Aucune ligne de bus chargée\n");
-		return 1;
-	}
-	for (int i=0; i<total; ++i)
-	{
-		print_list(timetables[i].list);
-	}
-
-	Bus* buses[MAX_TIMETABLES];
-	int incx[MAX_TIMETABLES] = {0};
-	int incy[MAX_TIMETABLES] = {0};
-
-	for (int i=0; i<total; ++i)
-	{
-		buses[i] = init_bus(i+1, timetables[i].list);
-		if (!buses[i])
+		int line_num = atoi(&command[2]);
+		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
+		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
+		if (is_in_range && is_line_exist)
 		{
-			fprintf(stderr, "Impossible d'initialiser un bus pour la ligne %d\n", timetables[i].id);
-			return 1;
+			Bus* new_bus = init_bus(++bus_id, lines[line_num-1].list);
+			if (new_bus)
+				bl_add_bus(&lines[line_num-1], new_bus);
 		}
 	}
-
-	int* keys = calloc(total,sizeof(int));
-	if (!keys) {
-		fprintf(stderr, "Memory allocation failed\n");
-		return 1;
+	// Mode suppression de bus
+	else if (command[0] == ':' && command[1] == 'd')
+	{
+		int line_num = atoi(&command[2]);
+		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
+		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
+		if (is_in_range && is_line_exist)
+		{
+			bl_remove_bus(&lines[line_num-1]);
+		}
 	}
-	for (int i=0; i<total; ++i)
-		keys[i] = KEY_ONE+i;  // Associe KEY_ONE, KEY_TWO, ..., en fonction de 'i'
+	// Mode concaténation de ligne de bus
+	else if (command[0] == ':' && command[1] == 'c')
+	{
+		char* slash_pos = strchr(command, '/');
+		if (slash_pos)
+		{
+			int line_num1 = atoi(&command[2]);
+			int line_num2 = atoi(slash_pos+1);
+			bool is_in_range1 = line_num1 >= 1 && line_num1 <= (int)line_count;
+			bool is_in_range2 = line_num2 >= 1 && line_num2 <= (int)line_count;
+			bool is_in_range = is_in_range1 && is_in_range2;
+			bool is_line_exist1 = !list_is_empty(lines[line_num1-1].list);
+			bool is_line_exist2 = !list_is_empty(lines[line_num2-1].list);
+			bool is_line_exist = is_line_exist1 && is_line_exist2;
+			bool is_different = line_num1 != line_num2;
+			if (is_in_range && is_line_exist && is_different)
+			{
+				lines[line_num1-1].list = bl_concat(lines[line_num1-1].list, lines[line_num2-1].list);;  // Réintégration de la liste concaténé
+				lines[line_num2-1].list = NULL;  // La liste est oublié, ne pas libérer ici, mais à la fin
+			}
+		}
+	}
+	// Mode suppresion de chemin de ligne de bus
+	else if (command[0] == ':' && command[1] == 'r')
+	{
+		int line_num = atoi(&command[2]);
+		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
+		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
+		bool is_removable = length(lines[line_num-1].list) > 3;
+		if (is_in_range && is_line_exist && is_removable)
+		{
+			bl_remove(lines[line_num-1].list);
+		}
+	}
+}
 
-	// Modes
-	bool paused = false;
-	bool deleteMode = false;
-	bool concatMode = false;
+int main(void)
+{
+	// Allocation et lecture
+	Timetables timetables = load_dir("vendor/timetables");
+	if (timetables.count == 0)
+	{
+		fprintf(stderr, "Aucun fichier de ligne de bus trouvée\n");
+		free_timetables(timetables);
+		return EXIT_FAILURE;
+	}
+	printf("%d fichiers trouvées\n", timetables.count);
+	BusLine* lines = calloc(timetables.count, sizeof(BusLine));
+	int incx[100] = {0};
+	int incy[100] = {0};
+	if (!lines)
+	{
+		fprintf(stderr, "Memory allocation failed\n");
+		free_timetables(timetables);
+		return EXIT_FAILURE;
+	}
+	for (unsigned i=0; i<timetables.count; ++i)
+	{
+		printf("Lecture de %s (%d)\n", timetables.files[i], timetables.ids[i]);
+		lines[i] = create_bl(timetables.ids[i]);
+		init_bl(&lines[i], timetables.files[i]);
+		print_bl(lines[i]);
+	}
 
+	// Affichage
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
 	SetTargetFPS(60);
 
 	Font font = LoadFontEx("vendor/Luciole-Regular.ttf", 18, NULL, 255);
 	if (font.texture.id == 0)
 	{
-		fprintf(stderr, "Police non chargée, utilisation de celle par défaut\n");
+		fprintf(stderr, "Police non chargée, bascule sur celle par défaut\n");
 		font = GetFontDefault();
 	}
+
+	// Commandes et modes
+	char cmd[MAX_INPUT_LENGTH] = {0};
+	int cmd_index = 0;
+	bool command_mode = false;
+	bool paused = false;
+
 	while (!WindowShouldClose())
 	{
 		// Mode pause
 		if (IsKeyPressed(KEY_SPACE))
 		{
 			paused = !paused;
-			printf("[MODE] Pause\n");
 		}
-		// Mode suppression
-		if (IsKeyPressed(KEY_D))
+		// Mode commande
+		int ch = GetCharPressed();
+		while (ch > 0)
 		{
-			deleteMode = true;
-			printf("[MODE] Suppression\n");
-		}
-		if (deleteMode)
-		{
-			int i = -1;
-			for (int j=0; j<total; ++j)
+			if (command_mode && cmd_index < MAX_INPUT_LENGTH - 1)
+				cmd[cmd_index++] = (char)ch;
+			else if (ch == ':')
 			{
-				if (IsKeyPressed(keys[j]))
-				{
-					deleteMode = false;
-					i = j + 1;  // Assigner l'indice (1 pour KEY_ONE, 2 pour KEY_TWO, etc.)
-					break;
-				}
+				command_mode = true;
+				cmd_index = 0;
+				cmd[cmd_index++] = ':';
 			}
-			// Si c'est un indice valide et qu'il reste plus d'un chemin => supprime
-			if (i > 0 && i <= total && length(timetables[i-1].list) > 3)
-				bl_remove(timetables[i-1].list);
+			ch = GetCharPressed();
 		}
-
-		// Mode concaténation
-		if (IsKeyPressed(KEY_C))
+		if (command_mode && IsKeyPressed(KEY_BACKSPACE))
 		{
-			concatMode = true;
-			printf("[MODE] Concaténation\n");
+			cmd[--cmd_index] = '\0';
 		}
-		if (concatMode)
+		else if (command_mode && IsKeyPressed(KEY_ENTER))
 		{
-			concatMode = false;
-			timetables[0].list = bl_concat(timetables[0].list, timetables[1].list);;  // Réintégration de la liste concaténé
-			timetables[1].list = NULL;  // La liste est oublié, ne pas libérer ici, mais à la fin
+			cmd[cmd_index] = '\0';
+			handle_command(cmd, lines, timetables.count);
+			command_mode = false;
+			memset(cmd, 0, sizeof(cmd));
+			cmd_index = 0;
 		}
 
 		// Variables temporelles
@@ -114,7 +164,6 @@ int main(void)
 		double time = GetTime();
 		int fps = GetFPS();
 
-		// Boucle d'affichage
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
 		DrawText(TextFormat("FPS: %d", fps), 10, 10, 20, GRAY);
@@ -124,47 +173,42 @@ int main(void)
 			const char* text = "-- PAUSE --";
 			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
 			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
-			DrawTextEx(font, text, textPos, 20, 0, BLUE);
+			DrawTextEx(font, text, textPos, 20, 0, DARKBLUE);
 		}
-		else if (deleteMode)
+		else if (command_mode)
 		{
-			const char* text = "-- DELETE --";
+			const char* text = cmd;
 			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
-			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
-			DrawTextEx(font, text, textPos, 20, 0, RED);
-		}
-		else if (concatMode)
-		{
-			const char* text = "-- CONCAT --";
-			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
-			Vector2 textPos = { SCREEN_WIDTH-textSize.x-20, textSize.y };
-			DrawTextEx(font, text, textPos, 20, 0, YELLOW);
+			Vector2 textPos = { textSize.x, SCREEN_HEIGHT-textSize.y-10 };
+			DrawTextEx(font, text, textPos, 20, 0, DARKGRAY);
 		}
 
-		for (int i=0; i<total; ++i)
+		for (unsigned i=0; i<timetables.count; ++i)
 		{
 			// Dessiner ligne de bus
-			Timetable timetable = timetables[i];
-			draw_bl(timetable.list, font, timetable.color);
+			draw_bl(lines[i], font, lines[i].color);
 			// Dessiner bus et déplacement bus
-			Bus* bus = buses[i];
-			draw_bus(bus, DARKPURPLE, paused);
-			if (!paused)
+			for (unsigned j=0; j<lines[i].bus_count; ++j)
 			{
-				BusDirection direction = bus_getdirection(bus);
-				bus_travel(bus, direction, &incx[i], &incy[i], delta, time);
+				Bus* bus = lines[i].bus_arr[j];
+				draw_bus(bus, DARKPURPLE, paused);
+				if (!paused)
+				{
+					BusDirection direction = bus_getdirection(bus);
+					bus_travel(bus, direction, &incx[i], &incy[i], delta, time);
+				}
 			}
 		}
 
 		EndDrawing();
 	}
 
-	free(keys);
+	// Libération mémoire
 	UnloadFont(font);
 	CloseWindow();
-	for (int i=0; i<total; ++i) {
-		destroy_bus(buses[i]);
-		destroy_timetable(&timetables[i]);
-	}
-	return 0;
+	for (unsigned i=0; i<timetables.count; ++i)
+		destroy_bl(lines[i]);
+	free(lines);
+	free_timetables(timetables);
+	return EXIT_SUCCESS;
 }
