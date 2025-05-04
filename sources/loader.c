@@ -63,7 +63,7 @@ Timetables load_dir(const char* path)
 					if (timetables.count >= timetables.capacity)
 					{
 						timetables.capacity *= 2;
-						int* newIds = realloc(timetables.files, sizeof(int)*timetables.capacity);
+						int* newIds = realloc(timetables.ids, sizeof(int)*timetables.capacity);
 						char** newFiles = realloc(timetables.files, sizeof(char*)*timetables.capacity);
 						if (!newIds || !newFiles)
 						{

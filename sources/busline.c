@@ -49,7 +49,7 @@ void destroy_bl(BusLine bl)
 	if (bl.bus_arr)
 	{
 		for (unsigned i=0; i<bl.bus_count; ++i)
-			free(bl.bus_arr[i]);
+			destroy_bus(bl.bus_arr[i]);
 		free(bl.bus_arr);
 	}
 	if (bl.list)

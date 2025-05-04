@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <time.h>
 #include "globals.h"
 #include "api.h"
 #include "list.h"
@@ -20,25 +19,33 @@ int freed_bus_ids[MAX_BUSES];
 int freed_bus_count = 0;
 int bus_id = 0;
 
+int find_line_index(BusLine* lines, unsigned count, int id)
+{
+	for (unsigned i=0; i<count; ++i)
+	{
+		if (lines[i].id == id)
+			return (int)i;
+	}
+	return -1;  // introuvable
+}
+
 void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 {
 	if (!cmd || strlen(cmd) < 2) return;
 	// Mode insertion de bus
 	if (cmd[0] == ':' && cmd[1] == 'i')
 	{
-		int line_num = atoi(&cmd[2]);
-		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
-		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
-		if (is_in_range && is_line_exist)
+		int id = atoi(&cmd[2]);
+		int i = find_line_index(lines, line_count, id);
+		bool is_line_exist = !list_is_empty(lines[i].list);
+		if (i != -1 && is_line_exist)
 		{
-			int new_id;
-			if (freed_bus_count > 0)
-				new_id = freed_bus_ids[--freed_bus_count];
-			else
-				new_id = ++bus_id;
-			Bus* new_bus = init_bus(new_id, lines[line_num-1].list);
+			int new_id = (freed_bus_count > 0)
+				? freed_bus_ids[--freed_bus_count]
+				: ++bus_id;
+			Bus* new_bus = init_bus(new_id, lines[i].list);
 			if (new_bus)
-				bl_add_bus(&lines[line_num-1], new_bus);
+				bl_add_bus(&lines[i], new_bus);
 		}
 	}
 	// Mode suppression de bus
@@ -47,14 +54,12 @@ void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 		char* slash_pos = strchr(cmd, '/');
 		if (slash_pos)
 		{
-			int line_num = atoi(&cmd[2]);
+			int id = atoi(&cmd[2]);
 			int bus_id = atoi(slash_pos+1);
-			bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
-			bool is_line_exist = !list_is_empty(lines[line_num-1].list);
-			if (is_in_range && is_line_exist)
-			{
-				bl_remove_bus(&lines[line_num-1], bus_id);
-			}
+			int i = find_line_index(lines, line_count, id);
+			bool is_line_exist = !list_is_empty(lines[i].list);
+			if (i != -1 && is_line_exist)
+				bl_remove_bus(&lines[i], bus_id);
 		}
 	}
 	// Mode concaténation de ligne de bus
@@ -63,31 +68,35 @@ void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 		char* slash_pos = strchr(cmd, '/');
 		if (slash_pos)
 		{
-			int line_num1 = atoi(&cmd[2]);
-			int line_num2 = atoi(slash_pos+1);
-			bool is_in_range1 = line_num1 >= 1 && line_num1 <= (int)line_count;
-			bool is_in_range2 = line_num2 >= 1 && line_num2 <= (int)line_count;
-			bool is_in_range = is_in_range1 && is_in_range2;
-			bool is_line_exist1 = !list_is_empty(lines[line_num1-1].list);
-			bool is_line_exist2 = !list_is_empty(lines[line_num2-1].list);
-			bool is_line_exist = is_line_exist1 && is_line_exist2;
-			bool is_different = line_num1 != line_num2;
-			if (is_in_range && is_line_exist && is_different)
+			int id1 = atoi(&cmd[2]);
+			int id2 = atoi(slash_pos+1);
+			int i = find_line_index(lines, line_count, id1);
+			int j = find_line_index(lines, line_count, id2);
+			bool valid = i != -1 && j != -1;
+			bool non_empty1 = !list_is_empty(lines[i].list);
+			bool non_empty2 = !list_is_empty(lines[j].list);
+			bool is_line_exist = non_empty1 && non_empty2;
+			bool is_different = id1 != id2;
+			if (valid && is_line_exist && is_different)
 			{
-				lines[line_num1-1].list = bl_concat(lines[line_num1-1].list, lines[line_num2-1].list);;  // Réintégration de la liste concaténé
-				lines[line_num2-1].list = NULL;  // La liste est oublié, ne pas libérer ici, mais à la fin
+				List concatened = bl_concat(lines[i].list, lines[j].list);
+				if (concatened)
+				{
+					lines[i].list = concatened;
+					lines[j].list = NULL;
+				}
 			}
 		}
 	}
 	// Mode suppresion de chemin de ligne de bus
 	else if (cmd[0] == ':' && cmd[1] == 'r')
 	{
-		int line_num = atoi(&cmd[2]);
-		bool is_in_range = line_num >= 1 && line_num <= (int)line_count;
-		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
-		bool is_removable = length(lines[line_num-1].list) > 3;
-		if (is_in_range && is_line_exist && is_removable)
-			bl_remove_tail(lines[line_num-1].list);
+		int id = atoi(&cmd[2]);
+		int i = find_line_index(lines, line_count, id);
+		bool is_line_exist = !list_is_empty(lines[i].list);
+		bool is_removable = length(lines[i].list) > 3;
+		if (i != -1 && is_line_exist && is_removable)
+			bl_remove_tail(lines[i].list);
 	}
 }
 
@@ -101,7 +110,6 @@ float color_distance(Color a, Color b)
 
 Color random_color(void)
 {
-	SetRandomSeed((unsigned int)time(NULL));
 	Color c;
 	int max, min;
 	#define MIN_DIST	100.0f  // distance minimum acceptable

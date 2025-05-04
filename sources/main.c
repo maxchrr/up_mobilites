@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "globals.h"
 #include "loader.h"
 #include "ui.h"
@@ -41,6 +42,7 @@ int main(void)
 	// Affichage
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
 	SetTargetFPS(60);
+	SetRandomSeed((unsigned int)time(NULL));
 
 	Font font = LoadFontEx("vendor/Luciole-Regular.ttf", 18, NULL, 255);
 	if (font.texture.id == 0)
