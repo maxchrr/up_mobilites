@@ -52,6 +52,9 @@ void destroy_bl(BusLine bl)
 			destroy_bus(bl.bus_arr[i]);
 		free(bl.bus_arr);
 	}
+	bl.bus_arr = NULL;
+	bl.bus_count = 0;
+	bl.arr_capacity = 0;
 	if (bl.list)
 		destroy_list(bl.list);
 	bl.list = NULL;
@@ -178,14 +181,36 @@ List bl_remove_tail(List l)
 	return l;
 }
 
-List bl_concat(List l1, List l2)
+void bl_concat(BusLine* line1, BusLine* line2)
 {
-	if (list_is_empty(l1) || list_is_empty(l2)) return NULL;
+	List l1 = line1->list;
+	List l2 = line2->list;
+	if (list_is_empty(l1) || list_is_empty(l2)) return;
+
+	// Concaténer les listes de chemins
 	BusStation* last_station = list_getnode(list_getlast_node(l1))->bs;
 	BusRoute* last_route = list_getnode(list_getprev_node(list_getlast_node(l1)))->br;
 	BusStation* new_first_station = list_getnode(list_getfirst_node(l2))->bs;
+
+	// Créer une nouvelle route entre la dernière station de line1 et la première station de line2
 	last_route = create_br(br_getbl_id(last_route), last_station, new_first_station);
 	l1 = insert_at_tail(l1, open_entity(ROUTE, last_route));
+
+	// Concaténer les listes et mettre à jour les pointeurs
 	l1 = list_append(l1, l2);
-	return l1;
+	line1->list = l1;
+
+	// Déplacer les bus de la ligne 2 sur la ligne 1
+	for (unsigned i=0; i<line2->bus_count; ++i)
+	{
+		if (line2->bus_arr[i])
+			bl_add_bus(line1, line2->bus_arr[i]);
+	}
+	free(line2->bus_arr);
+	line2->bus_arr = NULL;
+	line2->bus_count = 0;
+	line2->arr_capacity = 0;
+	line2->list = NULL;
+	line2->id = 0;
+	line2->color = (Color){0};
 }

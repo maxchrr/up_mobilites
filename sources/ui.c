@@ -68,14 +68,7 @@ void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 			bool valid = (j != -1) && (id != id2);
 			bool non_empty2 = !list_is_empty(lines[j].list);
 			if (valid && non_empty2)
-			{
-				List concatened = bl_concat(lines[i].list, lines[j].list);
-				if (concatened)
-				{
-					lines[i].list = concatened;
-					lines[j].list = NULL;
-				}
-			}
+				bl_concat(&lines[i], &lines[j]);
 		}
 	}
 	// Mode suppresion de chemin de ligne de bus
