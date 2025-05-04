@@ -54,7 +54,6 @@ void destroy_bl(BusLine bl)
 	}
 	if (bl.list)
 		destroy_list(bl.list);
-	free(bl.bus_arr);
 	bl.list = NULL;
 	bl.id = 0;
 	bl.color = (Color){0};  // Pour nettoyage visuel
