@@ -32,52 +32,42 @@ int find_line_index(BusLine* lines, unsigned count, int id)
 void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 {
 	if (!cmd || strlen(cmd) < 2) return;
+	char mode = cmd[1];
+	int id = atoi(&cmd[2]);
+	int i = find_line_index(lines, line_count, id);
+	bool is_line_exist = (i != -1) && !list_is_empty(lines[i].list);
+	if (!is_line_exist) return;
 	// Mode insertion de bus
-	if (cmd[0] == ':' && cmd[1] == 'i')
+	if (mode == 'i')
 	{
-		int id = atoi(&cmd[2]);
-		int i = find_line_index(lines, line_count, id);
-		bool is_line_exist = !list_is_empty(lines[i].list);
-		if (i != -1 && is_line_exist)
-		{
-			int new_id = (freed_bus_count > 0)
-				? freed_bus_ids[--freed_bus_count]
-				: ++bus_id;
-			Bus* new_bus = init_bus(new_id, lines[i].list);
-			if (new_bus)
-				bl_add_bus(&lines[i], new_bus);
-		}
+		int new_id = (freed_bus_count > 0)
+			? freed_bus_ids[--freed_bus_count]
+			: ++bus_id;
+		Bus* new_bus = init_bus(new_id, lines[i].list);
+		if (new_bus)
+			bl_add_bus(&lines[i], new_bus);
 	}
 	// Mode suppression de bus
-	else if (cmd[0] == ':' && cmd[1] == 'd')
+	else if (mode == 'd')
 	{
 		char* slash_pos = strchr(cmd, '/');
 		if (slash_pos)
 		{
-			int id = atoi(&cmd[2]);
 			int bus_id = atoi(slash_pos+1);
-			int i = find_line_index(lines, line_count, id);
-			bool is_line_exist = !list_is_empty(lines[i].list);
-			if (i != -1 && is_line_exist)
-				bl_remove_bus(&lines[i], bus_id);
+			bl_remove_bus(&lines[i], bus_id);
 		}
 	}
 	// Mode concaténation de ligne de bus
-	else if (cmd[0] == ':' && cmd[1] == 'c')
+	else if (mode == 'c')
 	{
 		char* slash_pos = strchr(cmd, '/');
 		if (slash_pos)
 		{
-			int id1 = atoi(&cmd[2]);
 			int id2 = atoi(slash_pos+1);
-			int i = find_line_index(lines, line_count, id1);
 			int j = find_line_index(lines, line_count, id2);
-			bool valid = i != -1 && j != -1;
-			bool non_empty1 = !list_is_empty(lines[i].list);
+			bool valid = (j != -1) && (id != id2);
 			bool non_empty2 = !list_is_empty(lines[j].list);
-			bool is_line_exist = non_empty1 && non_empty2;
-			bool is_different = id1 != id2;
-			if (valid && is_line_exist && is_different)
+			if (valid && non_empty2)
 			{
 				List concatened = bl_concat(lines[i].list, lines[j].list);
 				if (concatened)
@@ -89,13 +79,10 @@ void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 		}
 	}
 	// Mode suppresion de chemin de ligne de bus
-	else if (cmd[0] == ':' && cmd[1] == 'r')
+	else if (mode  == 'r')
 	{
-		int id = atoi(&cmd[2]);
-		int i = find_line_index(lines, line_count, id);
-		bool is_line_exist = !list_is_empty(lines[i].list);
 		bool is_removable = length(lines[i].list) > 3;
-		if (i != -1 && is_line_exist && is_removable)
+		if (is_removable)
 			bl_remove_tail(lines[i].list);
 	}
 }
