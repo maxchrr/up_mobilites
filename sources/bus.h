@@ -4,7 +4,6 @@
  */
 #pragma once
 
-#include "api.h"
 #include "list.h"
 
 typedef enum { FORWARD, BACKWARD } BusDirection;

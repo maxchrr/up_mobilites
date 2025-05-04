@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "globals.h"
-#include "list.h"
 #include "loader.h"
 #include "ui.h"
 #include "raylib.h"

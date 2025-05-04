@@ -4,7 +4,6 @@
  */
 #pragma once
 
-#include "globals.h"
 #include "list.h"
 #include "busline.h"
 #include "bus.h"

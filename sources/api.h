@@ -4,7 +4,6 @@
  */
 #pragma once
 
-#include "globals.h"
 #include "utils.h"
 
 /* Déclarations opaques des structures (encapsulation -> propriétées cachées) */

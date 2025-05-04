@@ -4,8 +4,6 @@
  */
 #pragma once
 
-#include "globals.h"
-#include "busline.h"
 #include "list.h"
 
 typedef struct

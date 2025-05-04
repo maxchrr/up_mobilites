@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "globals.h"
 #include "utils.h"
 #include "api.h"
 

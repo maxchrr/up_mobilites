@@ -7,6 +7,7 @@
 #include <string.h>
 #include <errno.h>
 #include <dirent.h>
+#include "globals.h"
 #include "api.h"
 #include "list.h"
 #include "loader.h"
