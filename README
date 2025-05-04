@@ -10,7 +10,8 @@
 
    Introduction
 
-UPmobilites est un projet de simulation de ligne de bus.
+UPmobilites est un projet de simulation de ligne de bus. La partie d'interface
+graphique utilise la bibliothèque raylib.
 
 L'idée est de créer un programme qui simule un ou plusieurs bus se déplaçant sur
 une ou plusieurs lignes de bus circulaire.
@@ -32,6 +33,13 @@ Ils sont lu à partir du dossier `vendor/timetables`.
 UPmobilites est un projet réalisé dans le cadre de l'Unité d'Enseignement
 « Programmation en C » de la licence Informatique de l'UFR Sciences
 Fondamentales et Appliquées de l'Université de Poitiers.
+
+
+   Compilation et installation
+
+Vous pouvez compiler le projet en utilisant CMake, puis en faisant :
+'cmake -B build && cmake --build build'.
+Un exécutable est alors créé `./build/up_mobilites`.
 
 
          Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani.
