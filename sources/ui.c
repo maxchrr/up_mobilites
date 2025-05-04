@@ -104,9 +104,10 @@ Color random_color(void)
 	SetRandomSeed((unsigned int)time(NULL));
 	Color c;
 	int max, min;
-	#define MIN_DIST	100.0f  // minimum acceptable distinct
+	#define MIN_DIST	100.0f  // distance minimum acceptable
 	int attempts = 0;
-	do
+	int found = 0;
+	while (attempts < MAX_ATTEMPTS && !found)
 	{
 		c = (Color){
 			GetRandomValue(0, 127),  // Rouge
@@ -116,20 +117,22 @@ Color random_color(void)
 		};
 		max = (c.r > c.g) ? ((c.r > c.b) ? c.r : c.b) : ((c.g > c.b) ? c.g : c.b);
 		min = (c.r < c.g) ? ((c.r < c.b) ? c.r : c.b) : ((c.g < c.b) ? c.g : c.b);
-		if ((max-min) < 30) continue;
-		int too_close = 0;
-		for (int i=0; i<color_count; ++i)
-		{
-			if (color_distance(c, used_colors[i]) < MIN_DIST)
+		if ((max-min) >= 30)
+		{ 
+			int i = 0;
+			unsigned too_close = 0;
+			while (i < color_count && !too_close)
 			{
-				too_close = 1;
-				break;
-			}
+				float dist = color_distance(c, used_colors[i]);
+				if (dist < MIN_DIST) too_close = 1;
+				++i;
+			};
+			if (!too_close) found = 1;
 		}
-		if (!too_close) break;
-	} while (++attempts < MAX_ATTEMPTS);
+		++attempts;
+	}
 	#undef MIN_DIST
-	if (color_count < MAX_COLORS) used_colors[color_count++] = c;
+	if (color_count < MAX_COLORS && found) used_colors[color_count++] = c;
 	return c;
 }
 
@@ -210,27 +213,26 @@ void draw_bl(BusLine bl, Font font, Color color)
 	while (!list_is_empty(head))
 	{
 		BusEntity* e = list_getnode(head);
-		if (gettype(e) == INVALID)
+		if (gettype(e) != INVALID)
 		{
-			fprintf(stderr, "Station invalide\n");
-			head = list_getnext_node(head);
-			continue;
+			BusStation* s = e->bs;
+			int dx = bs_getposx(s) + PADDING/2;
+			int dy = bs_getposy(s) + PADDING;
+			DrawCircle(dx, dy, 8+4,	BLACK);
+			DrawCircle(dx, dy, 8+2,	WHITE);
+			DrawCircle(dx, dy, 8,	color);
+			const char* name = bs_getname(s);
+			if (!name) fprintf(stderr, "Station sans nom\n");
+			Vector2 labelSize = MeasureTextEx(font, name, 16, 0);
+			Vector2 labelPos =
+			{
+				dx - labelSize.x / 2,  // centre
+				dy - labelSize.y / 2 - 24  // centre légèrement au dessus
+			};
+			DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
 		}
-		BusStation* s = e->bs;
-		int dx = bs_getposx(s) + PADDING/2;
-		int dy = bs_getposy(s) + PADDING;
-		DrawCircle(dx, dy, 8+4,	BLACK);
-		DrawCircle(dx, dy, 8+2,	WHITE);
-		DrawCircle(dx, dy, 8,	color);
-		const char* name = bs_getname(s);
-		if (!name) fprintf(stderr, "Station sans nom\n");
-		Vector2 labelSize = MeasureTextEx(font, name, 16, 0);
-		Vector2 labelPos =
-		{
-			dx - labelSize.x / 2,  // centre
-			dy - labelSize.y / 2 - 24  // centre légèrement au dessus
-		};
-		DrawTextEx(font, bs_getname(s), labelPos, 16, 0, BLACK);
+		else
+			fprintf(stderr, "Station invalide\n");
 		head = list_getnext_node(head);
 	}
 }
