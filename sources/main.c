@@ -113,13 +113,12 @@ int main(void)
 		else if (command_mode)
 		{
 			const char* text = cmd;
-			Vector2 textSize = MeasureTextEx(font, text, 20, 0);
 			Vector2 textPos =
 			{
-				textSize.x,  // à gauche
-				SCREEN_HEIGHT - textSize.y - 10  // en bas
+				6,  // à gauche, légérément décalé
+				SCREEN_HEIGHT - 20  // en bas, un peu au dessus du bord
 			};
-			DrawTextEx(font, text, textPos, 20, 0, DARKGRAY);
+			DrawTextEx(font, text, textPos, 14, 0, DARKGRAY);
 		}
 
 		for (unsigned i=0; i<timetables.count; ++i)

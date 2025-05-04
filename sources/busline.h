@@ -33,5 +33,5 @@ List     bl_getprev_br(List l);
 void  bl_add_bus(BusLine* bl, Bus* bus);
 void  bl_remove_bus(BusLine* bl, int bus_id);
 
-List  bl_remove(List l);
+List  bl_remove_tail(List l);
 List  bl_concat(List l1, List l2);

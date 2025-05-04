@@ -22,6 +22,7 @@ int bus_id = 0;
 
 void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 {
+	if (!cmd || strlen(cmd) < 2) return;
 	// Mode insertion de bus
 	if (cmd[0] == ':' && cmd[1] == 'i')
 	{
@@ -86,9 +87,7 @@ void handle_command(const char* cmd, BusLine* lines, unsigned line_count)
 		bool is_line_exist = !list_is_empty(lines[line_num-1].list);
 		bool is_removable = length(lines[line_num-1].list) > 3;
 		if (is_in_range && is_line_exist && is_removable)
-		{
-			bl_remove(lines[line_num-1].list);
-		}
+			bl_remove_tail(lines[line_num-1].list);
 	}
 }
 
@@ -243,7 +242,7 @@ void draw_bus(Bus* bus, Color color, int paused)
 	int dy = bus_getposy(bus)+PADDING;
 	if (bus_getis_stopping(bus) && !paused)
 	{
-		float blink = GetTime() * 4.0f;
+		float blink = fmodf(GetTime(), 4.0f);
 		if ((blink - (int)blink) < 0.5f) {
 			DrawCircle(dx, dy, 20, Fade(DARKBLUE, 0.4f));  // halo clignotant
 		}
@@ -264,5 +263,5 @@ void draw_bus(Bus* bus, Color color, int paused)
 		dx - labelSize.x / 2,  // centre du cercle
 		dy - labelSize.y / 2  // centre du cercle
 	};
-	DrawTextEx(font, TextFormat("%d", bus_getid(bus)), labelPos, 16, 0, WHITE);
+	DrawTextEx(font, label, labelPos, 16, 0, WHITE);
 }

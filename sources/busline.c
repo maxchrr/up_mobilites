@@ -46,8 +46,15 @@ void print_bl(BusLine bl)
 
 void destroy_bl(BusLine bl)
 {
-	if (!bl.list) return;
-	destroy_list(bl.list);
+	if (bl.bus_arr)
+	{
+		for (unsigned i=0; i<bl.bus_count; ++i)
+			free(bl.bus_arr[i]);
+		free(bl.bus_arr);
+	}
+	if (bl.list)
+		destroy_list(bl.list);
+	free(bl.bus_arr);
 	bl.list = NULL;
 	bl.id = 0;
 	bl.color = (Color){0};  // Pour nettoyage visuel
@@ -146,13 +153,17 @@ void bl_remove_bus(BusLine* bl, int bus_id)
 	// Chercher le bus
 	for (unsigned i=0; i<bl->bus_count; ++i)
 	{
-		if (!found && bl->bus_arr[i]->id == bus_id)
-		{
-			int freed_id = bl->bus_arr[i]->id;
-			free(bl->bus_arr[i]);
-			if (freed_bus_count < MAX_BUSES)
-				freed_bus_ids[freed_bus_count++] = freed_id;
-			found = true;
+		if (!found && bl->bus_arr[i])
+		{	
+			if (bl->bus_arr[i]->id == bus_id)
+			{
+				int freed_id = bl->bus_arr[i]->id;
+				free(bl->bus_arr[i]);
+				bl->bus_arr[i] = NULL;
+				if (freed_bus_count < MAX_BUSES)
+					freed_bus_ids[freed_bus_count++] = freed_id;
+				found = true;
+			}
 		}
 		if (found && i < bl->bus_count-1)
 			bl->bus_arr[i] = bl->bus_arr[i+1];
@@ -161,7 +172,7 @@ void bl_remove_bus(BusLine* bl, int bus_id)
 		bl->bus_count--;
 }
 
-List bl_remove(List l)
+List bl_remove_tail(List l)
 {
 	l = delete_at_tail(l);  // Dernière station
 	l = delete_at_tail(l);  // Dernière route
@@ -170,6 +181,7 @@ List bl_remove(List l)
 
 List bl_concat(List l1, List l2)
 {
+	if (list_is_empty(l1) || list_is_empty(l2)) return NULL;
 	BusStation* last_station = list_getnode(list_getlast_node(l1))->bs;
 	BusRoute* last_route = list_getnode(list_getprev_node(list_getlast_node(l1)))->br;
 	BusStation* new_first_station = list_getnode(list_getfirst_node(l2))->bs;

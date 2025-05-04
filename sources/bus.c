@@ -208,6 +208,7 @@ void bus_travel(Bus* bus, BusDirection direction, int* incx, int* incy, float de
 	float dx = xa - bus_getfx(bus);
 	float dy = ya - bus_getfy(bus);
 	float dist = sqrtf(dx * dx + dy * dy);
+	if (dist == 0.0f) return;
 	// Arrêt si proche
 	if (dist < 1.0f)
 	{
