@@ -42,5 +42,8 @@ Vous pouvez compiler le projet en utilisant CMake, puis en faisant :
 Un exécutable est alors créé `./build/up_mobilites`.
 
 
-         Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani.
-                         All Rights Reserved.
+   Legal
+
+
+UPmobilites est distribués sous licence ECL-2.0. Un copie de la licence est
+disponible dans le fichier LICENSE.
