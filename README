@@ -8,5 +8,31 @@
                    /_/_/_/\___/_.__/_/_/_/\__/\__/___/
 
 
+   Introduction
+
+UPmobilites est un projet de simulation de ligne de bus.
+
+L'idée est de créer un programme qui simule un ou plusieurs bus se déplaçant sur
+une ou plusieurs lignes de bus circulaire.
+
+L'utilisateur à le contrôle pour modifier à sa guise l'état de la simulation en
+utilisant des commandes clavier :
+  - ':iX' pour ajouter un bus sur la ligne X ;
+  - ':dX/Y' pour supprimer le bus Y de la ligne X ;
+  - ':cX/Y' pour concaténer la ligne Y avec la ligne X ;
+  - ':rX' pour supprimer le dernier chemin (station et route) de la ligne X
+
+La configuration par défaut est lu par une liste de fichier de description de
+ligne, au format 'timetableX.ini' (où X représente le numéro de la ligne).
+Ils sont lu à partir du dossier `vendor/timetables`.
+
+
+   Motivations
+
+UPmobilites est un projet réalisé dans le cadre de l'Unité d'Enseignement
+« Programmation en C » de la licence Informatique de l'UFR Sciences
+Fondamentales et Appliquées de l'Université de Poitiers.
+
+
          Copyright (c) 2025 Max Charrier, Emilio Decaix-Massiani.
                          All Rights Reserved.
