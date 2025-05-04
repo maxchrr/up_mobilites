@@ -184,7 +184,7 @@ void draw_bl(BusLine bl, Font font, Color color)
 		};
 		Rectangle box = {
 			namePos.x - 8,
-			namePos.y - 4,
+			namePos.y - 2,
 			nameSize.x + 8,
 			nameSize.y + 4
 		};
