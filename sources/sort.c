@@ -80,6 +80,7 @@ static List sorted_merge(List a, List b, cmp comparator)
 	}
 	return result;
 }
+
 List list_sort(List l, cmp comparator)
 {
 	if (!l || !list_getnext_node(l) || !comparator) return l;

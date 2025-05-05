@@ -34,8 +34,8 @@ int main(void)
 	}
 	printf("%d fichiers trouvées\n", timetables.count);
 	BusLine* lines = calloc(timetables.count, sizeof(BusLine));
-	int incx[100] = {0};
-	int incy[100] = {0};
+	int* incx = calloc(timetables.count, sizeof(int));
+	int* incy = calloc(timetables.count, sizeof(int));
 	if (!lines)
 	{
 		fprintf(stderr, "Memory allocation failed\n");
@@ -159,6 +159,8 @@ int main(void)
 	for (unsigned i=0; i<timetables.count; ++i)
 		destroy_bl(lines[i]);
 	free(lines);
+	free(incx);
+	free(incy);
 	free_timetables(timetables);
 	return EXIT_SUCCESS;
 }
